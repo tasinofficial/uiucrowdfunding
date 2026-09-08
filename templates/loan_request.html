@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIU Aid — Request a Loan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+/* ============================================================
+   UIU Aid — Shared Design System CSS (v1.0)
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --orange:#F97316; --orange-h:#EA580C;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --text:#0F172A; --text2:#64748B;
+  --shadow:0 1px 3px rgba(15,23,42,.08);
+  --r:8px;
+}
+
+html{background:var(--bg)}
+body{
+  font-family:'Inter',Roboto,system-ui,sans-serif;
+  color:var(--text); background:var(--bg);
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Material Symbols ---------- */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;display:inline-block;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-16{font-size:16px}.ms-18{font-size:18px}.ms-24{font-size:24px}.ms-28{font-size:28px}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh;min-width:1440px}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--navy);display:flex;flex-direction:column;
+  padding:24px 16px;z-index:50;
+}
+.logo{color:#fff;font-size:21px;font-weight:800;letter-spacing:-.02em;padding:0 10px}
+.logo small{display:block;font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:3px}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);
+  color:rgba(255,255,255,.82);font-size:14.5px;font-weight:500;
+  text-decoration:none;cursor:pointer;
+  transition:background .15s;
+}
+.nav-item .ms{font-size:20px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#fff;color:var(--navy);font-weight:600}
+.side-user{
+  margin-top:auto;display:flex;align-items:center;gap:10px;
+  padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.14);
+}
+.side-user .av{width:36px;height:36px;font-size:13px}
+.side-user b{display:block;color:#fff;font-size:13.5px;font-weight:600;line-height:1.25}
+.side-user .vrf{display:inline-flex;align-items:center;gap:4px;color:#6EE7B7;font-size:11px;font-weight:600}
+.side-user .vrf .ms{font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+.main{margin-left:240px;flex:1;padding:32px 36px 56px;min-width:0}
+
+/* ---------- Page header ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:14px;color:var(--text2);margin-top:2px}
+.head-actions{display:flex;align-items:center;gap:12px}
+.bell{position:relative;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--navy);box-shadow:var(--shadow)}
+.bell .cnt{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:var(--crimson);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(15,23,42,.08)}
+.card-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .ms{color:var(--navy)}
+
+/* ---------- Layout utils ---------- */
+.row{display:flex;gap:24px}
+.col{min-width:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.right{margin-left:auto}
+.center{text-align:center}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,transform .1s}
+.btn:active{transform:scale(0.98)}
+.btn .ms{font-size:18px}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-h)}
+.btn-secondary{background:var(--surface);color:var(--navy);border-color:#C7D2E5}
+.btn-secondary:hover{border-color:var(--navy);background:#F5F8FE}
+.btn-quiet{background:transparent;color:var(--navy);font-weight:600}
+.btn-quiet:hover{text-decoration:underline}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 14px;font-size:13.5px}
+.btn-lg{height:52px;font-size:16.5px}
+
+/* ---------- Pills / badges / tags ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.pill .ms{font-size:13px}
+.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-amber{background:rgba(245,158,11,.13);color:#B45309}
+.pill-crimson{background:rgba(239,68,68,.1);color:#DC2626}
+.pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.pill-slate{background:rgba(100,116,139,.1);color:#475569}
+.pill-solid-crimson{background:var(--crimson);color:#fff}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.vbadge{display:inline-flex;align-items:center;gap:4px;color:#059669;font-size:12.5px;font-weight:600}
+.vbadge .ms{font-size:15px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- Avatars (initials, no photos) ---------- */
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:40px;height:40px;color:#fff;font-weight:700;font-size:14px;flex:none;letter-spacing:.02em}
+.av-sm{width:32px;height:32px;font-size:12px}
+.av-lg{width:64px;height:64px;font-size:22px}
+.av-xl{width:88px;height:88px;font-size:30px}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
+.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+
+/* ---------- Money / metric cards ---------- */
+.money{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.01em}
+.m-card{display:flex;flex-direction:column;gap:10px}
+.m-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.m-ico .ms{font-size:22px}
+.m-ico.navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.m-ico.emerald{background:rgba(16,185,129,.12);color:#059669}
+.m-ico.amber{background:rgba(245,158,11,.14);color:#B45309}
+.m-label{font-size:13.5px;color:var(--text2);font-weight:500}
+.m-value{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.m-sub{font-size:13px;color:var(--text2)}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label{font-size:13.5px;font-weight:600}
+.input{height:44px;border:1px solid var(--border);border-radius:var(--r);padding:0 14px;font-family:inherit;font-size:15px;color:var(--text);background:#fff;width:100%;outline:none;transition:border-color 0.2s}
+.input:focus{border-color:var(--navy)}
+textarea.input{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.5}
+.help{font-size:12.5px;color:var(--text2)}
+.iwrap{position:relative}
+.iwrap .sfx{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--text2)}
+select.input{appearance:none}
+.check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+
+/* ---------- Banners ---------- */
+.banner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500}
+.banner .ms{font-size:19px;flex:none}
+.banner-emerald{background:rgba(16,185,129,.09);color:#065F46}
+.banner-emerald .ms{color:#059669}
+.banner-amber{background:rgba(245,158,11,.11);color:#92400E}
+.banner-amber .ms{color:#B45309}
+.banner-crimson{background:rgba(239,68,68,.09);color:#991B1B}
+.banner-crimson .ms{color:#DC2626}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border)}
+.tab{padding:12px 18px;font-size:14.5px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+
+/* ============================================================
+   SCREEN-SPECIFIC: 02 — Request a Loan
+   ============================================================ */
+.lr-layout{
+  display:flex;
+  gap:24px;
+  align-items:flex-start;
+}
+.lr-left{
+  flex:1.6;
+  min-width:0;
+}
+.lr-right{
+  width:340px;
+  flex:none;
+}
+.sub-section-label{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--text2);
+  margin-bottom:10px;
+}
+
+/* Sliders */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--navy);
+  cursor: pointer;
+  margin-top: -7px;
+  box-shadow: 0 1px 4px rgba(15,23,42,0.15);
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: var(--border);
+  border-radius: 999px;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, var(--emerald) var(--val), var(--border) var(--val));
+}
+
+.slider-wrap{
+  position:relative;
+  height:30px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.slider-label{
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  white-space:nowrap;
+  min-width:32px;
+  text-align:right;
+}
+
+/* Guarantor tiles */
+.guarantor-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:4px;
+}
+.gtile{
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  background:#fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.gtile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.gtile-empty{
+  border:2px dashed var(--border);
+  background:var(--bg);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:104px;
+  gap:6px;
+  cursor: pointer;
+}
+.gtile-empty:hover {
+  border-color: var(--navy);
+}
+.gtile-empty .plus-label{
+  font-size:13.5px;
+  font-weight:600;
+  color:var(--text2);
+}
+.gtile-name{
+  font-size:14.5px;
+  font-weight:600;
+  line-height:1.25;
+}
+.gtile-stake{
+  font-size:12.5px;
+  color:var(--text2);
+  margin-top:1px;
+}
+.gtile-badges{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+/* Card footer actions row */
+.card-footer-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:24px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+}
+
+/* Preview auction card */
+.preview-card{
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:20px;
+  background:var(--bg);
+  transition: all 0.2s ease;
+}
+.preview-identity{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+.preview-name{
+  font-size:15px;
+  font-weight:600;
+}
+.preview-badges{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:3px;
+  flex-wrap:wrap;
+}
+.preview-amount{
+  font-size:26px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+  color:var(--text);
+  letter-spacing:-.02em;
+  margin-bottom:6px;
+}
+.preview-detail{
+  font-size:13.5px;
+  color:var(--text2);
+  margin-bottom:12px;
+}
+.preview-chips-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.g-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px 4px 6px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#fff;
+  font-size:12px;
+  font-weight:600;
+  color:var(--text);
+}
+.g-chip .av-sm{font-size:10px;width:22px;height:22px;}
+
+/* How-it-works steps */
+.hiw-step{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:12px 0;
+}
+.hiw-step + .hiw-step{
+  border-top:1px solid var(--border);
+}
+.hiw-num{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  margin-top:1px;
+}
+.hiw-title{
+  font-size:14.5px;
+  font-weight:600;
+  line-height:1.3;
+}
+.hiw-sub{
+  font-size:13px;
+  color:var(--text2);
+  margin-top:3px;
+}
+
+/* Your standing gauge card */
+.standing-inner{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.standing-meta{
+  flex:1;
+  min-width:0;
+}
+.standing-line{
+  font-size:13.5px;
+  color:var(--text2);
+  margin-top:8px;
+}
+
+/* Footnote card */
+.footnote-card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:16px 20px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #333;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-weight: 500;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">UIU Aid<small>Mutual Aid Network</small></div>
+    <nav class="nav">
+      <a class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" href="/"><span class="ms">space_dashboard</span>Dashboard</a>
+      <a class="nav-item {% if active_page == 'loans' %}active{% endif %}" href="/loan-request"><span class="ms">handshake</span>Loans</a>
+      <a class="nav-item {% if active_page == 'crowdfunding' %}active{% endif %}" href="/crowdfunding"><span class="ms">volunteer_activism</span>Crowdfunding</a>
+      <a class="nav-item {% if active_page == 'gigs' %}active{% endif %}" href="/gigs"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item {% if active_page == 'meals' %}active{% endif %}" href="/meal-drops"><span class="ms">restaurant</span>Meal Drops</a>
+      <a class="nav-item {% if active_page == 'trust' %}active{% endif %}" href="/trust-profile"><span class="ms">verified_user</span>Trust Profile</a>
+    </nav>
+    <div class="side-user">
+      <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
+      <div>
+        <b>{{ user.name }}</b>
+        {% if user.is_verified %}
+        <span class="vrf"><span class="ms">verified</span>Verified</span>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Page header -->
+    <div class="page-head">
+      <div>
+        <h1>Request a Loan</h1>
+        <div class="sub">Your peers bid the interest down — you pick the best offer.</div>
+      </div>
+    </div>
+
+    <!-- Main two-column layout -->
+    <div class="tabs" style="margin-bottom: 24px; background: #fff; border-radius: 8px; border: 1px solid var(--border); padding: 4px 16px; box-shadow: var(--shadow); display:flex; gap:16px;">
+      <a href="/loan-request" class="tab on" style="text-decoration:none;"><span class="ms ms-18">add_circle</span>1. Request a Loan</a>
+      <a href="/auction" class="tab" style="text-decoration:none;"><span class="ms ms-18">gavel</span>2. Live Reverse Auction</a>
+      <a href="/repayment" class="tab" style="text-decoration:none;"><span class="ms ms-18">payments</span>3. Active Loan Repayment</a>
+    </div>
+
+    <div class="lr-layout">
+
+      <!-- LEFT COLUMN: form card + preview card -->
+      <div class="lr-left">
+        <div class="stack">
+
+          <!-- CARD 1: Loan Request Form -->
+          <div class="card">
+            <div class="card-title">
+              <span class="ms">edit_note</span>
+              Loan Details
+            </div>
+
+            <!-- Amount field -->
+            <div class="field" style="margin-bottom:20px;">
+              <label>How much do you need?</label>
+              <div style="display:flex; gap: 16px; align-items:center;">
+                <input type="range" id="loan-amount-range" min="500" max="{{ user.borrowing_limit }}" step="100" value="3000" style="flex:1;">
+                <div class="iwrap" style="width: 140px; flex:none;">
+                  <input id="loan-amount-num" class="input" type="number" min="500" max="{{ user.borrowing_limit }}" step="100" value="3000" style="padding-right:42px;font-weight:700;font-size:16px;">
+                  <span class="sfx">Tk</span>
+                </div>
+              </div>
+              <span class="help">Your {{ user.tier }} Tier limit: up to {{ user.borrowing_limit | int }} Tk</span>
+            </div>
+
+            <!-- Purpose + Repay by -->
+            <div class="grid-2" style="margin-bottom:20px;">
+              <div class="field">
+                <label>Purpose</label>
+                <div class="iwrap">
+                  <select id="loan-purpose" class="input">
+                    <option value="Laptop repair before finals">Laptop repair before finals</option>
+                    <option value="Course materials &amp; books">Course materials &amp; books</option>
+                    <option value="Medical emergency">Medical emergency</option>
+                    <option value="Rent &amp; utilities">Rent &amp; utilities</option>
+                    <option value="Transport costs">Transport costs</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <span class="sfx" style="pointer-events:none;right:12px;">
+                    <span class="ms ms-16">expand_more</span>
+                  </span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Repay by</label>
+                <!-- Set value to some sensible default like 7 days from now, handled via JS if needed, but static here for simplicity -->
+                <input id="loan-repay-by" class="input" type="date">
+              </div>
+            </div>
+
+            <!-- Max interest rate slider -->
+            <div class="field" style="margin-bottom:20px;">
+              <label>Maximum interest rate</label>
+              <div class="slider-wrap">
+                <input type="range" id="loan-max-rate" min="1" max="10" step="0.5" value="5" style="flex:1; margin:0; padding:0;">
+                <span class="slider-label" id="loan-rate-label">5.0%</span>
+              </div>
+              <span class="help">Lenders bid this down in the live auction — most loans close far below the max.</span>
+            </div>
+
+            <!-- Message to lenders -->
+            <div class="field" style="margin-bottom:4px;">
+              <label>Message to lenders</label>
+              <textarea id="loan-message" class="input" rows="3">My laptop died a week before finals. I tutor on weekends and can repay right after.</textarea>
+            </div>
+
+            <hr class="divider" style="margin:20px 0 18px;">
+
+            <!-- Guarantors sub-section -->
+            <div class="sub-section-label">Guarantors</div>
+            <p class="help" style="margin-bottom:12px;">Loans above 2,000 Tk need 2 peers who stake their own trust points on you.</p>
+
+            <div class="banner banner-emerald" style="margin-bottom:16px;">
+              <span class="ms">how_to_reg</span>
+              Guarantors lose their staked points if you default — choose people who truly know you.
+            </div>
+
+            <div class="guarantor-grid">
+              <!-- Filled guarantor tile -->
+              <div class="gtile gtile-filled">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="av av-2 av-sm" style="width:36px;height:36px;font-size:13px;">TH</span>
+                  <div>
+                    <div class="gtile-name">Tanvir Hasan</div>
+                    <div class="gtile-stake">staking 15 trust pts</div>
+                  </div>
+                </div>
+                <div class="gtile-badges">
+                  <span class="vbadge"><span class="ms">verified</span>Verified</span>
+                  <span class="pill pill-emerald">Accepted</span>
+                </div>
+              </div>
+
+              <!-- Empty invite tile -->
+              <div class="gtile gtile-empty" onclick="showToast('Invite sent to guarantor.')">
+                <span class="ms ms-24 muted">person_add</span>
+                <span class="plus-label">+ Invite second guarantor</span>
+              </div>
+            </div>
+
+            <!-- Card footer actions -->
+            <div class="card-footer-actions">
+              <button id="btn-post-loan" type="button" class="btn btn-primary" onclick="submitLoanRequest()">
+                <span class="ms ms-18">gavel</span>
+                Post to Auction
+              </button>
+              <button type="button" class="btn btn-quiet" onclick="showToast('Draft saved successfully!')">Save draft</button>
+            </div>
+          </div>
+
+          <!-- CARD 2: Auction preview -->
+          <div class="card">
+            <div class="card-title">
+              <span class="ms">visibility</span>
+              What lenders will see
+            </div>
+
+            <div class="preview-card" id="preview-container">
+              <div class="preview-identity">
+                <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
+                <div>
+                  <div class="preview-name">{{ user.name }}</div>
+                  <div class="preview-badges">
+                    {% if user.is_verified %}
+                    <span class="vbadge"><span class="ms">verified</span>Verified</span>
+                    {% endif %}
+                    {% set tier_color = {'Gold': 'emerald', 'Silver': 'slate', 'Platinum': 'amber'}.get(user.tier, 'navy') %}
+                    <span class="pill pill-{{ tier_color }}" style="font-size:11px;padding:3px 8px;">{{ user.trust_score }}</span>
+                    <span class="pill pill-slate" style="font-size:11px;padding:3px 8px;">{{ user.tier }} Tier</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="preview-amount">
+                <span class="money" id="preview-amount-val" style="font-size:26px;">3,000 Tk</span>
+              </div>
+
+              <div class="preview-detail">
+                <span id="preview-purpose-val">Laptop repair before finals</span> &nbsp;&middot;&nbsp; repay by <span id="preview-date-val">Sep 5, 2026</span>
+              </div>
+
+              <div class="preview-chips-row">
+                <!-- Guarantor chip 1 -->
+                <span class="g-chip">
+                  <span class="av av-sm av-2">TH</span>
+                  Tanvir Hasan
+                </span>
+                <!-- Guarantor chip 2 (pending) -->
+                <span class="g-chip" style="border-style:dashed;color:var(--text2);">
+                  <span class="ms ms-16 muted">person_add</span>
+                  Awaiting guarantor
+                </span>
+                <span class="pill pill-navy" style="margin-left:auto;">
+                  <span class="ms ms-16">percent</span>
+                  max <span id="preview-rate-val">5.0%</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /stack -->
+      </div><!-- /lr-left -->
+
+      <!-- RIGHT COLUMN: guidance rail -->
+      <div class="lr-right">
+        <div class="stack">
+
+          <!-- How it works -->
+          <div class="card">
+            <div class="card-title">
+              <span class="ms">info</span>
+              How it works
+            </div>
+
+            <div class="hiw-step">
+              <div class="hiw-num">1</div>
+              <div class="hiw-body">
+                <div class="hiw-title">Post your request</div>
+                <div class="hiw-sub">Your details go live on the peer auction board.</div>
+              </div>
+            </div>
+            <div class="hiw-step">
+              <div class="hiw-num">2</div>
+              <div class="hiw-body">
+                <div class="hiw-title">Lenders bid the rate down</div>
+                <div class="hiw-sub">Peers compete to offer the lowest interest — in your favour.</div>
+              </div>
+            </div>
+            <div class="hiw-step">
+              <div class="hiw-num">3</div>
+              <div class="hiw-body">
+                <div class="hiw-title">Accept the best bid</div>
+                <div class="hiw-sub">Money arrives via bKash, usually within the hour.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Your standing -->
+          <div class="card">
+            <div class="card-title">
+              <span class="ms">shield</span>
+              Your standing
+            </div>
+
+            <div class="standing-inner">
+              {% set offset = 326.7 * (1 - user.trust_score/100) %}
+              <svg width="100" height="100" viewBox="0 0 120 120" style="flex:none;">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#10B981" stroke-width="10"
+                  stroke-linecap="round"
+                  stroke-dasharray="326.7"
+                  stroke-dashoffset="{{ offset }}"
+                  transform="rotate(-90 60 60)"/>
+                <text x="60" y="56" text-anchor="middle" font-size="28" font-weight="800" fill="#0F172A" font-family="Inter">{{ user.trust_score }}</text>
+                <text x="60" y="74" text-anchor="middle" font-size="11" fill="#64748B" font-family="Inter">/100</text>
+              </svg>
+
+              <div class="standing-meta">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+                  <span class="pill pill-slate">{{ user.tier }} Tier</span>
+                  <span class="pill pill-emerald">
+                    <span class="ms ms-16">check_circle</span>
+                    Good standing
+                  </span>
+                </div>
+                <div class="standing-line">Your current limit is {{ user.borrowing_limit | int }} Tk.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk notice footnote card -->
+          <div class="footnote-card">
+            <p class="footnote" style="line-height:1.6;">
+              Defaulting leads to a permanent badge visible across campus. Guarantors lose their staked points. UIU Aid escalates only after all extension options are exhausted.
+            </p>
+          </div>
+
+        </div><!-- /stack -->
+      </div><!-- /lr-right -->
+
+    </div><!-- /lr-layout -->
+
+  </main>
+</div>
+
+<div id="toast" class="toast">Draft saved</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const range = document.getElementById('loan-amount-range');
+  const num = document.getElementById('loan-amount-num');
+  const rateSlider = document.getElementById('loan-max-rate');
+  const rateLabel = document.getElementById('loan-rate-label');
+  const purpose = document.getElementById('loan-purpose');
+  const dateObj = document.getElementById('loan-repay-by');
+  
+  // Initialize date input to a week from now
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  dateObj.value = nextWeek.toISOString().split('T')[0];
+  document.getElementById('preview-date-val').textContent = dateObj.value;
+
+  const preAmount = document.getElementById('preview-amount-val');
+  const preRate = document.getElementById('preview-rate-val');
+  const prePurpose = document.getElementById('preview-purpose-val');
+  const preDate = document.getElementById('preview-date-val');
+  
+  const updateSliderGradient = (el) => {
+    const val = (el.value - el.min) / (el.max - el.min) * 100;
+    el.style.setProperty('--val', val + '%');
+  };
+
+  // Sync Amount Slider and Number
+  const syncAmount = (val) => {
+    range.value = val;
+    num.value = val;
+    preAmount.textContent = Number(val).toLocaleString() + ' Tk';
+    updateSliderGradient(range);
+  };
+
+  range.addEventListener('input', (e) => syncAmount(e.target.value));
+  num.addEventListener('input', (e) => {
+    if(e.target.value > Number(num.max)) e.target.value = num.max;
+    if(e.target.value < Number(num.min)) return;
+    syncAmount(e.target.value);
+  });
+
+  // Sync Rate Slider
+  rateSlider.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value).toFixed(1);
+    rateLabel.textContent = val + '%';
+    preRate.textContent = val + '%';
+    updateSliderGradient(rateSlider);
+  });
+  
+  // Sync Purpose and Date
+  purpose.addEventListener('change', (e) => {
+    prePurpose.textContent = e.target.value;
+  });
+  
+  dateObj.addEventListener('change', (e) => {
+    preDate.textContent = e.target.value;
+  });
+
+  // Initial call
+  updateSliderGradient(range);
+  updateSliderGradient(rateSlider);
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function submitLoanRequest() {
+  const btn = document.getElementById('btn-post-loan');
+  btn.innerHTML = `<span class="ms ms-18" style="animation: pulse 1s infinite">sync</span> Processing...`;
+  btn.disabled = true;
+
+  const payload = {
+    amount: document.getElementById('loan-amount-num').value,
+    purpose: document.getElementById('loan-purpose').value,
+    repay_by: document.getElementById('loan-repay-by').value,
+    max_rate: document.getElementById('loan-max-rate').value,
+    message: document.getElementById('loan-message').value
+  };
+
+  fetch('/api/loans/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.status === 'success') {
+      window.location.href = `/auction?id=${res.loan_id}`;
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showToast('Failed to post loan');
+    btn.innerHTML = `<span class="ms ms-18">gavel</span> Post to Auction`;
+    btn.disabled = false;
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIU Aid — Live Loan Auction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+/* ============================================================
+   UIU Aid — Shared Design System CSS (v1.0)
+   Source of truth: /agent/workspace/DESIGN.md
+   Inline this ENTIRE file into each screen's <style> tag.
+   Do NOT modify tokens. Append screen-specific CSS below it.
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --orange:#F97316; --orange-h:#EA580C;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --text:#0F172A; --text2:#64748B;
+  --shadow:0 1px 3px rgba(15,23,42,.08);
+  --r:8px;
+}
+
+html{background:var(--bg)}
+body{
+  font-family:'Inter',Roboto,system-ui,sans-serif;
+  color:var(--text); background:var(--bg);
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Material Symbols ---------- */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;display:inline-block;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-16{font-size:16px}.ms-18{font-size:18px}.ms-24{font-size:24px}.ms-28{font-size:28px}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh;min-width:1440px}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--navy);display:flex;flex-direction:column;
+  padding:24px 16px;z-index:50;
+}
+.logo{color:#fff;font-size:21px;font-weight:800;letter-spacing:-.02em;padding:0 10px}
+.logo small{display:block;font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:3px}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);
+  color:rgba(255,255,255,.82);font-size:14.5px;font-weight:500;
+  text-decoration:none;cursor:pointer;
+}
+.nav-item .ms{font-size:20px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#fff;color:var(--navy);font-weight:600}
+.side-user{
+  margin-top:auto;display:flex;align-items:center;gap:10px;
+  padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.14);
+}
+.side-user .av{width:36px;height:36px;font-size:13px}
+.side-user b{display:block;color:#fff;font-size:13.5px;font-weight:600;line-height:1.25}
+.side-user .vrf{display:inline-flex;align-items:center;gap:4px;color:#6EE7B7;font-size:11px;font-weight:600}
+.side-user .vrf .ms{font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+.main{margin-left:240px;flex:1;padding:32px 36px 56px;min-width:0}
+
+/* ---------- Page header ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:14px;color:var(--text2);margin-top:2px}
+.head-actions{display:flex;align-items:center;gap:12px}
+.bell{position:relative;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--navy);box-shadow:var(--shadow)}
+.bell .cnt{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:var(--crimson);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px}
+.card-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .ms{color:var(--navy)}
+
+/* ---------- Layout utils ---------- */
+.row{display:flex;gap:24px}
+.col{min-width:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.right{margin-left:auto}
+.center{text-align:center}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s}
+.btn .ms{font-size:18px}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-h)}
+.btn-secondary{background:var(--surface);color:var(--navy);border-color:#C7D2E5}
+.btn-secondary:hover{border-color:var(--navy);background:#F5F8FE}
+.btn-quiet{background:transparent;color:var(--navy);font-weight:600}
+.btn-quiet:hover{text-decoration:underline}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 14px;font-size:13.5px}
+.btn-lg{height:52px;font-size:16.5px}
+
+/* ---------- Pills / badges / tags ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.pill .ms{font-size:13px}
+.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-amber{background:rgba(245,158,11,.13);color:#B45309}
+.pill-crimson{background:rgba(239,68,68,.1);color:#DC2626}
+.pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.pill-slate{background:rgba(100,116,139,.1);color:#475569}
+.pill-solid-crimson{background:var(--crimson);color:#fff}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.vbadge{display:inline-flex;align-items:center;gap:4px;color:#059669;font-size:12.5px;font-weight:600}
+.vbadge .ms{font-size:15px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- Avatars (initials, no photos) ---------- */
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:40px;height:40px;color:#fff;font-weight:700;font-size:14px;flex:none;letter-spacing:.02em}
+.av-sm{width:32px;height:32px;font-size:12px}
+.av-lg{width:64px;height:64px;font-size:22px}
+.av-xl{width:88px;height:88px;font-size:30px}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
+.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+
+/* ---------- Money / metric cards ---------- */
+.money{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.01em}
+.m-card{display:flex;flex-direction:column;gap:10px}
+.m-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.m-ico .ms{font-size:22px}
+.m-ico.navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.m-ico.emerald{background:rgba(16,185,129,.12);color:#059669}
+.m-ico.amber{background:rgba(245,158,11,.14);color:#B45309}
+.m-label{font-size:13.5px;color:var(--text2);font-weight:500}
+.m-value{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.m-sub{font-size:13px;color:var(--text2)}
+
+/* ---------- Progress ---------- */
+.bar{height:8px;border-radius:999px;background:var(--border);overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--emerald)}
+.bar-lg{height:12px}
+
+/* ---------- Banners ---------- */
+.banner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500}
+.banner .ms{font-size:19px;flex:none}
+.banner-emerald{background:rgba(16,185,129,.09);color:#065F46}
+.banner-emerald .ms{color:#059669}
+.banner-amber{background:rgba(245,158,11,.11);color:#92400E}
+.banner-amber .ms{color:#B45309}
+.banner-crimson{background:rgba(239,68,68,.09);color:#991B1B}
+.banner-crimson .ms{color:#DC2626}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label{font-size:13.5px;font-weight:600}
+.input{height:44px;border:1px solid var(--border);border-radius:var(--r);padding:0 14px;font-family:inherit;font-size:15px;color:var(--text);background:#fff;width:100%;outline:none}
+.input:focus{border-color:var(--navy)}
+textarea.input{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.5}
+.help{font-size:12.5px;color:var(--text2)}
+.iwrap{position:relative}
+.iwrap .sfx{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--text2)}
+select.input{appearance:none}
+.check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+
+/* ---------- Chips ---------- */
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--r);background:#fff;font-size:14.5px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:#C7D2E5}
+.chip.on{border-color:var(--navy);background:rgba(30,58,138,.06);color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+
+/* Filter pills for boards */
+.fpill{padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:13.5px;font-weight:600;color:var(--text2);cursor:pointer}
+.fpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ---------- Timeline ---------- */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px;padding:14px 0}
+.tl-item + .tl-item{border-top:1px dashed var(--border)}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px;box-shadow:0 0 0 4px rgba(226,232,240,.6)}
+.tl-dot.emerald{background:var(--emerald)}
+.tl-dot.navy{background:var(--navy)}
+.tl-dot.amber{background:var(--amber)}
+.tl-dot.crimson{background:var(--crimson)}
+
+/* ---------- Escalation stepper ---------- */
+.steps{display:flex;align-items:flex-start}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;gap:8px;padding:0 8px}
+.step::before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:first-child::before{display:none}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--border);color:var(--text2);z-index:1;position:relative}
+.step-dot .ms{font-size:16px}
+.step.done .step-dot{background:var(--emerald);border-color:var(--emerald);color:#fff}
+.step.done::before{background:var(--emerald)}
+.step.current .step-dot{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 0 0 5px rgba(245,158,11,.18)}
+.step.current::before{background:var(--amber)}
+.step.danger .step-dot{color:var(--crimson)}
+.step b{font-size:13px;font-weight:600}
+.step small{font-size:11.5px;color:var(--text2);line-height:1.35}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border)}
+.tab{padding:12px 18px;font-size:14.5px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+
+/* ---------- Feed rows ---------- */
+.frow{display:flex;align-items:center;gap:12px;padding:13px 0}
+.frow + .frow{border-top:1px solid var(--border)}
+
+/* ---------- Misc ---------- */
+.link{color:var(--navy);font-weight:600;text-decoration:none}
+.link:hover{text-decoration:underline}
+.footnote{font-size:12.5px;color:var(--text2)}
+.divider{height:1px;background:var(--border);margin:16px 0;border:0}
+.dot-live{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.muted{color:var(--text2)}
+
+/* ============================================================
+   SCREEN-SPECIFIC CSS — 03 Loan Auction
+   ============================================================ */
+
+/* Column flex proportions */
+.col-left  { flex: 1;     min-width: 0; }
+.col-right { flex: 1.1;   min-width: 0; }
+
+/* Borrower card header area */
+.borrower-hdr {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.borrower-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.borrower-meta { display: flex; flex-direction: column; gap: 4px; }
+.borrower-name {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+}
+.borrower-trust-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.trust-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--emerald);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.borrower-sub {
+  font-size: 13.5px;
+  color: var(--text2);
+}
+
+/* Trust gauge container — right side of borrower card header */
+.gauge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+/* Loan details info rows */
+.info-rows { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text);
+}
+.info-row .ms {
+  font-size: 18px;
+  color: var(--text2);
+  flex: none;
+}
+
+/* Guarantors section */
+.guarantors-section { margin-top: 16px; }
+.guarantors-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-bottom: 12px;
+}
+.guarantor-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+}
+.guarantor-row + .guarantor-row { border-top: 1px solid var(--border); }
+.guarantor-info { flex: 1; min-width: 0; }
+.guarantor-name { font-size: 14px; font-weight: 600; }
+.guarantor-stake { font-size: 12.5px; color: var(--text2); margin-top: 1px; }
+
+/* Lowest bid banner */
+.bid-banner {
+  background: var(--emerald);
+  border: none;
+  border-radius: var(--r);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.bid-banner-left { display: flex; flex-direction: column; gap: 4px; }
+.bid-banner-live-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bid-banner-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.72);
+}
+.bid-banner-rate {
+  font-size: 34px;
+  font-weight: 800;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+}
+.bid-banner-by {
+  font-size: 13px;
+  color: rgba(255,255,255,.85);
+  font-weight: 500;
+}
+.bid-banner-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.bid-banner-label {
+  font-size: 12px;
+  color: rgba(255,255,255,.72);
+  font-weight: 500;
+  text-align: right;
+}
+.bid-banner-timer {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.bid-banner-watching {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255,255,255,.82);
+  font-size: 13px;
+  font-weight: 500;
+}
+.bid-banner-watching .ms {
+  font-size: 16px;
+  color: rgba(255,255,255,.72);
+}
+
+/* Place-bid card */
+.bid-card .card-title { margin-bottom: 16px; }
+.help-emerald {
+  font-size: 13px;
+  color: #059669;
+  font-weight: 500;
+  margin-top: 6px;
+}
+.charity-check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  background: rgba(16,185,129,.05);
+  border: 1px solid rgba(16,185,129,.18);
+  border-radius: var(--r);
+  margin-top: 14px;
+}
+.charity-check-row .check { flex: 1; font-size: 14px; }
+.charity-fav { color: var(--emerald); display: flex; align-items: center; }
+.charity-fav .ms { font-size: 18px; }
+
+/* Live bids feed */
+.bids-card .card-title { margin-bottom: 0; }
+
+/* Lowest bid row highlight */
+.frow-lowest {
+  border-left: 3px solid var(--emerald);
+  background: rgba(16,185,129,.05);
+  margin-left: -24px;
+  padding-left: 21px;
+  margin-right: -24px;
+  padding-right: 24px;
+  border-radius: 0;
+}
+/* Override top border for the first frow that is lowest */
+.frow-lowest.frow { border-top: 1px solid var(--border); }
+
+/* For the very first frow-lowest (top of list), no border-top needed */
+.bids-list .frow:first-child { border-top: none; }
+
+.frow-name-block { display: flex; flex-direction: column; gap: 1px; }
+.frow-name { font-size: 14.5px; font-weight: 700; }
+.frow-time { font-size: 12.5px; color: var(--text2); }
+.frow-rate-block { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.frow-rate { font-size: 17px; font-variant-numeric: tabular-nums; font-weight: 800; }
+.frow-charity-sub {
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.frow-charity-sub .ms { font-size: 14px; color: var(--emerald); }
+
+/* Large amount display */
+.loan-amount-display {
+  margin: 4px 0 14px;
+}
+.loan-amount-display .money {
+  font-size: 40px;
+  color: var(--text);
+  display: block;
+  line-height: 1.1;
+}
+
+/* Requested tag row */
+.requested-label-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+</style>
+<style>
+.ha-img-placeholder{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:#f4f4f5;border:1px dashed #d4d4d8;border-radius:8px;color:#71717a;font-size:12px;font-family:system-ui,sans-serif;min-height:80px;padding:16px;box-sizing:border-box;animation:ha-img-pulse 1.5s ease-in-out infinite}
+.ha-img-placeholder.ha-failed{animation:none;opacity:.7}
+@keyframes ha-img-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@media(prefers-color-scheme:dark){.ha-img-placeholder{background:#27272a;border-color:#3f3f46;color:#a1a1aa}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR: Loans active. Bottom user: Sadia Rahman (av-3, initials SR) -->
+  <aside class="sidebar">
+    <div class="logo">UIU Aid<small>Mutual Aid Network</small></div>
+    <nav class="nav">
+      <a class="nav-item"><span class="ms">space_dashboard</span>Dashboard</a>
+      <a class="nav-item active"><span class="ms">handshake</span>Loans</a>
+      <a class="nav-item"><span class="ms">volunteer_activism</span>Crowdfunding</a>
+      <a class="nav-item"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item"><span class="ms">restaurant</span>Meal Drops</a>
+      <a class="nav-item"><span class="ms">verified_user</span>Trust Profile</a>
+    </nav>
+    <div class="side-user">
+      <span class="av av-3">SR</span>
+      <div>
+        <b>Sadia Rahman</b>
+        <span class="vrf"><span class="ms">verified</span>Verified</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Page header -->
+    <div class="page-head">
+      <div>
+        <h1>Loan Auction #1042</h1>
+        <div class="sub">Live reverse auction — the lowest rate wins</div>
+      </div>
+      <div class="head-actions">
+        <div class="bell">
+          <span class="ms">notifications</span>
+          <span class="cnt">3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main two-column layout -->
+    <div class="row">
+
+      <!-- ===================== LEFT COLUMN — Borrower Identity ===================== -->
+      <div class="col col-left">
+        <div class="card" style="height:100%;display:flex;flex-direction:column;">
+
+          <!-- Borrower header row -->
+          <div class="borrower-hdr">
+            <div class="borrower-identity">
+              <span class="av av-lg av-2">TH</span>
+              <div class="borrower-meta">
+                <div class="borrower-name">Tanvir Hasan</div>
+                <div class="borrower-trust-row">
+                  <span class="trust-mini">78</span>
+                  <span class="borrower-sub">18 / 700</span>
+                </div>
+                <div class="borrower-sub" style="margin-top:2px;">CSE &middot; 7th trimester</div>
+                <span class="vbadge" style="margin-top:6px;">
+                  <span class="ms">verified</span>Verified Student
+                </span>
+              </div>
+            </div>
+
+            <!-- Circular trust gauge — score 78, dasharray 326.7, offset 71.9 -->
+            <div class="gauge-wrap">
+              <svg width="84" height="84" viewBox="0 0 84 84" aria-label="Trust score 78 out of 100">
+                <circle cx="42" cy="42" r="34" fill="none" stroke="#E2E8F0" stroke-width="7"/>
+                <circle cx="42" cy="42" r="34" fill="none" stroke="#10B981" stroke-width="7"
+                  stroke-linecap="round"
+                  stroke-dasharray="213.6"
+                  stroke-dashoffset="46.9"
+                  transform="rotate(-90 42 42)"/>
+                <text x="42" y="39" text-anchor="middle" font-size="20" font-weight="800" fill="#0F172A" font-family="Inter">78</text>
+                <text x="42" y="53" text-anchor="middle" font-size="10" fill="#64748B" font-family="Inter">/100</text>
+              </svg>
+              <span class="pill pill-slate" style="font-size:11px;padding:3px 9px;">Silver Tier</span>
+            </div>
+          </div>
+
+          <!-- Repayment pill -->
+          <span class="pill pill-emerald" style="width:fit-content;">
+            <span class="ms">check_circle</span>9/9 loans repaid on time
+          </span>
+
+          <hr class="divider">
+
+          <!-- Loan amount section -->
+          <div class="requested-label-row">
+            <span class="tag">Requested</span>
+          </div>
+          <div class="loan-amount-display">
+            <span class="money" style="font-size:40px;">3,000 Tk</span>
+          </div>
+
+          <!-- Info rows -->
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="ms">computer</span>
+              <span>Laptop repair before finals</span>
+            </div>
+            <div class="info-row">
+              <span class="ms">schedule</span>
+              <span>Repay by Sep 5, 2026</span>
+            </div>
+            <div class="info-row">
+              <span class="ms">percent</span>
+              <span>Max rate <strong>5%</strong></span>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- Guarantors -->
+          <div class="guarantors-section">
+            <div class="guarantors-title">Guarantors &mdash; 25 pts staked</div>
+
+            <div class="guarantor-row">
+              <span class="av av-4">RK</span>
+              <div class="guarantor-info">
+                <div class="guarantor-name">Rahim Khan</div>
+                <div class="guarantor-stake">staking 15 pts</div>
+              </div>
+              <span class="vbadge">
+                <span class="ms">how_to_reg</span>Guarantor
+              </span>
+            </div>
+
+            <div class="guarantor-row">
+              <span class="av av-6">MA</span>
+              <div class="guarantor-info">
+                <div class="guarantor-name">Mim Akter</div>
+                <div class="guarantor-stake">staking 10 pts</div>
+              </div>
+              <span class="vbadge">
+                <span class="ms">how_to_reg</span>Guarantor
+              </span>
+            </div>
+          </div>
+
+          <!-- Footnote pinned to bottom -->
+          <p class="footnote" style="margin-top:auto;padding-top:20px;line-height:1.6;">
+            UIU Aid loans are enforced by reputation, not courts. Guarantor stakes are lost on default.
+          </p>
+
+        </div>
+      </div>
+
+      <!-- ===================== RIGHT COLUMN — Auction actions ===================== -->
+      <div class="col col-right">
+        <div class="stack">
+
+          <!-- 1. LOWEST-BID BANNER -->
+          <div class="bid-banner">
+            <div class="bid-banner-left">
+              <div class="bid-banner-live-row">
+                <span class="dot-live"></span>
+                <span class="bid-banner-tag">Current Lowest Bid</span>
+              </div>
+              <div class="bid-banner-rate">3.5%</div>
+              <div class="bid-banner-by">by Sadia R. &middot; 2 min ago</div>
+            </div>
+            <div class="bid-banner-right">
+              <div class="bid-banner-label">Auction ends in</div>
+              <div class="bid-banner-timer">5h 12m</div>
+              <div class="bid-banner-watching">
+                <span class="ms">visibility</span>
+                <span>14 watching</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. PLACE YOUR BID -->
+          <div class="card bid-card">
+            <div class="card-title">
+              <span class="ms">gavel</span>Place your bid
+            </div>
+
+            <div class="field">
+              <label for="bid-rate">Your interest rate</label>
+              <div class="iwrap">
+                <input id="bid-rate" class="input" type="text" value="3.0" style="font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;padding-right:40px;">
+                <span class="sfx">%</span>
+              </div>
+              <div class="help-emerald">At 3.0% you earn 90 Tk if Tanvir repays on time.</div>
+            </div>
+
+            <!-- Charity checkbox -->
+            <div class="charity-check-row">
+              <label class="check">
+                <input type="checkbox">
+                <span>0% interest &mdash; lend as charity</span>
+              </label>
+              <span class="charity-fav">
+                <span class="ms">favorite</span>
+              </span>
+            </div>
+
+            <!-- THE ONE orange primary button -->
+            <button class="btn btn-primary btn-block" style="margin-top:18px;">
+              Submit Bid
+            </button>
+          </div>
+
+          <!-- 3. LIVE BIDS -->
+          <div class="card bids-card">
+            <div class="card-title" style="margin-bottom:16px;">
+              <span class="ms">format_list_bulleted</span>Live bids
+              <span class="pill pill-navy" style="margin-left:4px;font-size:11px;padding:3px 9px;">5</span>
+            </div>
+
+            <div class="bids-list">
+
+              <!-- Sadia R. — LOWEST (highlighted) -->
+              <div class="frow frow-lowest">
+                <span class="av av-sm av-3">SR</span>
+                <div class="frow-name-block" style="flex:1;min-width:0;">
+                  <span class="frow-name">Sadia R.</span>
+                  <span class="frow-time">2 min ago</span>
+                </div>
+                <div class="frow-rate-block">
+                  <span class="frow-rate money" style="color:var(--emerald);">3.5%</span>
+                  <span class="pill pill-emerald" style="font-size:11px;padding:2px 8px;">Lowest</span>
+                </div>
+              </div>
+
+              <!-- Adnan C. -->
+              <div class="frow">
+                <span class="av av-sm av-4">AC</span>
+                <div class="frow-name-block" style="flex:1;min-width:0;">
+                  <span class="frow-name">Adnan C.</span>
+                  <span class="frow-time">14 min ago</span>
+                </div>
+                <div class="frow-rate-block">
+                  <span class="frow-rate money">4.0%</span>
+                </div>
+              </div>
+
+              <!-- Rifat I. — 0% charity -->
+              <div class="frow">
+                <span class="av av-sm av-5">RI</span>
+                <div class="frow-name-block" style="flex:1;min-width:0;">
+                  <span class="frow-name">Rifat I.</span>
+                  <span class="frow-time">26 min ago</span>
+                </div>
+                <div class="frow-rate-block" style="align-items:flex-end;">
+                  <span class="frow-rate money" style="color:var(--emerald);">0%</span>
+                  <span class="frow-charity-sub">
+                    <span class="ms ms-fill" style="font-size:13px;">favorite</span>pledged 500 Tk &middot; partial charity
+                  </span>
+                </div>
+              </div>
+
+              <!-- Karim H. -->
+              <div class="frow">
+                <span class="av av-sm av-1">KH</span>
+                <div class="frow-name-block" style="flex:1;min-width:0;">
+                  <span class="frow-name">Karim H.</span>
+                  <span class="frow-time">1h ago</span>
+                </div>
+                <div class="frow-rate-block">
+                  <span class="frow-rate money">4.5%</span>
+                </div>
+              </div>
+
+              <!-- Priya D. -->
+              <div class="frow">
+                <span class="av av-sm av-6">PD</span>
+                <div class="frow-name-block" style="flex:1;min-width:0;">
+                  <span class="frow-name">Priya D.</span>
+                  <span class="frow-time">2h ago</span>
+                </div>
+                <div class="frow-rate-block">
+                  <span class="frow-rate money">5.0%</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /.row -->
+
+  </main>
+</div>
+<script>
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && window.parent !== window) {
+    window.parent.postMessage({ type: 'close-fullscreen' }, '*');
+  }
+});
+</script>
+<!-- broken-img-handler -->
+<script>
+(function(){
+  if(window.__brokenImgHandler)return;
+  window.__brokenImgHandler=true;
+  var MAX=5,DELAYS=[2000,4000,8000,16000,32000];
+  document.addEventListener('error',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    var liveSrc=img.getAttribute('src');
+    var src=img.dataset.haOriginalSrc||liveSrc;
+    if(!src)return;
+    if(img.dataset.haOriginalSrc&&liveSrc&&liveSrc!==img.dataset.haOriginalSrc&&liveSrc.indexOf('_r=')<0){src=liveSrc;img.dataset.haOriginalSrc=src;img.dataset.haRetryCount='0'}
+    else if(!img.dataset.haOriginalSrc){img.dataset.haOriginalSrc=src}
+    var attempt=parseInt(img.dataset.haRetryCount||'0',10);
+    if(img.dataset.haPhId){var old=document.getElementById(img.dataset.haPhId);if(old)old.remove()}
+    var ph=document.createElement('div');
+    ph.className='ha-img-placeholder'+(attempt>=MAX?' ha-failed':'');
+    ph.id='ha-ph-'+Math.random().toString(36).slice(2,9);
+    var w=img.getAttribute('width');var h=img.getAttribute('height');
+    if(w)ph.style.width=w+(isNaN(Number(w))?'':'px');
+    else if(img.style.width)ph.style.width=img.style.width;
+    else if(img.width>1)ph.style.width=img.width+'px';
+    if(h)ph.style.height=h+(isNaN(Number(h))?'':'px');
+    else if(img.style.height)ph.style.height=img.style.height;
+    else if(img.height>1)ph.style.height=img.height+'px';
+    ph.textContent=attempt>=MAX?'Image unavailable':'Loading image\u2026';
+    img.dataset.haPhId=ph.id;
+    if(img.dataset.haOrigDisplay==null)img.dataset.haOrigDisplay=img.style.display||'';
+    img.style.display='none';
+    img.insertAdjacentElement('afterend',ph);
+    if(attempt<MAX){
+      img.dataset.haRetryCount=String(attempt+1);
+      setTimeout(function(){
+        if(!img.isConnected)return;
+        if(img.dataset.haOriginalSrc!==src)return;
+        if(img.complete&&img.naturalWidth>0)return;
+        var curSrc=img.getAttribute('src');
+        if(curSrc&&curSrc.indexOf(src)!==0)return;
+        var fresh=src+(src.indexOf('?')>=0?'&':'?')+'_r='+(attempt+1)+'_'+Date.now();
+        img.src=fresh;
+      },DELAYS[attempt]);
+    }
+  },true);
+  document.addEventListener('load',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    if(img.dataset.haPhId){
+      var ph=document.getElementById(img.dataset.haPhId);
+      if(ph)ph.remove();
+      delete img.dataset.haPhId;
+      img.style.display=img.dataset.haOrigDisplay||'';
+      delete img.dataset.haOrigDisplay;
+      delete img.dataset.haOriginalSrc;
+      delete img.dataset.haRetryCount;
+    }
+  },true);
+})();
+</script>
+</body>
+</html>

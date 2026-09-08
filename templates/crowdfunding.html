@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIU Aid — Crowdfunding Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+/* ============================================================
+   UIU Aid — Shared Design System CSS (v1.0)
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --orange:#F97316; --orange-h:#EA580C;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --text:#0F172A; --text2:#64748B;
+  --shadow:0 1px 3px rgba(15,23,42,.08);
+  --r:8px;
+}
+
+html{background:var(--bg)}
+body{
+  font-family:'Inter',Roboto,system-ui,sans-serif;
+  color:var(--text); background:var(--bg);
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Material Symbols ---------- */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;display:inline-block;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-16{font-size:16px}.ms-18{font-size:18px}.ms-24{font-size:24px}.ms-28{font-size:28px}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--navy);display:flex;flex-direction:column;
+  padding:24px 16px;z-index:50;
+}
+.logo{color:#fff;font-size:21px;font-weight:800;letter-spacing:-.02em;padding:0 10px}
+.logo small{display:block;font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:3px}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);
+  color:rgba(255,255,255,.82);font-size:14.5px;font-weight:500;
+  text-decoration:none;cursor:pointer;
+  transition:background .15s;
+}
+.nav-item .ms{font-size:20px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#fff;color:var(--navy);font-weight:600}
+.side-user{
+  margin-top:auto;display:flex;align-items:center;gap:10px;
+  padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.14);
+}
+.side-user .av{width:36px;height:36px;font-size:13px}
+.side-user b{display:block;color:#fff;font-size:13.5px;font-weight:600;line-height:1.25}
+.side-user .vrf{display:inline-flex;align-items:center;gap:4px;color:#6EE7B7;font-size:11px;font-weight:600}
+.side-user .vrf .ms{font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+.main{margin-left:240px;flex:1;padding:32px 36px 56px;min-width:0}
+
+/* ---------- Page header ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:14px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:8px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 18px;border-radius:var(--r);font-family:inherit;font-size:14.5px;font-weight:600;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:all .15s}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-h)}
+.btn-secondary{background:var(--surface);color:var(--navy);border-color:#C7D2E5}
+.btn-secondary:hover{border-color:var(--navy);background:#F5F8FE}
+.btn-block{width:100%}
+
+/* ---------- Layout & Cards ---------- */
+.grid-2{display:grid;grid-template-columns:1.8fr 1.2fr;gap:24px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px;margin-bottom:24px}
+.card-title{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text)}
+
+/* Progress Card */
+.progress-stats{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.progress-stats .raised{font-size:24px;font-weight:800;color:var(--navy)}
+.progress-bar-bg{background:var(--border);height:12px;border-radius:999px;overflow:hidden;position:relative}
+.progress-bar-fill{background:var(--emerald);height:100%;border-radius:999px;transition:width 0.8s ease}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid var(--border)}
+th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+
+/* Pills & Badges */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-amber{background:rgba(245,158,11,.14);color:#B45309}
+
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:36px;height:36px;color:#fff;font-weight:700;font-size:13px;flex:none}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
+.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+
+/* Forms */
+.input-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.input-group label{font-size:13.5px;font-weight:600}
+.input{height:42px;border:1px solid var(--border);border-radius:var(--r);padding:0 14px;font-size:14.5px;font-family:inherit;width:100%;outline:none}
+.input:focus{border-color:var(--navy)}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;margin-bottom:16px;cursor:pointer}
+.checkbox-label input{width:16px;height:16px;accent-color:var(--navy)}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{display:inline-flex;align-items:center;padding:7px 14px;border:1px solid var(--border);border-radius:var(--r);background:#fff;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:#C7D2E5}
+.chip.active{background:rgba(30,58,138,.08);border-color:var(--navy);color:var(--navy);font-weight:700}
+
+/* Donation Feed */
+.feed-list{list-style:none;display:flex;flex-direction:column}
+.feed-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.feed-item:last-child{border-bottom:none;padding-bottom:0}
+.feed-donor{font-weight:600;font-size:14.5px;color:var(--text)}
+.feed-meta{color:var(--text2);font-size:12.5px;margin-top:2px}
+.feed-amount{font-weight:800;color:var(--emerald);font-size:15px;font-variant-numeric:tabular-nums}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1E3A8A;color:#fff;padding:14px 20px;border-radius:var(--r);box-shadow:0 10px 20px rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px;transform:translateY(150%);transition:transform .25s ease;z-index:200;font-size:14.5px;font-weight:500}
+.toast.show{transform:translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">UIU Aid<small>Mutual Aid Network</small></div>
+    <nav class="nav">
+      <a class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" href="/"><span class="ms">space_dashboard</span>Dashboard</a>
+      <a class="nav-item {% if active_page == 'loans' %}active{% endif %}" href="/loan-request"><span class="ms">handshake</span>Loans</a>
+      <a class="nav-item {% if active_page == 'crowdfunding' %}active{% endif %}" href="/crowdfunding"><span class="ms">volunteer_activism</span>Crowdfunding</a>
+      <a class="nav-item {% if active_page == 'gigs' %}active{% endif %}" href="/gigs"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item {% if active_page == 'meals' %}active{% endif %}" href="/meal-drops"><span class="ms">restaurant</span>Meal Drops</a>
+      <a class="nav-item {% if active_page == 'trust' %}active{% endif %}" href="/trust-profile"><span class="ms">verified_user</span>Trust Profile</a>
+    </nav>
+    <div class="side-user">
+      <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
+      <div><b>{{ user.name }}</b>
+      {% if user.is_verified %}
+      <span class="vrf"><span class="ms">verified</span>Verified</span>
+      {% endif %}
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>{{ campaign.title }}</h1>
+        <div class="sub">
+          <span>By <strong>{{ campaign.student_name }}</strong></span>
+          <span>&bull;</span>
+          <span>{{ campaign.student_dept }}</span>
+          <span>&bull;</span>
+          <span class="pill pill-navy">{{ campaign.category }}</span>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="shareCampaign()">
+        <span class="ms ms-18">share</span> Share Campaign
+      </button>
+    </div>
+
+    <div class="grid-2">
+      <!-- Left Column -->
+      <div>
+        <div class="card">
+          <div class="progress-stats">
+            <div>
+              <span class="raised">{{ campaign.raised_amount | int }} Tk</span>
+              <span style="color:var(--text2);font-size:14px;"> raised of {{ campaign.goal_amount | int }} Tk goal</span>
+            </div>
+            <div style="font-weight:600;font-size:13.5px;color:var(--text2);">{{ campaign.days_left }} days left</div>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="ms">article</span>The Story</div>
+          <p style="line-height: 1.6; color: var(--text); white-space: pre-wrap;">{{ campaign.story }}</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="ms">verified</span>Milestones & Transparency</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Milestone</th>
+                <th>Amount</th>
+                <th>Vendor / Memo</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for m in milestones %}
+              <tr>
+                <td style="font-weight: 600;">{{ m.title }}</td>
+                <td style="font-weight: 700; color: var(--navy);">{{ m.amount }} Tk</td>
+                <td>{{ m.vendor }}<br><small style="color: var(--text2)">{{ m.memo }}</small></td>
+                <td>
+                  <span class="pill {{ 'pill-emerald' if m.status == 'verified' else 'pill-amber' }}">
+                    {{ m.status }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+              {% if not milestones %}
+              <tr><td colspan="4" style="text-align: center; color: var(--text2);">No milestones added yet.</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div>
+        <div class="card">
+          <div class="card-title"><span class="ms">volunteer_activism</span>Make a Donation</div>
+          
+          <div class="input-group">
+            <label>Select Amount</label>
+            <div class="chips" id="amount-chips">
+              <div class="chip" data-val="500">500 Tk</div>
+              <div class="chip" data-val="1000">1000 Tk</div>
+              <div class="chip" data-val="2000">2000 Tk</div>
+              <div class="chip" data-val="5000">5000 Tk</div>
+            </div>
+            <input type="number" id="donate-amount" class="input" placeholder="Or enter custom amount (Tk)">
+          </div>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="donate-anon">
+            <span>Make donation anonymous</span>
+          </label>
+
+          <div class="input-group" id="donor-name-group">
+            <label>Your Name</label>
+            <input type="text" id="donor-name" class="input" value="{{ user.name if user else '' }}" placeholder="Enter your name">
+          </div>
+
+          <div class="input-group">
+            <label>Payment Method</label>
+            <div class="chips" id="payment-chips">
+              <div class="chip active" data-val="bKash">bKash</div>
+              <div class="chip" data-val="Nagad">Nagad</div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" onclick="submitDonation()" id="donate-btn">
+            Donate Now
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="ms">favorite</span>Recent Donations</div>
+          <div style="display:flex;gap:24px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-size:22px;font-weight:800;color:var(--text);">{{ donations|length }}</div>
+              <div style="font-size:12.5px;color:var(--text2);">Total Donors</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:800;color:var(--emerald);">{{ ((campaign.raised_amount / donations|length)|round|int) if donations else 0 }} Tk</div>
+              <div style="font-size:12.5px;color:var(--text2);">Avg. Donation</div>
+            </div>
+          </div>
+
+          <ul class="feed-list" id="donation-feed">
+            {% for d in donations %}
+            <li class="feed-item">
+              <div>
+                <div class="feed-donor">{{ 'Anonymous Peer' if d.is_anonymous else d.donor_name }}</div>
+                <div class="feed-meta">Trx: {{ d.trx_id[:6] }}...</div>
+              </div>
+              <div class="feed-amount">{{ d.amount }} Tk</div>
+            </li>
+            {% endfor %}
+            {% if not donations %}
+            <li class="feed-item" id="no-donations-msg" style="color: var(--text2); justify-content: center;">Be the first to donate!</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">
+  <span class="ms" style="color:#10B981">check_circle</span>
+  <span id="toast-msg">Success</span>
+</div>
+
+<script>
+  // Setup Progress Bar
+  const raised = {{ campaign.raised_amount | int }};
+  const goal = {{ campaign.goal_amount | int }};
+  let percent = (raised / goal) * 100;
+  if(percent > 100) percent = 100;
+  setTimeout(() => {
+    document.getElementById('progress-bar').style.width = percent + '%';
+  }, 100);
+
+  // Amount Chips Logic
+  const amountChips = document.querySelectorAll('#amount-chips .chip');
+  const amountInput = document.getElementById('donate-amount');
+  
+  amountChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      amountChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      amountInput.value = chip.getAttribute('data-val');
+    });
+  });
+
+  amountInput.addEventListener('input', () => {
+    amountChips.forEach(c => c.classList.remove('active'));
+  });
+
+  // Payment Chips Logic
+  const paymentChips = document.querySelectorAll('#payment-chips .chip');
+  let selectedPayment = 'bKash';
+  paymentChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      paymentChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedPayment = chip.getAttribute('data-val');
+    });
+  });
+
+  // Anonymous Logic
+  const anonCheckbox = document.getElementById('donate-anon');
+  const nameGroup = document.getElementById('donor-name-group');
+  anonCheckbox.addEventListener('change', (e) => {
+    nameGroup.style.display = e.target.checked ? 'none' : 'flex';
+  });
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  function shareCampaign() {
+    navigator.clipboard.writeText(window.location.href);
+    showToast('URL copied to clipboard!');
+  }
+
+  async function submitDonation() {
+    const amount = parseInt(amountInput.value);
+    const isAnon = anonCheckbox.checked;
+    const donorName = document.getElementById('donor-name').value || 'Anonymous';
+    
+    if(!amount || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    const payload = {
+      amount: amount,
+      donor_name: donorName,
+      is_anonymous: isAnon,
+      payment_method: selectedPayment
+    };
+
+    const btn = document.getElementById('donate-btn');
+    const ogText = btn.innerText;
+    btn.innerText = 'Processing...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/crowdfunding/{{ campaign.id }}/donate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const fakeTrxId = 'TXN' + Math.floor(Math.random() * 1000000);
+
+      const feed = document.getElementById('donation-feed');
+      const noMsg = document.getElementById('no-donations-msg');
+      if(noMsg) noMsg.remove();
+      
+      const li = document.createElement('li');
+      li.className = 'feed-item';
+      li.innerHTML = `
+        <div>
+          <div class="feed-donor">${isAnon ? 'Anonymous Peer' : donorName}</div>
+          <div class="feed-meta">Trx: ${fakeTrxId.substring(0,6)}...</div>
+        </div>
+        <div class="feed-amount">${amount} Tk</div>
+      `;
+      feed.prepend(li);
+
+      let newRaised = raised + amount;
+      let newPercent = (newRaised / goal) * 100;
+      if(newPercent > 100) newPercent = 100;
+      document.getElementById('progress-bar').style.width = newPercent + '%';
+      document.querySelector('.raised').innerText = newRaised + ' Tk';
+
+      showToast(`Donation successful! Trx ID: ${fakeTrxId}`);
+      amountInput.value = '';
+      
+    } catch(err) {
+      alert('Error making donation');
+    } finally {
+      btn.innerText = ogText;
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

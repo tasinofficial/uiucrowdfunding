@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIU Aid — Student Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+/* ============================================================
+   UIU Aid — Shared Design System CSS (v1.0)
+   Source of truth: /agent/workspace/DESIGN.md
+   Inline this ENTIRE file into each screen's <style> tag.
+   Do NOT modify tokens. Append screen-specific CSS below it.
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --orange:#F97316; --orange-h:#EA580C;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --text:#0F172A; --text2:#64748B;
+  --shadow:0 1px 3px rgba(15,23,42,.08);
+  --r:8px;
+}
+
+html{background:var(--bg)}
+body{
+  font-family:'Inter',Roboto,system-ui,sans-serif;
+  color:var(--text); background:var(--bg);
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Material Symbols ---------- */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;display:inline-block;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-16{font-size:16px}.ms-18{font-size:18px}.ms-24{font-size:24px}.ms-28{font-size:28px}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh;min-width:1440px}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--navy);display:flex;flex-direction:column;
+  padding:24px 16px;z-index:50;
+}
+.logo{color:#fff;font-size:21px;font-weight:800;letter-spacing:-.02em;padding:0 10px}
+.logo small{display:block;font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:3px}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);
+  color:rgba(255,255,255,.82);font-size:14.5px;font-weight:500;
+  text-decoration:none;cursor:pointer;
+}
+.nav-item .ms{font-size:20px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#fff;color:var(--navy);font-weight:600}
+.side-user{
+  margin-top:auto;display:flex;align-items:center;gap:10px;
+  padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.14);
+}
+.side-user .av{width:36px;height:36px;font-size:13px}
+.side-user b{display:block;color:#fff;font-size:13.5px;font-weight:600;line-height:1.25}
+.side-user .vrf{display:inline-flex;align-items:center;gap:4px;color:#6EE7B7;font-size:11px;font-weight:600}
+.side-user .vrf .ms{font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+.main{margin-left:240px;flex:1;padding:32px 36px 56px;min-width:0}
+
+/* ---------- Page header ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:14px;color:var(--text2);margin-top:2px}
+.head-actions{display:flex;align-items:center;gap:12px}
+.bell{position:relative;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--navy);box-shadow:var(--shadow)}
+.bell .cnt{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:var(--crimson);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px}
+.card-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .ms{color:var(--navy)}
+
+/* ---------- Layout utils ---------- */
+.row{display:flex;gap:24px}
+.col{min-width:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.right{margin-left:auto}
+.center{text-align:center}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s}
+.btn .ms{font-size:18px}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-h)}
+.btn-secondary{background:var(--surface);color:var(--navy);border-color:#C7D2E5}
+.btn-secondary:hover{border-color:var(--navy);background:#F5F8FE}
+.btn-quiet{background:transparent;color:var(--navy);font-weight:600}
+.btn-quiet:hover{text-decoration:underline}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 14px;font-size:13.5px}
+.btn-lg{height:52px;font-size:16.5px}
+
+/* ---------- Pills / badges / tags ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.pill .ms{font-size:13px}
+.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-amber{background:rgba(245,158,11,.13);color:#B45309}
+.pill-crimson{background:rgba(239,68,68,.1);color:#DC2626}
+.pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.pill-slate{background:rgba(100,116,139,.1);color:#475569}
+.pill-solid-crimson{background:var(--crimson);color:#fff}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.vbadge{display:inline-flex;align-items:center;gap:4px;color:#059669;font-size:12.5px;font-weight:600}
+.vbadge .ms{font-size:15px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- Avatars (initials, no photos) ---------- */
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:40px;height:40px;color:#fff;font-weight:700;font-size:14px;flex:none;letter-spacing:.02em}
+.av-sm{width:32px;height:32px;font-size:12px}
+.av-lg{width:64px;height:64px;font-size:22px}
+.av-xl{width:88px;height:88px;font-size:30px}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
+.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+
+/* ---------- Money / metric cards ---------- */
+.money{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.01em}
+.m-card{display:flex;flex-direction:column;gap:10px}
+.m-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.m-ico .ms{font-size:22px}
+.m-ico.navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.m-ico.emerald{background:rgba(16,185,129,.12);color:#059669}
+.m-ico.amber{background:rgba(245,158,11,.14);color:#B45309}
+.m-label{font-size:13.5px;color:var(--text2);font-weight:500}
+.m-value{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.m-sub{font-size:13px;color:var(--text2)}
+
+/* ---------- Progress ---------- */
+.bar{height:8px;border-radius:999px;background:var(--border);overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--emerald)}
+.bar-lg{height:12px}
+
+/* ---------- Banners ---------- */
+.banner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500}
+.banner .ms{font-size:19px;flex:none}
+.banner-emerald{background:rgba(16,185,129,.09);color:#065F46}
+.banner-emerald .ms{color:#059669}
+.banner-amber{background:rgba(245,158,11,.11);color:#92400E}
+.banner-amber .ms{color:#B45309}
+.banner-crimson{background:rgba(239,68,68,.09);color:#991B1B}
+.banner-crimson .ms{color:#DC2626}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label{font-size:13.5px;font-weight:600}
+.input{height:44px;border:1px solid var(--border);border-radius:var(--r);padding:0 14px;font-family:inherit;font-size:15px;color:var(--text);background:#fff;width:100%;outline:none}
+.input:focus{border-color:var(--navy)}
+textarea.input{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.5}
+.help{font-size:12.5px;color:var(--text2)}
+.iwrap{position:relative}
+.iwrap .sfx{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--text2)}
+select.input{appearance:none}
+.check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+
+/* ---------- Chips ---------- */
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--r);background:#fff;font-size:14.5px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:#C7D2E5}
+.chip.on{border-color:var(--navy);background:rgba(30,58,138,.06);color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+
+/* Filter pills for boards */
+.fpill{padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:13.5px;font-weight:600;color:var(--text2);cursor:pointer}
+.fpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ---------- Timeline ---------- */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px;padding:14px 0}
+.tl-item + .tl-item{border-top:1px dashed var(--border)}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px;box-shadow:0 0 0 4px rgba(226,232,240,.6)}
+.tl-dot.emerald{background:var(--emerald)}
+.tl-dot.navy{background:var(--navy)}
+.tl-dot.amber{background:var(--amber)}
+.tl-dot.crimson{background:var(--crimson)}
+
+/* ---------- Escalation stepper ---------- */
+.steps{display:flex;align-items:flex-start}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;gap:8px;padding:0 8px}
+.step::before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:first-child::before{display:none}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--border);color:var(--text2);z-index:1;position:relative}
+.step-dot .ms{font-size:16px}
+.step.done .step-dot{background:var(--emerald);border-color:var(--emerald);color:#fff}
+.step.done::before{background:var(--emerald)}
+.step.current .step-dot{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 0 0 5px rgba(245,158,11,.18)}
+.step.current::before{background:var(--amber)}
+.step.danger .step-dot{color:var(--crimson)}
+.step b{font-size:13px;font-weight:600}
+.step small{font-size:11.5px;color:var(--text2);line-height:1.35}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border)}
+.tab{padding:12px 18px;font-size:14.5px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+
+/* ---------- Feed rows ---------- */
+.frow{display:flex;align-items:center;gap:12px;padding:13px 0}
+.frow + .frow{border-top:1px solid var(--border)}
+
+/* ---------- Misc ---------- */
+.link{color:var(--navy);font-weight:600;text-decoration:none}
+.link:hover{text-decoration:underline}
+.footnote{font-size:12.5px;color:var(--text2)}
+.divider{height:1px;background:var(--border);margin:16px 0;border:0}
+.dot-live{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.muted{color:var(--text2)}
+
+/* ============================================================
+   SCREEN-SPECIFIC CSS — 01-dashboard.html
+   ============================================================ */
+
+/* Repayment amber banner */
+.repay-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border-radius: var(--r);
+  background: rgba(245,158,11,.11);
+  color: #92400E;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+.repay-banner .ms {
+  font-size: 19px;
+  color: #B45309;
+  flex: none;
+}
+.repay-banner .banner-text {
+  flex: 1;
+  line-height: 1.45;
+}
+.repay-banner .pay-link {
+  color: #92400E;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: 13.5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(180,83,9,.35);
+  transition: background .15s;
+  flex: none;
+}
+.repay-banner .pay-link:hover {
+  background: rgba(245,158,11,.18);
+}
+
+/* Hero trust card */
+.trust-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.trust-gauge-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+.trust-gauge-row svg {
+  flex: none;
+}
+.trust-tier-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.trust-tier-block .score-big {
+  font-size: 36px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.03em;
+  color: var(--text);
+  line-height: 1;
+}
+.trust-tier-block .score-denom {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text2);
+}
+
+/* Metric card hero emphasis */
+.card.card-hero {
+  border: 1.5px solid rgba(16,185,129,.28);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF8 100%);
+}
+
+/* Tier pip ladder */
+.tier-pips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+.tier-pip {
+  width: 20px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+}
+.tier-pip.active {
+  background: var(--emerald);
+}
+.tier-pip-label {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 600;
+  margin-top: 4px;
+  letter-spacing: .03em;
+}
+
+/* Borrowing card bar section */
+.borrow-details {
+  margin-top: 4px;
+}
+.borrow-amounts {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.borrow-amounts .limit-val {
+  font-size: 28px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+.borrow-amounts .used-val {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* Lent card emerald delta */
+.delta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.delta-row .ms {
+  color: var(--emerald);
+  font-size: 17px;
+}
+.delta-row span {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* Content split row proportions */
+.row-split {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.col-deadlines {
+  flex: 1.6;
+  min-width: 0;
+}
+.col-actions {
+  width: 340px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Timeline item content */
+.tl-body {
+  flex: 1;
+  min-width: 0;
+}
+.tl-body .tl-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.tl-body .tl-meta {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+.tl-body .tl-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.tl-body .tl-actions .link {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: none;
+}
+.tl-body .tl-actions .link:hover {
+  text-decoration: underline;
+}
+.tl-body .tl-actions .sep {
+  color: var(--border);
+  font-size: 13px;
+  margin: 0 2px;
+}
+
+/* Quick actions button stack */
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* Community impact stat rows */
+.impact-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 0;
+}
+.impact-stat + .impact-stat {
+  border-top: 1px solid var(--border);
+}
+.impact-stat .stat-val {
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+  color: var(--text);
+  white-space: nowrap;
+}
+.impact-stat .stat-label {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.4;
+}
+.impact-stat .stat-icon {
+  margin-left: auto;
+  flex: none;
+}
+.impact-stat .stat-icon .ms {
+  font-size: 20px;
+  color: var(--emerald);
+}
+.impact-footnote {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.impact-footnote .ms {
+  font-size: 15px;
+  color: var(--text2);
+}
+
+/* Metric cards row slight height alignment */
+.grid-4 .card {
+  display: flex;
+  flex-direction: column;
+}
+.grid-4 .card .m-card {
+  flex: 1;
+}
+
+/* Active loan card amber accent top */
+.card-amber-accent {
+  border-top: 3px solid var(--amber);
+}
+</style>
+<style>
+.ha-img-placeholder{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:#f4f4f5;border:1px dashed #d4d4d8;border-radius:8px;color:#71717a;font-size:12px;font-family:system-ui,sans-serif;min-height:80px;padding:16px;box-sizing:border-box;animation:ha-img-pulse 1.5s ease-in-out infinite}
+.ha-img-placeholder.ha-failed{animation:none;opacity:.7}
+@keyframes ha-img-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@media(prefers-color-scheme:dark){.ha-img-placeholder{background:#27272a;border-color:#3f3f46;color:#a1a1aa}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">UIU Aid<small>Mutual Aid Network</small></div>
+    <nav class="nav">
+      <a class="nav-item active"><span class="ms">space_dashboard</span>Dashboard</a>
+      <a class="nav-item"><span class="ms">handshake</span>Loans</a>
+      <a class="nav-item"><span class="ms">volunteer_activism</span>Crowdfunding</a>
+      <a class="nav-item"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item"><span class="ms">restaurant</span>Meal Drops</a>
+      <a class="nav-item"><span class="ms">verified_user</span>Trust Profile</a>
+    </nav>
+    <div class="side-user">
+      <span class="av av-1">NJ</span>
+      <div><b>Nusrat Jahan</b><span class="vrf"><span class="ms">verified</span>Verified</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Page header -->
+    <div class="page-head">
+      <div>
+        <h1>Good evening, Nusrat</h1>
+        <div class="sub">Here's your campus standing today.</div>
+      </div>
+      <div class="head-actions">
+        <div class="bell">
+          <span class="ms">notifications</span>
+          <span class="cnt">2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Repayment amber banner -->
+    <div class="repay-banner">
+      <span class="ms">schedule</span>
+      <span class="banner-text">
+        Repayment of <strong>552 Tk</strong> to Karim H. due in 3 days — pay on time to earn <strong>+2 trust points.</strong>
+      </span>
+      <a href="#" class="pay-link">Pay now &rarr;</a>
+    </div>
+
+    <!-- 4-metric cards row -->
+    <div class="grid-4" style="margin-bottom:24px;">
+
+      <!-- 1 — Campus Trust Score (hero card) -->
+      <div class="card card-hero">
+        <div class="m-card trust-hero">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="m-ico emerald"><span class="ms ms-24">verified_user</span></div>
+            <span class="m-label" style="font-size:14px;font-weight:600;color:var(--text);">Campus Trust Score</span>
+          </div>
+          <div class="trust-gauge-row">
+            <!-- Circular gauge: score 82 → dashoffset = 326.7 × (1 − 0.82) = 58.806 ≈ 58.8 -->
+            <svg width="110" height="110" viewBox="0 0 120 120" aria-label="Trust score 82 out of 100">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#10B981" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="58.8"
+                transform="rotate(-90 60 60)"/>
+              <text x="60" y="57" text-anchor="middle" font-size="30" font-weight="800" fill="#0F172A" font-family="Inter">82</text>
+              <text x="60" y="74" text-anchor="middle" font-size="11" fill="#64748B" font-family="Inter">/100</text>
+            </svg>
+            <div class="trust-tier-block">
+              <span class="pill pill-emerald" style="font-size:12px;font-weight:700;">
+                <span class="ms ms-fill" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;">star</span>
+                Gold Tier
+              </span>
+              <div style="margin-top:10px;">
+                <div class="tier-pip-label" style="margin-bottom:5px;">Tier progress</div>
+                <div class="tier-pips">
+                  <div class="tier-pip"></div>
+                  <div class="tier-pip"></div>
+                  <div class="tier-pip"></div>
+                  <div class="tier-pip active"></div>
+                  <div class="tier-pip"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:4px;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);">New</span>
+                  <span style="font-size:10px;color:var(--text2);">Bronze</span>
+                  <span style="font-size:10px;color:var(--text2);">Silver</span>
+                  <span style="font-size:10px;color:#059669;font-weight:700;">Gold</span>
+                  <span style="font-size:10px;color:var(--text2);">Plat.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 — Borrowing Limit -->
+      <div class="card">
+        <div class="m-card">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="m-ico navy"><span class="ms ms-24">speed</span></div>
+            <span class="m-label">Borrowing Limit</span>
+          </div>
+          <div class="borrow-details">
+            <div class="borrow-amounts">
+              <span class="borrow-amounts limit-val money">4,000 Tk</span>
+            </div>
+            <div class="bar" style="margin-bottom:8px;">
+              <i style="width:37.5%;"></i>
+            </div>
+            <div class="m-sub" style="display:flex;align-items:center;gap:5px;">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--emerald);flex:none;"></span>
+              <span>1,500 Tk in use &nbsp;&middot;&nbsp; 2,500 Tk available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 — Active Borrowed -->
+      <div class="card card-amber-accent">
+        <div class="m-card">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="m-ico amber"><span class="ms ms-24">handshake</span></div>
+            <span class="m-label">Active Borrowed</span>
+          </div>
+          <div class="m-value money" style="margin-top:4px;">1,500 Tk</div>
+          <div style="margin-top:4px;">
+            <span class="pill pill-amber">
+              <span class="ms" style="font-size:13px;">schedule</span>
+              Due in 3 days
+            </span>
+          </div>
+          <div class="m-sub" style="margin-top:6px;">Repay 552 Tk to Karim H.</div>
+        </div>
+      </div>
+
+      <!-- 4 — Lent & Donated -->
+      <div class="card">
+        <div class="m-card">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="m-ico emerald"><span class="ms ms-24">volunteer_activism</span></div>
+            <span class="m-label">Lent &amp; Donated</span>
+          </div>
+          <div class="m-value money" style="margin-top:4px;">6,200 Tk</div>
+          <div class="delta-row">
+            <span class="ms">trending_up</span>
+            <span>3 students helped this trimester</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- end grid-4 -->
+
+    <!-- Lower row: deadlines + right column -->
+    <div class="row-split">
+
+      <!-- LEFT: Upcoming Deadlines -->
+      <div class="col-deadlines">
+        <div class="card">
+          <div class="card-title">
+            <span class="ms">schedule</span>
+            Upcoming Deadlines
+          </div>
+          <div class="tl">
+
+            <!-- Item 1 — at-risk amber -->
+            <div class="tl-item">
+              <div class="tl-dot amber" style="margin-top:6px;"></div>
+              <div class="tl-body">
+                <div class="tl-title">Repay 552 Tk to Karim H.</div>
+                <div class="tl-meta">Aug 2 &nbsp;&middot;&nbsp; Loan at 3.5% interest</div>
+                <div style="margin-bottom:8px;">
+                  <span class="pill pill-amber">
+                    <span class="ms" style="font-size:13px;">schedule</span>
+                    Due in 3 days
+                  </span>
+                </div>
+                <div class="tl-actions">
+                  <a href="#" class="link">Pay now</a>
+                  <span class="sep">&middot;</span>
+                  <a href="#" class="link" style="font-weight:500;color:var(--text2);">Request extension</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item 2 — upcoming navy -->
+            <div class="tl-item">
+              <div class="tl-dot navy" style="margin-top:6px;"></div>
+              <div class="tl-body">
+                <div class="tl-title">Repay 1,000 Tk to Farhan A.</div>
+                <div class="tl-meta">Aug 15 &nbsp;&middot;&nbsp; Loan at 4.0% interest</div>
+              </div>
+            </div>
+
+            <!-- Item 3 — upcoming navy (gig) -->
+            <div class="tl-item">
+              <div class="tl-dot navy" style="margin-top:6px;"></div>
+              <div class="tl-body">
+                <div class="tl-title">Deliver gig: Physics II notes</div>
+                <div class="tl-meta">Aug 20 &nbsp;&middot;&nbsp; 400 Tk on approval</div>
+              </div>
+            </div>
+
+          </div><!-- end .tl -->
+        </div><!-- end card -->
+      </div>
+      <!-- end col-deadlines -->
+
+      <!-- RIGHT column -->
+      <div class="col-actions">
+
+        <!-- Quick Actions card -->
+        <div class="card">
+          <div class="card-title">
+            <span class="ms">bolt</span>
+            Quick Actions
+          </div>
+          <!-- ONE orange button on the entire screen -->
+          <a href="#" class="btn btn-primary btn-block">
+            <span class="ms ms-18">handshake</span>
+            Request a Loan
+          </a>
+          <div class="action-stack" style="margin-top:10px;">
+            <a href="#" class="btn btn-secondary btn-block">
+              <span class="ms ms-18">sos</span>
+              Report an Emergency
+            </a>
+            <a href="#" class="btn btn-secondary btn-block">
+              <span class="ms ms-18">work</span>
+              Post a Gig
+            </a>
+            <a href="#" class="btn btn-secondary btn-block">
+              <span class="ms ms-18">restaurant</span>
+              Claim a Meal
+            </a>
+          </div>
+        </div>
+
+        <!-- Community Impact card -->
+        <div class="card">
+          <div class="card-title">
+            <span class="ms">groups</span>
+            Community Impact
+          </div>
+          <div>
+            <div class="impact-stat">
+              <div>
+                <div class="stat-val money">52,400 Tk</div>
+                <div class="stat-label">facilitated this month</div>
+              </div>
+              <div class="stat-icon">
+                <span class="ms">payments</span>
+              </div>
+            </div>
+            <div class="impact-stat">
+              <div>
+                <div class="stat-val" style="color:#059669;">94%</div>
+                <div class="stat-label">on-time repayment rate</div>
+              </div>
+              <div class="stat-icon">
+                <span class="ms">trending_up</span>
+              </div>
+            </div>
+          </div>
+          <div class="impact-footnote" style="margin-top:12px;">
+            <span class="ms">verified_user</span>
+            1,240 verified students &amp; alumni
+          </div>
+        </div>
+
+      </div>
+      <!-- end col-actions -->
+
+    </div>
+    <!-- end row-split -->
+
+  </main>
+</div>
+<script>
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && window.parent !== window) {
+    window.parent.postMessage({ type: 'close-fullscreen' }, '*');
+  }
+});
+</script>
+<!-- broken-img-handler -->
+<script>
+(function(){
+  if(window.__brokenImgHandler)return;
+  window.__brokenImgHandler=true;
+  var MAX=5,DELAYS=[2000,4000,8000,16000,32000];
+  document.addEventListener('error',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    var liveSrc=img.getAttribute('src');
+    var src=img.dataset.haOriginalSrc||liveSrc;
+    if(!src)return;
+    if(img.dataset.haOriginalSrc&&liveSrc&&liveSrc!==img.dataset.haOriginalSrc&&liveSrc.indexOf('_r=')<0){src=liveSrc;img.dataset.haOriginalSrc=src;img.dataset.haRetryCount='0'}
+    else if(!img.dataset.haOriginalSrc){img.dataset.haOriginalSrc=src}
+    var attempt=parseInt(img.dataset.haRetryCount||'0',10);
+    if(img.dataset.haPhId){var old=document.getElementById(img.dataset.haPhId);if(old)old.remove()}
+    var ph=document.createElement('div');
+    ph.className='ha-img-placeholder'+(attempt>=MAX?' ha-failed':'');
+    ph.id='ha-ph-'+Math.random().toString(36).slice(2,9);
+    var w=img.getAttribute('width');var h=img.getAttribute('height');
+    if(w)ph.style.width=w+(isNaN(Number(w))?'':'px');
+    else if(img.style.width)ph.style.width=img.style.width;
+    else if(img.width>1)ph.style.width=img.width+'px';
+    if(h)ph.style.height=h+(isNaN(Number(h))?'':'px');
+    else if(img.style.height)ph.style.height=img.style.height;
+    else if(img.height>1)ph.style.height=img.height+'px';
+    ph.textContent=attempt>=MAX?'Image unavailable':'Loading image\u2026';
+    img.dataset.haPhId=ph.id;
+    if(img.dataset.haOrigDisplay==null)img.dataset.haOrigDisplay=img.style.display||'';
+    img.style.display='none';
+    img.insertAdjacentElement('afterend',ph);
+    if(attempt<MAX){
+      img.dataset.haRetryCount=String(attempt+1);
+      setTimeout(function(){
+        if(!img.isConnected)return;
+        if(img.dataset.haOriginalSrc!==src)return;
+        if(img.complete&&img.naturalWidth>0)return;
+        var curSrc=img.getAttribute('src');
+        if(curSrc&&curSrc.indexOf(src)!==0)return;
+        var fresh=src+(src.indexOf('?')>=0?'&':'?')+'_r='+(attempt+1)+'_'+Date.now();
+        img.src=fresh;
+      },DELAYS[attempt]);
+    }
+  },true);
+  document.addEventListener('load',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    if(img.dataset.haPhId){
+      var ph=document.getElementById(img.dataset.haPhId);
+      if(ph)ph.remove();
+      delete img.dataset.haPhId;
+      img.style.display=img.dataset.haOrigDisplay||'';
+      delete img.dataset.haOrigDisplay;
+      delete img.dataset.haOriginalSrc;
+      delete img.dataset.haRetryCount;
+    }
+  },true);
+})();
+</script>
+</body>
+</html>

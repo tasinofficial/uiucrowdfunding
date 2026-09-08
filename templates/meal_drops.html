@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIU Aid — Meal Drops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+/* ============================================================
+   UIU Aid — Shared Design System CSS (v1.0)
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --orange:#F97316; --orange-h:#EA580C;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --text:#0F172A; --text2:#64748B;
+  --shadow:0 1px 3px rgba(15,23,42,.08);
+  --r:8px;
+}
+
+html{background:var(--bg)}
+body{
+  font-family:'Inter',Roboto,system-ui,sans-serif;
+  color:var(--text); background:var(--bg);
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Material Symbols ---------- */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;display:inline-block;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-16{font-size:16px}.ms-18{font-size:18px}.ms-24{font-size:24px}.ms-28{font-size:28px}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh;min-width:1440px}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--navy);display:flex;flex-direction:column;
+  padding:24px 16px;z-index:50;
+}
+.logo{color:#fff;font-size:21px;font-weight:800;letter-spacing:-.02em;padding:0 10px}
+.logo small{display:block;font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:3px}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);
+  color:rgba(255,255,255,.82);font-size:14.5px;font-weight:500;
+  text-decoration:none;cursor:pointer;
+  transition:background .15s;
+}
+.nav-item .ms{font-size:20px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#fff;color:var(--navy);font-weight:600}
+.side-user{
+  margin-top:auto;display:flex;align-items:center;gap:10px;
+  padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.14);
+}
+.side-user .av{width:36px;height:36px;font-size:13px}
+.side-user b{display:block;color:#fff;font-size:13.5px;font-weight:600;line-height:1.25}
+.side-user .vrf{display:inline-flex;align-items:center;gap:4px;color:#6EE7B7;font-size:11px;font-weight:600}
+.side-user .vrf .ms{font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+.main{margin-left:240px;flex:1;padding:32px 36px 56px;min-width:0}
+
+/* ---------- Page header ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:14px;color:var(--text2);margin-top:2px}
+.head-actions{display:flex;align-items:center;gap:12px}
+.bell{position:relative;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--navy);box-shadow:var(--shadow)}
+.bell .cnt{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:var(--crimson);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(15,23,42,.08)}
+.card-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .ms{color:var(--navy)}
+
+/* ---------- Layout utils ---------- */
+.row{display:flex;gap:24px}
+.col{min-width:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.right{margin-left:auto}
+.center{text-align:center}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,transform .1s}
+.btn:active{transform:scale(0.98)}
+.btn .ms{font-size:18px}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-h)}
+.btn-secondary{background:var(--surface);color:var(--navy);border-color:#C7D2E5}
+.btn-secondary:hover{border-color:var(--navy);background:#F5F8FE}
+.btn-quiet{background:transparent;color:var(--navy);font-weight:600}
+.btn-quiet:hover{text-decoration:underline}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 14px;font-size:13.5px}
+.btn-lg{height:52px;font-size:16.5px}
+
+/* ---------- Pills / badges / tags ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.pill .ms{font-size:13px}
+.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-amber{background:rgba(245,158,11,.13);color:#B45309}
+.pill-crimson{background:rgba(239,68,68,.1);color:#DC2626}
+.pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.pill-slate{background:rgba(100,116,139,.1);color:#475569}
+.pill-solid-crimson{background:var(--crimson);color:#fff}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.vbadge{display:inline-flex;align-items:center;gap:4px;color:#059669;font-size:12.5px;font-weight:600}
+.vbadge .ms{font-size:15px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- Avatars (initials, no photos) ---------- */
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:40px;height:40px;color:#fff;font-weight:700;font-size:14px;flex:none;letter-spacing:.02em}
+.av-sm{width:32px;height:32px;font-size:12px}
+.av-lg{width:64px;height:64px;font-size:22px}
+.av-xl{width:88px;height:88px;font-size:30px}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
+.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+
+/* ---------- Money / metric cards ---------- */
+.money{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.01em}
+.m-card{display:flex;flex-direction:column;gap:10px}
+.m-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.m-ico .ms{font-size:22px}
+.m-ico.navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.m-ico.emerald{background:rgba(16,185,129,.12);color:#059669}
+.m-ico.amber{background:rgba(245,158,11,.14);color:#B45309}
+.m-label{font-size:13.5px;color:var(--text2);font-weight:500}
+.m-value{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.m-sub{font-size:13px;color:var(--text2)}
+
+/* ---------- Progress ---------- */
+.bar{height:8px;border-radius:999px;background:var(--border);overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--emerald);transition:width 0.4s ease}
+.bar-lg{height:12px}
+
+/* ---------- Banners ---------- */
+.banner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500}
+.banner .ms{font-size:19px;flex:none}
+.banner-emerald{background:rgba(16,185,129,.09);color:#065F46}
+.banner-emerald .ms{color:#059669}
+.banner-amber{background:rgba(245,158,11,.11);color:#92400E}
+.banner-amber .ms{color:#B45309}
+.banner-crimson{background:rgba(239,68,68,.09);color:#991B1B}
+.banner-crimson .ms{color:#DC2626}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label{font-size:13.5px;font-weight:600}
+.input{height:44px;border:1px solid var(--border);border-radius:var(--r);padding:0 14px;font-family:inherit;font-size:15px;color:var(--text);background:#fff;width:100%;outline:none;transition:border-color 0.2s}
+.input:focus{border-color:var(--navy)}
+textarea.input{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.5}
+.help{font-size:12.5px;color:var(--text2)}
+.iwrap{position:relative}
+.iwrap .sfx{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--text2)}
+select.input{appearance:none}
+.check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+
+/* ---------- Chips ---------- */
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--r);background:#fff;font-size:14.5px;font-weight:600;cursor:pointer;transition:border-color 0.2s, background 0.2s}
+.chip:hover{border-color:#C7D2E5}
+.chip.on{border-color:var(--navy);background:rgba(30,58,138,.06);color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+
+/* Filter pills for boards */
+.fpill{padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:13.5px;font-weight:600;color:var(--text2);cursor:pointer}
+.fpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ---------- Timeline ---------- */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px;padding:14px 0}
+.tl-item + .tl-item{border-top:1px dashed var(--border)}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px;box-shadow:0 0 0 4px rgba(226,232,240,.6)}
+.tl-dot.emerald{background:var(--emerald)}
+.tl-dot.navy{background:var(--navy)}
+.tl-dot.amber{background:var(--amber)}
+.tl-dot.crimson{background:var(--crimson)}
+
+/* ---------- Escalation stepper ---------- */
+.steps{display:flex;align-items:flex-start}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;gap:8px;padding:0 8px}
+.step::before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:first-child::before{display:none}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--border);color:var(--text2);z-index:1;position:relative}
+.step-dot .ms{font-size:16px}
+.step.done .step-dot{background:var(--emerald);border-color:var(--emerald);color:#fff}
+.step.done::before{background:var(--emerald)}
+.step.current .step-dot{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 0 0 5px rgba(245,158,11,.18)}
+.step.current::before{background:var(--amber)}
+.step.danger .step-dot{color:var(--crimson)}
+.step b{font-size:13px;font-weight:600}
+.step small{font-size:11.5px;color:var(--text2);line-height:1.35}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border)}
+.tab{padding:12px 18px;font-size:14.5px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+
+/* ---------- Feed rows ---------- */
+.frow{display:flex;align-items:center;gap:12px;padding:13px 0}
+.frow + .frow{border-top:1px solid var(--border)}
+
+/* ---------- Misc ---------- */
+.link{color:var(--navy);font-weight:600;text-decoration:none}
+.link:hover{text-decoration:underline}
+.footnote{font-size:12.5px;color:var(--text2)}
+.divider{height:1px;background:var(--border);margin:16px 0;border:0}
+.dot-live{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.muted{color:var(--text2)}
+
+/* ============================================================
+   SCREEN-SPECIFIC CSS — 01-dashboard.html
+   ============================================================ */
+
+/* Repayment amber banner */
+.repay-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border-radius: var(--r);
+  background: rgba(245,158,11,.11);
+  color: #92400E;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+.repay-banner .ms {
+  font-size: 19px;
+  color: #B45309;
+  flex: none;
+}
+.repay-banner .banner-text {
+  flex: 1;
+  line-height: 1.45;
+}
+.repay-banner .pay-link {
+  color: #92400E;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: 13.5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(180,83,9,.35);
+  transition: background .15s;
+  flex: none;
+}
+.repay-banner .pay-link:hover {
+  background: rgba(245,158,11,.18);
+}
+
+/* Hero trust card */
+.trust-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.trust-gauge-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+.trust-gauge-row svg {
+  flex: none;
+}
+.trust-tier-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.trust-tier-block .score-big {
+  font-size: 36px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.03em;
+  color: var(--text);
+  line-height: 1;
+}
+.trust-tier-block .score-denom {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text2);
+}
+
+/* Metric card hero emphasis */
+.card.card-hero {
+  border: 1.5px solid rgba(16,185,129,.28);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF8 100%);
+}
+
+/* Tier pip ladder */
+.tier-pips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+.tier-pip {
+  width: 20px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+}
+.tier-pip.active {
+  background: var(--emerald);
+}
+.tier-pip-label {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 600;
+  margin-top: 4px;
+  letter-spacing: .03em;
+}
+
+/* Borrowing card bar section */
+.borrow-details {
+  margin-top: 4px;
+}
+.borrow-amounts {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.borrow-amounts .limit-val {
+  font-size: 28px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+.borrow-amounts .used-val {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* Lent card emerald delta */
+.delta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.delta-row .ms {
+  color: var(--emerald);
+  font-size: 17px;
+}
+.delta-row span {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* Content split row proportions */
+.row-split {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.col-deadlines {
+  flex: 1.6;
+  min-width: 0;
+}
+.col-actions {
+  width: 340px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Timeline item content */
+.tl-body {
+  flex: 1;
+  min-width: 0;
+}
+.tl-body .tl-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.tl-body .tl-meta {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+.tl-body .tl-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.tl-body .tl-actions .link {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: none;
+}
+.tl-body .tl-actions .link:hover {
+  text-decoration: underline;
+}
+.tl-body .tl-actions .sep {
+  color: var(--border);
+  font-size: 13px;
+  margin: 0 2px;
+}
+
+/* Quick actions button stack */
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* Community impact stat rows */
+.impact-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 0;
+}
+.impact-stat + .impact-stat {
+  border-top: 1px solid var(--border);
+}
+.impact-stat .stat-val {
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+  color: var(--text);
+  white-space: nowrap;
+}
+.impact-stat .stat-label {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.4;
+}
+.impact-stat .stat-icon {
+  margin-left: auto;
+  flex: none;
+}
+.impact-stat .stat-icon .ms {
+  font-size: 20px;
+  color: var(--emerald);
+}
+.impact-footnote {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.impact-footnote .ms {
+  font-size: 15px;
+  color: var(--text2);
+}
+
+/* Metric cards row slight height alignment */
+.grid-4 .card {
+  display: flex;
+  flex-direction: column;
+}
+.grid-4 .card .m-card {
+  flex: 1;
+}
+
+/* Active loan card amber accent top */
+.card-amber-accent {
+  border-top: 3px solid var(--amber);
+}
+</style>
+<style>
+/* Additional Custom CSS for the rewrite */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.6); z-index: 999;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.active {
+  opacity: 1; pointer-events: auto;
+}
+.modal-content {
+  background: #fff; border-radius: 12px; padding: 32px;
+  width: 90%; max-width: 400px; text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transform: translateY(20px); transition: transform 0.2s;
+}
+.modal-overlay.active .modal-content {
+  transform: translateY(0);
+}
+.modal-close {
+  margin-top: 24px;
+}
+.step-item {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; flex: 1;
+}
+.step-item .step-icon {
+  width: 48px; height: 48px; border-radius: 50%; background: rgba(30,58,138,0.1); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+}
+.step-item .step-icon .ms { font-size: 24px; }
+.step-arrow { color: var(--text2); display: flex; align-items: center; padding: 0 16px; margin-top: 12px; }
+
+.feed-list { display: flex; flex-direction: column; gap: 12px; }
+.feed-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px; border: 1px solid var(--border); border-radius: var(--r);
+  background: var(--surface); animation: fadeInDown 0.4s ease;
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Toast notifications */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px; z-index: 10000;
+}
+.toast {
+  background: #1E3A8A; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 14.5px; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">UIU Aid<small>Mutual Aid Network</small></div>
+    <nav class="nav">
+      <a class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" href="/"><span class="ms">space_dashboard</span>Dashboard</a>
+      <a class="nav-item {% if active_page == 'loans' %}active{% endif %}" href="/loan-request"><span class="ms">handshake</span>Loans</a>
+      <a class="nav-item {% if active_page == 'crowdfunding' %}active{% endif %}" href="/crowdfunding"><span class="ms">volunteer_activism</span>Crowdfunding</a>
+      <a class="nav-item {% if active_page == 'gigs' %}active{% endif %}" href="/gigs"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item {% if active_page == 'meals' %}active{% endif %}" href="/meal-drops"><span class="ms">restaurant</span>Meal Drops</a>
+      <a class="nav-item {% if active_page == 'trust' %}active{% endif %}" href="/trust-profile"><span class="ms">verified_user</span>Trust Profile</a>
+    </nav>
+    <div class="side-user">
+      <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
+      <div><b>{{ user.name }}</b>
+      {% if user.is_verified %}
+      <span class="vrf"><span class="ms">verified</span>Verified</span>
+      {% endif %}
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="meal-container">
+
+      <!-- PAGE HEADER -->
+      <div class="meal-page-head" style="display:flex; justify-content:space-between; margin-bottom:32px;">
+        <div>
+          <h1>Meal Drops</h1>
+          <div class="sub">A meal from a classmate you'll never meet.</div>
+        </div>
+        <div class="head-actions">
+          <div class="banner banner-emerald" style="background: rgba(16,185,129,0.1); border-radius: 99px; padding: 8px 16px;">
+            <span class="ms" style="color: #059669; font-size: 18px;">lock</span>
+            <strong style="color: #065F46; font-size: 13.5px;">Fully Anonymous — donor & recipient identities never revealed</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOW IT WORKS -->
+      <div class="card" style="margin-bottom: 24px; background: #F8FAFC;">
+        <div style="display: flex; justify-content: space-between;">
+          <div class="step-item">
+            <div class="step-icon"><span class="ms">volunteer_activism</span></div>
+            <div style="font-weight: 600; margin-top: 12px; font-size: 14.5px;">1. Gift</div>
+            <div style="font-size: 13px; color: var(--text2);">Pay for a 120 Tk meal token</div>
+          </div>
+          <div class="step-arrow"><span class="ms">arrow_forward</span></div>
+          <div class="step-item">
+            <div class="step-icon"><span class="ms">water_drop</span></div>
+            <div style="font-weight: 600; margin-top: 12px; font-size: 14.5px;">2. Pool</div>
+            <div style="font-size: 13px; color: var(--text2);">Token goes to the community pool</div>
+          </div>
+          <div class="step-arrow"><span class="ms">arrow_forward</span></div>
+          <div class="step-item">
+            <div class="step-icon"><span class="ms">restaurant</span></div>
+            <div style="font-weight: 600; margin-top: 12px; font-size: 14.5px;">3. Claim</div>
+            <div style="font-size: 13px; color: var(--text2);">A student in need generates a QR code</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAT STRIP -->
+      <div style="display: flex; align-items: center; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow); padding: 20px 28px; margin-bottom: 28px;">
+        <div style="display: flex; flex-direction: column; gap: 3px; padding-right: 36px;">
+          <div class="stat-num" id="stat-available" style="font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums;">{{ total_available }}</div>
+          <div class="stat-label" style="font-size: 13px; color: var(--text2); font-weight: 500;">meals available right now</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 3px; padding-left: 36px; padding-right: 36px; border-left: 1px solid var(--border);">
+          <div class="stat-num" id="stat-shared" style="font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums;">{{ total_shared }}</div>
+          <div class="stat-label" style="font-size: 13px; color: var(--text2); font-weight: 500;">total meals shared</div>
+        </div>
+        <div style="margin-left: auto;">
+          <span class="pill pill-emerald">
+            <span class="ms ms-fill dot-live" style="font-size:10px;color:#059669;margin-right: 6px;"></span>
+            Live updates
+          </span>
+        </div>
+      </div>
+
+      <!-- TWO-CARD GRID -->
+      <div class="grid-2" style="margin-bottom: 24px;">
+
+        <!-- LEFT: Gift Meals -->
+        <div class="card meal-card" style="padding:32px;">
+          <div class="card-title">
+            <span class="ms" style="color:#059669">favorite</span>
+            Gift Meals Anonymously
+          </div>
+          <p style="font-size: 15px; color: var(--text2); line-height: 1.65; margin-bottom: 24px;">Gift meal credits to students who need one. You will never know who claims it.</p>
+
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); margin-bottom: 10px;">Number of meals</div>
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 0;">
+              <button style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #C7D2E5; background: var(--surface); color: var(--navy); font-size: 20px; font-weight: 600; cursor: pointer; border-radius: var(--r) 0 0 var(--r); border-right: none;" onclick="changeQty(-1)">&minus;</button>
+              <div id="gift-qty" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #C7D2E5; font-size: 17px; font-weight: 700; color: var(--text); background: var(--surface);">1</div>
+              <button style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #C7D2E5; background: var(--surface); color: var(--navy); font-size: 20px; font-weight: 600; cursor: pointer; border-radius: 0 var(--r) var(--r) 0; border-left: none;" onclick="changeQty(1)">+</button>
+            </div>
+            <div class="chips">
+              <span class="chip" onclick="setQty(2)">2 meals</span>
+              <span class="chip" onclick="setQty(5)">5 meals</span>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 4px 0;">
+            <span style="font-size: 14px; color: var(--text2); font-weight: 500;">Total</span>
+            <span id="gift-total" class="money" style="font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: -.02em;">120 Tk</span>
+          </div>
+
+          <hr class="divider" style="margin-top:16px">
+
+          <button id="btn-gift-meal" type="button" class="btn btn-primary btn-block btn-lg" onclick="giftMeal()">Gift 1 Meal (120 Tk)</button>
+        </div>
+
+        <!-- RIGHT: Claim a Meal -->
+        <div class="card meal-card" style="display:flex;flex-direction:column;align-items:center;text-align:center; padding:32px;">
+          <div class="card-title" style="width:100%;justify-content:center">
+            <span class="ms">qr_code_2</span>
+            Claim an Anonymous Meal Token
+          </div>
+          <p style="font-size: 15px; color: var(--text2); line-height: 1.65; margin-bottom: 24px; max-width:340px">If you're hungry today, eat today. Generate a secret token for the cafeteria. No names, no questions.</p>
+          
+          <button id="btn-claim-meal" type="button" class="btn btn-secondary btn-block btn-lg" style="margin-top:auto;" onclick="claimMeal()">
+            <span class="ms ms-18">qr_code</span> Claim an Anonymous Meal Token
+          </button>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW -->
+      <div class="grid-2">
+        <!-- Recent Drops Feed -->
+        <div class="card">
+          <div class="card-title"><span class="ms">history</span> Recent Meal Drops</div>
+          <div class="feed-list" id="drops-feed">
+            {% for drop in recent_drops %}
+            <div class="feed-item">
+              <div style="display:flex; align-items:center; gap: 12px;">
+                <div class="av av-2" style="background: var(--text2);"><span class="ms">person</span></div>
+                <div>
+                  <div style="font-weight: 600; font-size: 14.5px;">Anonymous Classmate</div>
+                  <div style="font-size: 12.5px; color: var(--text2);">Gifted {{ drop.meals_count }} meal{% if drop.meals_count > 1 %}s{% endif %}</div>
+                </div>
+              </div>
+              {% if drop.status == 'available' %}
+                <span class="pill pill-emerald">Available</span>
+              {% else %}
+                <span class="pill pill-slate">Claimed</span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Privacy Commitment -->
+        <div class="card" style="background: var(--navy); color: #fff;">
+          <div class="card-title" style="color: #fff;"><span class="ms" style="color: #60A5FA;">shield</span> Privacy Commitment</div>
+          <p style="font-size: 14.5px; line-height: 1.6; color: rgba(255,255,255,0.85); margin-bottom: 16px;">
+            The UIU Mutual Aid Meal Drop system is strictly blind. We employ mathematical unlinking between the donor's payment ID and the generated meal token.
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span class="ms" style="color: #6EE7B7; font-size: 18px;">check_circle</span>
+              Donors cannot see who claims their meals.
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span class="ms" style="color: #6EE7B7; font-size: 18px;">check_circle</span>
+              Recipients only see "Anonymous Classmate".
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span class="ms" style="color: #6EE7B7; font-size: 18px;">check_circle</span>
+              Cafeteria staff only scan the QR code and see no names.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Modal for Claim/Gift Success -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal-content">
+    <div style="width: 64px; height: 64px; background: rgba(16,185,129,0.1); color: var(--emerald); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+      <span class="ms" style="font-size: 32px;" id="modal-icon">check_circle</span>
+    </div>
+    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;" id="modal-title">Success!</h3>
+    <p style="font-size: 14.5px; color: var(--text2); margin-bottom: 24px;" id="modal-desc">Details here.</p>
+    
+    <div id="modal-qr-section" style="display: none; margin-bottom: 24px;">
+      <div style="border: 2px dashed var(--border); padding: 16px; display: inline-block; border-radius: 8px;">
+        <!-- SVG QR code placeholder -->
+        <svg width="120" height="120" viewBox="0 0 100 100"><rect width="100" height="100" fill="#fff"/><rect x="10" y="10" width="30" height="30" fill="#0F172A"/><rect x="15" y="15" width="20" height="20" fill="#fff"/><rect x="20" y="20" width="10" height="10" fill="#0F172A"/><rect x="60" y="10" width="30" height="30" fill="#0F172A"/><rect x="65" y="15" width="20" height="20" fill="#fff"/><rect x="70" y="20" width="10" height="10" fill="#0F172A"/><rect x="10" y="60" width="30" height="30" fill="#0F172A"/><rect x="15" y="65" width="20" height="20" fill="#fff"/><rect x="20" y="70" width="10" height="10" fill="#0F172A"/><rect x="50" y="50" width="10" height="10" fill="#0F172A"/><rect x="70" y="60" width="20" height="20" fill="#0F172A"/><rect x="60" y="80" width="30" height="10" fill="#0F172A"/></svg>
+      </div>
+      <div id="modal-code" style="font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: 2px; margin-top: 12px;"></div>
+      <div style="font-size: 12.5px; color: var(--text2); margin-top: 8px; font-weight: 600;">Show this code at UIU cafeteria counter</div>
+    </div>
+
+    <button class="btn btn-secondary btn-block modal-close" onclick="closeModal()">Done</button>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+let qty = 1;
+const maxQty = 10;
+const minQty = 1;
+
+function updateQtyUI() {
+  document.getElementById('gift-qty').textContent = qty;
+  document.getElementById('gift-total').textContent = (qty * 120) + ' Tk';
+  document.getElementById('btn-gift-meal').textContent = `Gift ${qty} Meal${qty>1?'s':''} (${qty * 120} Tk)`;
+}
+function changeQty(delta) {
+  qty = Math.max(minQty, Math.min(maxQty, qty + delta));
+  updateQtyUI();
+}
+function setQty(val) {
+  qty = val;
+  updateQtyUI();
+}
+
+function showToast(msg) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span class="ms">notifications</span> ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(20px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+function showModal(title, desc, code = null, isClaim = false) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-desc').textContent = desc;
+  document.getElementById('modal-icon').textContent = isClaim ? 'qr_code' : 'favorite';
+  const qrSec = document.getElementById('modal-qr-section');
+  if (code) {
+    qrSec.style.display = 'block';
+    document.getElementById('modal-code').textContent = code;
+  } else {
+    qrSec.style.display = 'none';
+  }
+  document.getElementById('success-modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('success-modal').classList.remove('active');
+}
+
+function animateNumber(id, newVal) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const oldVal = parseInt(el.textContent || '0', 10);
+  if (oldVal === newVal) return;
+  el.style.transform = 'scale(1.2)';
+  el.style.color = 'var(--emerald)';
+  el.textContent = newVal;
+  setTimeout(() => {
+    el.style.transform = 'scale(1)';
+    el.style.color = '';
+  }, 300);
+}
+
+function giftMeal() {
+  fetch('/api/meals/gift', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({meals_count: qty, donor_id: 1})
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === 'success') {
+      showModal('Meals Gifted', `You have successfully gifted ${qty} meal${qty>1?'s':''} to the community pool.`);
+      showToast('Meals gifted successfully!');
+      const availEl = document.getElementById('stat-available');
+      const sharedEl = document.getElementById('stat-shared');
+      animateNumber('stat-available', parseInt(availEl.textContent) + qty);
+      animateNumber('stat-shared', parseInt(sharedEl.textContent) + qty);
+      
+      const feed = document.getElementById('drops-feed');
+      if (feed) {
+        const item = document.createElement('div');
+        item.className = 'feed-item';
+        item.innerHTML = `
+          <div style="display:flex; align-items:center; gap: 12px;">
+            <div class="av av-2" style="background: var(--text2);"><span class="ms">person</span></div>
+            <div>
+              <div style="font-weight: 600; font-size: 14.5px;">Anonymous Classmate</div>
+              <div style="font-size: 12.5px; color: var(--text2);">Gifted ${qty} meal${qty>1?'s':''}</div>
+            </div>
+          </div>
+          <span class="pill pill-emerald">Available</span>
+        `;
+        feed.insertBefore(item, feed.firstChild);
+        if (feed.children.length > 10) feed.removeChild(feed.lastChild);
+      }
+    }
+  });
+}
+
+function claimMeal() {
+  fetch('/api/meals/claim', {method: 'POST'})
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === 'success') {
+      showModal('Meal Token Generated', 'Present this anonymous token at the cafeteria counter.', data.claim_code, true);
+      showToast('Meal claimed successfully!');
+      const availEl = document.getElementById('stat-available');
+      if (availEl) {
+        let current = parseInt(availEl.textContent);
+        if(current > 0) animateNumber('stat-available', current - 1);
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

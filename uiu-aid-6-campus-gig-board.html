@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIU Aid — Campus Gig Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+/* ============================================================
+   UIU Aid — Shared Design System CSS (v1.0)
+   Source of truth: /agent/workspace/DESIGN.md
+   Inline this ENTIRE file into each screen's <style> tag.
+   Do NOT modify tokens. Append screen-specific CSS below it.
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --orange:#F97316; --orange-h:#EA580C;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --text:#0F172A; --text2:#64748B;
+  --shadow:0 1px 3px rgba(15,23,42,.08);
+  --r:8px;
+}
+
+html{background:var(--bg)}
+body{
+  font-family:'Inter',Roboto,system-ui,sans-serif;
+  color:var(--text); background:var(--bg);
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Material Symbols ---------- */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;display:inline-block;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-16{font-size:16px}.ms-18{font-size:18px}.ms-24{font-size:24px}.ms-28{font-size:28px}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh;min-width:1440px}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--navy);display:flex;flex-direction:column;
+  padding:24px 16px;z-index:50;
+}
+.logo{color:#fff;font-size:21px;font-weight:800;letter-spacing:-.02em;padding:0 10px}
+.logo small{display:block;font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:3px}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);
+  color:rgba(255,255,255,.82);font-size:14.5px;font-weight:500;
+  text-decoration:none;cursor:pointer;
+}
+.nav-item .ms{font-size:20px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#fff;color:var(--navy);font-weight:600}
+.side-user{
+  margin-top:auto;display:flex;align-items:center;gap:10px;
+  padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.14);
+}
+.side-user .av{width:36px;height:36px;font-size:13px}
+.side-user b{display:block;color:#fff;font-size:13.5px;font-weight:600;line-height:1.25}
+.side-user .vrf{display:inline-flex;align-items:center;gap:4px;color:#6EE7B7;font-size:11px;font-weight:600}
+.side-user .vrf .ms{font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+.main{margin-left:240px;flex:1;padding:32px 36px 56px;min-width:0}
+
+/* ---------- Page header ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:14px;color:var(--text2);margin-top:2px}
+.head-actions{display:flex;align-items:center;gap:12px}
+.bell{position:relative;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--navy);box-shadow:var(--shadow)}
+.bell .cnt{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:var(--crimson);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px}
+.card-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .ms{color:var(--navy)}
+
+/* ---------- Layout utils ---------- */
+.row{display:flex;gap:24px}
+.col{min-width:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.right{margin-left:auto}
+.center{text-align:center}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s}
+.btn .ms{font-size:18px}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-h)}
+.btn-secondary{background:var(--surface);color:var(--navy);border-color:#C7D2E5}
+.btn-secondary:hover{border-color:var(--navy);background:#F5F8FE}
+.btn-quiet{background:transparent;color:var(--navy);font-weight:600}
+.btn-quiet:hover{text-decoration:underline}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 14px;font-size:13.5px}
+.btn-lg{height:52px;font-size:16.5px}
+
+/* ---------- Pills / badges / tags ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.pill .ms{font-size:13px}
+.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-amber{background:rgba(245,158,11,.13);color:#B45309}
+.pill-crimson{background:rgba(239,68,68,.1);color:#DC2626}
+.pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.pill-slate{background:rgba(100,116,139,.1);color:#475569}
+.pill-solid-crimson{background:var(--crimson);color:#fff}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.vbadge{display:inline-flex;align-items:center;gap:4px;color:#059669;font-size:12.5px;font-weight:600}
+.vbadge .ms{font-size:15px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- Avatars (initials, no photos) ---------- */
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:40px;height:40px;color:#fff;font-weight:700;font-size:14px;flex:none;letter-spacing:.02em}
+.av-sm{width:32px;height:32px;font-size:12px}
+.av-lg{width:64px;height:64px;font-size:22px}
+.av-xl{width:88px;height:88px;font-size:30px}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
+.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+
+/* ---------- Money / metric cards ---------- */
+.money{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.01em}
+.m-card{display:flex;flex-direction:column;gap:10px}
+.m-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.m-ico .ms{font-size:22px}
+.m-ico.navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.m-ico.emerald{background:rgba(16,185,129,.12);color:#059669}
+.m-ico.amber{background:rgba(245,158,11,.14);color:#B45309}
+.m-label{font-size:13.5px;color:var(--text2);font-weight:500}
+.m-value{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.m-sub{font-size:13px;color:var(--text2)}
+
+/* ---------- Progress ---------- */
+.bar{height:8px;border-radius:999px;background:var(--border);overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--emerald)}
+.bar-lg{height:12px}
+
+/* ---------- Banners ---------- */
+.banner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500}
+.banner .ms{font-size:19px;flex:none}
+.banner-emerald{background:rgba(16,185,129,.09);color:#065F46}
+.banner-emerald .ms{color:#059669}
+.banner-amber{background:rgba(245,158,11,.11);color:#92400E}
+.banner-amber .ms{color:#B45309}
+.banner-crimson{background:rgba(239,68,68,.09);color:#991B1B}
+.banner-crimson .ms{color:#DC2626}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label{font-size:13.5px;font-weight:600}
+.input{height:44px;border:1px solid var(--border);border-radius:var(--r);padding:0 14px;font-family:inherit;font-size:15px;color:var(--text);background:#fff;width:100%;outline:none}
+.input:focus{border-color:var(--navy)}
+textarea.input{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.5}
+.help{font-size:12.5px;color:var(--text2)}
+.iwrap{position:relative}
+.iwrap .sfx{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--text2)}
+select.input{appearance:none}
+.check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+
+/* ---------- Chips ---------- */
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--r);background:#fff;font-size:14.5px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:#C7D2E5}
+.chip.on{border-color:var(--navy);background:rgba(30,58,138,.06);color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+
+/* Filter pills for boards */
+.fpill{padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:13.5px;font-weight:600;color:var(--text2);cursor:pointer}
+.fpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ---------- Timeline ---------- */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px;padding:14px 0}
+.tl-item + .tl-item{border-top:1px dashed var(--border)}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px;box-shadow:0 0 0 4px rgba(226,232,240,.6)}
+.tl-dot.emerald{background:var(--emerald)}
+.tl-dot.navy{background:var(--navy)}
+.tl-dot.amber{background:var(--amber)}
+.tl-dot.crimson{background:var(--crimson)}
+
+/* ---------- Escalation stepper ---------- */
+.steps{display:flex;align-items:flex-start}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;gap:8px;padding:0 8px}
+.step::before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:first-child::before{display:none}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--border);color:var(--text2);z-index:1;position:relative}
+.step-dot .ms{font-size:16px}
+.step.done .step-dot{background:var(--emerald);border-color:var(--emerald);color:#fff}
+.step.done::before{background:var(--emerald)}
+.step.current .step-dot{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 0 0 5px rgba(245,158,11,.18)}
+.step.current::before{background:var(--amber)}
+.step.danger .step-dot{color:var(--crimson)}
+.step b{font-size:13px;font-weight:600}
+.step small{font-size:11.5px;color:var(--text2);line-height:1.35}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border)}
+.tab{padding:12px 18px;font-size:14.5px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+
+/* ---------- Feed rows ---------- */
+.frow{display:flex;align-items:center;gap:12px;padding:13px 0}
+.frow + .frow{border-top:1px solid var(--border)}
+
+/* ---------- Misc ---------- */
+.link{color:var(--navy);font-weight:600;text-decoration:none}
+.link:hover{text-decoration:underline}
+.footnote{font-size:12.5px;color:var(--text2)}
+.divider{height:1px;background:var(--border);margin:16px 0;border:0}
+.dot-live{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.muted{color:var(--text2)}
+
+/* ============================================================
+   Screen-specific CSS — 06-gig-board.html
+   ============================================================ */
+
+/* Earnings strip */
+.earnings-strip{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:16px 22px;
+  margin-bottom:20px;
+}
+.earnings-strip .tag{
+  white-space:nowrap;
+  flex:none;
+}
+.earnings-strip .money{
+  font-size:22px;
+  color:var(--text);
+  flex:none;
+}
+.sparkline-wrap{
+  display:flex;
+  align-items:center;
+  flex:none;
+}
+.earnings-strip .withdraw-link{
+  margin-left:auto;
+  font-size:14px;
+  white-space:nowrap;
+}
+
+/* Filter row */
+.filter-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:24px;
+  flex-wrap:nowrap;
+}
+.filter-pills{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:none;
+}
+.filter-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:none;
+}
+.search-wrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+.search-wrap .ms{
+  position:absolute;
+  left:12px;
+  font-size:18px;
+  color:var(--text2);
+  pointer-events:none;
+}
+.search-wrap .input{
+  padding-left:38px;
+  width:260px;
+}
+.sort-select-wrap{
+  position:relative;
+}
+.sort-select-wrap .ms{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:18px;
+  color:var(--text2);
+  pointer-events:none;
+}
+.sort-select-wrap select.input{
+  padding-right:38px;
+  width:170px;
+  cursor:pointer;
+}
+
+/* Gig card */
+.gig-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+}
+.gig-card .gig-tag{
+  margin-bottom:8px;
+}
+.gig-title{
+  font-size:16.5px;
+  font-weight:600;
+  line-height:1.4;
+  color:var(--text);
+  min-height:46px;
+  margin-bottom:10px;
+}
+.gig-budget{
+  font-size:24px;
+  color:var(--navy);
+  margin-bottom:14px;
+}
+.gig-poster{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+.gig-poster-name{
+  font-size:13.5px;
+  font-weight:600;
+  color:var(--text);
+}
+.gig-poster .pill-emerald{
+  font-size:11.5px;
+  padding:3px 8px;
+}
+.gig-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.gig-meta-left{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:13px;
+  color:var(--text2);
+}
+.gig-meta-left .ms{
+  font-size:15px;
+  color:var(--text2);
+}
+.gig-meta-right{
+  font-size:13px;
+  color:var(--text2);
+}
+.gig-card .btn-secondary.btn-sm.btn-block{
+  margin-top:auto;
+}
+
+/* Banner close icon */
+.banner-close{
+  margin-left:auto;
+  font-size:18px;
+  color:rgba(6,95,70,.45);
+  cursor:pointer;
+  flex:none;
+}
+
+/* Footnote with lock */
+.page-footnote{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin-top:28px;
+}
+.page-footnote .ms{
+  font-size:14px;
+  color:var(--text2);
+}
+</style>
+<style>
+.ha-img-placeholder{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:#f4f4f5;border:1px dashed #d4d4d8;border-radius:8px;color:#71717a;font-size:12px;font-family:system-ui,sans-serif;min-height:80px;padding:16px;box-sizing:border-box;animation:ha-img-pulse 1.5s ease-in-out infinite}
+.ha-img-placeholder.ha-failed{animation:none;opacity:.7}
+@keyframes ha-img-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@media(prefers-color-scheme:dark){.ha-img-placeholder{background:#27272a;border-color:#3f3f46;color:#a1a1aa}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">UIU Aid<small>Mutual Aid Network</small></div>
+    <nav class="nav">
+      <a class="nav-item"><span class="ms">space_dashboard</span>Dashboard</a>
+      <a class="nav-item"><span class="ms">handshake</span>Loans</a>
+      <a class="nav-item"><span class="ms">volunteer_activism</span>Crowdfunding</a>
+      <a class="nav-item active"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item"><span class="ms">restaurant</span>Meal Drops</a>
+      <a class="nav-item"><span class="ms">verified_user</span>Trust Profile</a>
+    </nav>
+    <div class="side-user">
+      <span class="av av-1">NJ</span>
+      <div>
+        <b>Nusrat Jahan</b>
+        <span class="vrf"><span class="ms">verified</span>Verified</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-head">
+      <div>
+        <h1>Campus Gig Board</h1>
+        <div class="sub">Earn it, don't owe it.</div>
+      </div>
+      <div class="head-actions">
+        <div class="bell">
+          <span class="ms">notifications</span>
+          <span class="cnt">3</span>
+        </div>
+        <button class="btn btn-primary">
+          <span class="ms ms-18">add_circle</span>
+          Post a Gig
+        </button>
+      </div>
+    </div>
+
+    <!-- REPAYMENT BANNER -->
+    <div class="banner banner-emerald" style="margin-bottom:20px;">
+      <span class="ms">lightbulb</span>
+      <span>You have a <strong>552 Tk</strong> repayment due Aug 2 &mdash; one gig below covers it.</span>
+      <span class="banner-close ms">close</span>
+    </div>
+
+    <!-- EARNINGS STRIP -->
+    <div class="earnings-strip">
+      <span class="tag">Earned this trimester</span>
+      <span class="money">3,400 Tk</span>
+      <div class="sparkline-wrap">
+        <svg width="90" height="28" viewBox="0 0 90 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline
+            points="0,24 12,20 24,18 36,15 48,12 60,9 72,6 84,3 90,2"
+            stroke="#10B981"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+          <polyline
+            points="0,24 12,20 24,18 36,15 48,12 60,9 72,6 84,3 90,2 90,28 0,28"
+            fill="rgba(16,185,129,0.08)"
+            stroke="none"
+          />
+        </svg>
+      </div>
+      <a class="link withdraw-link" href="#">Withdraw to bKash &rarr;</a>
+    </div>
+
+    <!-- FILTER ROW -->
+    <div class="filter-row">
+      <div class="filter-pills">
+        <button class="fpill on">All</button>
+        <button class="fpill">Tech &amp; Code</button>
+        <button class="fpill">Design</button>
+        <button class="fpill">Tutoring</button>
+        <button class="fpill">Notes &amp; Writing</button>
+        <button class="fpill">Errands</button>
+      </div>
+      <div class="filter-right">
+        <div class="search-wrap">
+          <span class="ms">search</span>
+          <input class="input" type="text" placeholder="Search gigs…">
+        </div>
+        <div class="sort-select-wrap">
+          <select class="input">
+            <option>Highest pay</option>
+            <option>Newest first</option>
+            <option>Due soonest</option>
+            <option>Fewest applicants</option>
+          </select>
+          <span class="ms">expand_more</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GIG CARD GRID -->
+    <div class="grid-3">
+
+      <!-- Gig 1: Debug Python -->
+      <div class="gig-card">
+        <div class="gig-tag tag">Tech &amp; Code</div>
+        <div class="gig-title">Debug my Python data-structures assignment</div>
+        <div class="gig-budget money">800 Tk</div>
+        <div class="gig-poster">
+          <span class="av av-sm av-4">AC</span>
+          <span class="gig-poster-name">Adnan C.</span>
+          <span class="pill pill-emerald">85 trust</span>
+        </div>
+        <hr class="divider">
+        <div class="gig-meta">
+          <div class="gig-meta-left">
+            <span class="ms">schedule</span>
+            <span>due in 2 days</span>
+          </div>
+          <div class="gig-meta-right">4 applicants</div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block">Apply</button>
+      </div>
+
+      <!-- Gig 2: Poster Design -->
+      <div class="gig-card">
+        <div class="gig-tag tag">Design</div>
+        <div class="gig-title">Poster design for Robotics Club fest</div>
+        <div class="gig-budget money">600 Tk</div>
+        <div class="gig-poster">
+          <span class="av av-sm av-6">MA</span>
+          <span class="gig-poster-name">Mim A.</span>
+          <span class="pill pill-emerald">91 trust</span>
+        </div>
+        <hr class="divider">
+        <div class="gig-meta">
+          <div class="gig-meta-left">
+            <span class="ms">schedule</span>
+            <span>due Jul 30</span>
+          </div>
+          <div class="gig-meta-right">2 applicants</div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block">Apply</button>
+      </div>
+
+      <!-- Gig 3: Calculus Tutoring -->
+      <div class="gig-card">
+        <div class="gig-tag tag">Tutoring</div>
+        <div class="gig-title">Calculus II crash tutoring, 2 sessions</div>
+        <div class="gig-budget money">1,200 Tk</div>
+        <div class="gig-poster">
+          <span class="av av-sm av-2">PD</span>
+          <span class="gig-poster-name">Priya D.</span>
+          <span class="pill pill-emerald">88 trust</span>
+        </div>
+        <hr class="divider">
+        <div class="gig-meta">
+          <div class="gig-meta-left">
+            <span class="ms">schedule</span>
+            <span>flexible</span>
+          </div>
+          <div class="gig-meta-right">6 applicants</div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block">Apply</button>
+      </div>
+
+      <!-- Gig 4: Lab Notes -->
+      <div class="gig-card">
+        <div class="gig-tag tag">Notes &amp; Writing</div>
+        <div class="gig-title">Type and format 20 pages of lab notes</div>
+        <div class="gig-budget money">400 Tk</div>
+        <div class="gig-poster">
+          <span class="av av-sm av-5">RI</span>
+          <span class="gig-poster-name">Rifat I.</span>
+          <span class="pill pill-emerald">76 trust</span>
+        </div>
+        <hr class="divider">
+        <div class="gig-meta">
+          <div class="gig-meta-left">
+            <span class="ms">schedule</span>
+            <span>due Aug 1</span>
+          </div>
+          <div class="gig-meta-right">1 applicant</div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block">Apply</button>
+      </div>
+
+      <!-- Gig 5: WordPress Fix -->
+      <div class="gig-card">
+        <div class="gig-tag tag">Tech &amp; Code</div>
+        <div class="gig-title">Fix the WordPress site for the Debate Society</div>
+        <div class="gig-budget money">1,500 Tk</div>
+        <div class="gig-poster">
+          <span class="av av-sm av-1">KH</span>
+          <span class="gig-poster-name">Karim H.</span>
+          <span class="pill pill-emerald">82 trust</span>
+        </div>
+        <hr class="divider">
+        <div class="gig-meta">
+          <div class="gig-meta-left">
+            <span class="ms">schedule</span>
+            <span>due Aug 8</span>
+          </div>
+          <div class="gig-meta-right">5 applicants</div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block">Apply</button>
+      </div>
+
+      <!-- Gig 6: Print-shop Errand -->
+      <div class="gig-card">
+        <div class="gig-tag tag">Errands</div>
+        <div class="gig-title">Print-shop pickup before 5 PM</div>
+        <div class="gig-budget money">150 Tk</div>
+        <div class="gig-poster">
+          <span class="av av-sm av-3">SR</span>
+          <span class="gig-poster-name">Sadia R.</span>
+          <span class="pill pill-emerald">95 trust</span>
+        </div>
+        <hr class="divider">
+        <div class="gig-meta">
+          <div class="gig-meta-left">
+            <span class="ms">schedule</span>
+            <span>today</span>
+          </div>
+          <div class="gig-meta-right">0 applicants</div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block">Apply</button>
+      </div>
+
+    </div>
+    <!-- end .grid-3 -->
+
+    <!-- FOOTNOTE -->
+    <div class="page-footnote footnote">
+      <span class="ms">lock</span>
+      Payments are held by UIU Aid and released when the poster approves the work.
+    </div>
+
+  </main>
+</div>
+<script>
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && window.parent !== window) {
+    window.parent.postMessage({ type: 'close-fullscreen' }, '*');
+  }
+});
+</script>
+<!-- broken-img-handler -->
+<script>
+(function(){
+  if(window.__brokenImgHandler)return;
+  window.__brokenImgHandler=true;
+  var MAX=5,DELAYS=[2000,4000,8000,16000,32000];
+  document.addEventListener('error',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    var liveSrc=img.getAttribute('src');
+    var src=img.dataset.haOriginalSrc||liveSrc;
+    if(!src)return;
+    if(img.dataset.haOriginalSrc&&liveSrc&&liveSrc!==img.dataset.haOriginalSrc&&liveSrc.indexOf('_r=')<0){src=liveSrc;img.dataset.haOriginalSrc=src;img.dataset.haRetryCount='0'}
+    else if(!img.dataset.haOriginalSrc){img.dataset.haOriginalSrc=src}
+    var attempt=parseInt(img.dataset.haRetryCount||'0',10);
+    if(img.dataset.haPhId){var old=document.getElementById(img.dataset.haPhId);if(old)old.remove()}
+    var ph=document.createElement('div');
+    ph.className='ha-img-placeholder'+(attempt>=MAX?' ha-failed':'');
+    ph.id='ha-ph-'+Math.random().toString(36).slice(2,9);
+    var w=img.getAttribute('width');var h=img.getAttribute('height');
+    if(w)ph.style.width=w+(isNaN(Number(w))?'':'px');
+    else if(img.style.width)ph.style.width=img.style.width;
+    else if(img.width>1)ph.style.width=img.width+'px';
+    if(h)ph.style.height=h+(isNaN(Number(h))?'':'px');
+    else if(img.style.height)ph.style.height=img.style.height;
+    else if(img.height>1)ph.style.height=img.height+'px';
+    ph.textContent=attempt>=MAX?'Image unavailable':'Loading image\u2026';
+    img.dataset.haPhId=ph.id;
+    if(img.dataset.haOrigDisplay==null)img.dataset.haOrigDisplay=img.style.display||'';
+    img.style.display='none';
+    img.insertAdjacentElement('afterend',ph);
+    if(attempt<MAX){
+      img.dataset.haRetryCount=String(attempt+1);
+      setTimeout(function(){
+        if(!img.isConnected)return;
+        if(img.dataset.haOriginalSrc!==src)return;
+        if(img.complete&&img.naturalWidth>0)return;
+        var curSrc=img.getAttribute('src');
+        if(curSrc&&curSrc.indexOf(src)!==0)return;
+        var fresh=src+(src.indexOf('?')>=0?'&':'?')+'_r='+(attempt+1)+'_'+Date.now();
+        img.src=fresh;
+      },DELAYS[attempt]);
+    }
+  },true);
+  document.addEventListener('load',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    if(img.dataset.haPhId){
+      var ph=document.getElementById(img.dataset.haPhId);
+      if(ph)ph.remove();
+      delete img.dataset.haPhId;
+      img.style.display=img.dataset.haOrigDisplay||'';
+      delete img.dataset.haOrigDisplay;
+      delete img.dataset.haOriginalSrc;
+      delete img.dataset.haRetryCount;
+    }
+  },true);
+})();
+</script>
+</body>
+</html>

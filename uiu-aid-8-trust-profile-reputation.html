@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIU Aid — Campus Trust Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+/* ============================================================
+   UIU Aid — Shared Design System CSS (v1.0)
+   Source of truth: /agent/workspace/DESIGN.md
+   Inline this ENTIRE file into each screen's <style> tag.
+   Do NOT modify tokens. Append screen-specific CSS below it.
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --orange:#F97316; --orange-h:#EA580C;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --text:#0F172A; --text2:#64748B;
+  --shadow:0 1px 3px rgba(15,23,42,.08);
+  --r:8px;
+}
+
+html{background:var(--bg)}
+body{
+  font-family:'Inter',Roboto,system-ui,sans-serif;
+  color:var(--text); background:var(--bg);
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Material Symbols ---------- */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;display:inline-block;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-16{font-size:16px}.ms-18{font-size:18px}.ms-24{font-size:24px}.ms-28{font-size:28px}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh;min-width:1440px}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--navy);display:flex;flex-direction:column;
+  padding:24px 16px;z-index:50;
+}
+.logo{color:#fff;font-size:21px;font-weight:800;letter-spacing:-.02em;padding:0 10px}
+.logo small{display:block;font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:3px}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);
+  color:rgba(255,255,255,.82);font-size:14.5px;font-weight:500;
+  text-decoration:none;cursor:pointer;
+}
+.nav-item .ms{font-size:20px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#fff;color:var(--navy);font-weight:600}
+.side-user{
+  margin-top:auto;display:flex;align-items:center;gap:10px;
+  padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.14);
+}
+.side-user .av{width:36px;height:36px;font-size:13px}
+.side-user b{display:block;color:#fff;font-size:13.5px;font-weight:600;line-height:1.25}
+.side-user .vrf{display:inline-flex;align-items:center;gap:4px;color:#6EE7B7;font-size:11px;font-weight:600}
+.side-user .vrf .ms{font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+.main{margin-left:240px;flex:1;padding:32px 36px 56px;min-width:0}
+
+/* ---------- Page header ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:14px;color:var(--text2);margin-top:2px}
+.head-actions{display:flex;align-items:center;gap:12px}
+.bell{position:relative;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--navy);box-shadow:var(--shadow)}
+.bell .cnt{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:var(--crimson);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px}
+.card-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .ms{color:var(--navy)}
+
+/* ---------- Layout utils ---------- */
+.row{display:flex;gap:24px}
+.col{min-width:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.right{margin-left:auto}
+.center{text-align:center}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s}
+.btn .ms{font-size:18px}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-h)}
+.btn-secondary{background:var(--surface);color:var(--navy);border-color:#C7D2E5}
+.btn-secondary:hover{border-color:var(--navy);background:#F5F8FE}
+.btn-quiet{background:transparent;color:var(--navy);font-weight:600}
+.btn-quiet:hover{text-decoration:underline}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 14px;font-size:13.5px}
+.btn-lg{height:52px;font-size:16.5px}
+
+/* ---------- Pills / badges / tags ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.pill .ms{font-size:13px}
+.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-amber{background:rgba(245,158,11,.13);color:#B45309}
+.pill-crimson{background:rgba(239,68,68,.1);color:#DC2626}
+.pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.pill-slate{background:rgba(100,116,139,.1);color:#475569}
+.pill-solid-crimson{background:var(--crimson);color:#fff}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.vbadge{display:inline-flex;align-items:center;gap:4px;color:#059669;font-size:12.5px;font-weight:600}
+.vbadge .ms{font-size:15px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ---------- Avatars (initials, no photos) ---------- */
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:40px;height:40px;color:#fff;font-weight:700;font-size:14px;flex:none;letter-spacing:.02em}
+.av-sm{width:32px;height:32px;font-size:12px}
+.av-lg{width:64px;height:64px;font-size:22px}
+.av-xl{width:88px;height:88px;font-size:30px}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
+.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+
+/* ---------- Money / metric cards ---------- */
+.money{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.01em}
+.m-card{display:flex;flex-direction:column;gap:10px}
+.m-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.m-ico .ms{font-size:22px}
+.m-ico.navy{background:rgba(30,58,138,.08);color:var(--navy)}
+.m-ico.emerald{background:rgba(16,185,129,.12);color:#059669}
+.m-ico.amber{background:rgba(245,158,11,.14);color:#B45309}
+.m-label{font-size:13.5px;color:var(--text2);font-weight:500}
+.m-value{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.m-sub{font-size:13px;color:var(--text2)}
+
+/* ---------- Progress ---------- */
+.bar{height:8px;border-radius:999px;background:var(--border);overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--emerald)}
+.bar-lg{height:12px}
+
+/* ---------- Banners ---------- */
+.banner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500}
+.banner .ms{font-size:19px;flex:none}
+.banner-emerald{background:rgba(16,185,129,.09);color:#065F46}
+.banner-emerald .ms{color:#059669}
+.banner-amber{background:rgba(245,158,11,.11);color:#92400E}
+.banner-amber .ms{color:#B45309}
+.banner-crimson{background:rgba(239,68,68,.09);color:#991B1B}
+.banner-crimson .ms{color:#DC2626}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label{font-size:13.5px;font-weight:600}
+.input{height:44px;border:1px solid var(--border);border-radius:var(--r);padding:0 14px;font-family:inherit;font-size:15px;color:var(--text);background:#fff;width:100%;outline:none}
+.input:focus{border-color:var(--navy)}
+textarea.input{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.5}
+.help{font-size:12.5px;color:var(--text2)}
+.iwrap{position:relative}
+.iwrap .sfx{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--text2)}
+select.input{appearance:none}
+.check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+
+/* ---------- Chips ---------- */
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--r);background:#fff;font-size:14.5px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:#C7D2E5}
+.chip.on{border-color:var(--navy);background:rgba(30,58,138,.06);color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+
+/* Filter pills for boards */
+.fpill{padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:13.5px;font-weight:600;color:var(--text2);cursor:pointer}
+.fpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ---------- Timeline ---------- */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px;padding:14px 0}
+.tl-item + .tl-item{border-top:1px dashed var(--border)}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px;box-shadow:0 0 0 4px rgba(226,232,240,.6)}
+.tl-dot.emerald{background:var(--emerald)}
+.tl-dot.navy{background:var(--navy)}
+.tl-dot.amber{background:var(--amber)}
+.tl-dot.crimson{background:var(--crimson)}
+
+/* ---------- Escalation stepper ---------- */
+.steps{display:flex;align-items:flex-start}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;gap:8px;padding:0 8px}
+.step::before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:first-child::before{display:none}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--border);color:var(--text2);z-index:1;position:relative}
+.step-dot .ms{font-size:16px}
+.step.done .step-dot{background:var(--emerald);border-color:var(--emerald);color:#fff}
+.step.done::before{background:var(--emerald)}
+.step.current .step-dot{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 0 0 5px rgba(245,158,11,.18)}
+.step.current::before{background:var(--amber)}
+.step.danger .step-dot{color:var(--crimson)}
+.step b{font-size:13px;font-weight:600}
+.step small{font-size:11.5px;color:var(--text2);line-height:1.35}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border)}
+.tab{padding:12px 18px;font-size:14.5px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+
+/* ---------- Feed rows ---------- */
+.frow{display:flex;align-items:center;gap:12px;padding:13px 0}
+.frow + .frow{border-top:1px solid var(--border)}
+
+/* ---------- Misc ---------- */
+.link{color:var(--navy);font-weight:600;text-decoration:none}
+.link:hover{text-decoration:underline}
+.footnote{font-size:12.5px;color:var(--text2)}
+.divider{height:1px;background:var(--border);margin:16px 0;border:0}
+.dot-live{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.muted{color:var(--text2)}
+
+/* ============================================================
+   08-trust-profile.html — Screen-specific CSS
+   ============================================================ */
+
+/* Header identity card */
+.hdr-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:28px 32px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:32px;
+  margin-bottom:24px;
+}
+
+.hdr-identity{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+
+.hdr-identity-text{}
+.hdr-name{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  line-height:1.2;
+}
+.hdr-meta{
+  font-size:14px;
+  color:var(--text2);
+  margin-top:3px;
+  margin-bottom:10px;
+}
+
+/* Right panel of header card: gauge + tier ladder */
+.hdr-right{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:28px;
+  flex:none;
+}
+
+.gauge-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+
+/* Tier ladder */
+.tier-ladder{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.tier-ladder-label{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--text2);
+  margin-bottom:4px;
+}
+.tier-pips{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.tier-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:4px 0;
+}
+.tier-pip{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  flex:none;
+  background:rgba(100,116,139,.18);
+  border:2px solid rgba(100,116,139,.25);
+}
+.tier-pip.done{
+  background:var(--emerald);
+  border-color:var(--emerald);
+}
+.tier-pip.current{
+  width:18px;
+  height:18px;
+  background:var(--emerald);
+  border:3px solid #fff;
+  box-shadow:0 0 0 3px var(--emerald);
+}
+.tier-pip-label{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+}
+.tier-pip-label.muted-tier{
+  color:var(--text2);
+}
+.tier-caption{
+  font-size:12.5px;
+  color:var(--text2);
+  margin-top:8px;
+  max-width:200px;
+  line-height:1.45;
+}
+
+/* Badge row */
+.badge-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:24px;
+}
+.badge-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.3;
+  white-space:nowrap;
+}
+.badge-chip .ms{font-size:15px}
+.badge-chip.emerald{background:rgba(16,185,129,.1);color:#059669;}
+.badge-chip.navy{background:rgba(30,58,138,.08);color:var(--navy);}
+.badge-chip.slate{background:rgba(100,116,139,.1);color:#475569;}
+.badge-chip.locked{opacity:.55;}
+
+/* Left column — repayment card */
+.repay-headline{
+  display:flex;
+  align-items:center;
+  margin-bottom:16px;
+}
+.repay-count{
+  font-size:30px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;
+  color:var(--text);
+}
+.repay-label{
+  font-size:14px;
+  color:var(--text2);
+  margin-left:10px;
+  line-height:1.35;
+}
+.repay-check{
+  margin-left:auto;
+  color:var(--emerald);
+  font-size:26px !important;
+  font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;
+}
+
+/* Score breakdown card */
+.score-row{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:10px 0;
+}
+.score-row + .score-row{border-top:1px solid var(--border)}
+.score-row-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:5px;
+}
+.score-label{
+  font-size:14px;
+  color:var(--text);
+}
+.score-val{
+  font-size:14px;
+  font-weight:700;
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+}
+
+/* Vouched by card */
+.voucher-name{
+  font-size:14.5px;
+  font-weight:600;
+  line-height:1.2;
+}
+.voucher-sub{
+  font-size:12.5px;
+  color:var(--text2);
+}
+
+/* Tier badge next to voucher */
+.tier-badge{
+  margin-left:auto;
+  flex:none;
+}
+
+/* Thin emerald banner at very top */
+.glory-banner{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 18px;
+  border-radius:var(--r);
+  background:rgba(16,185,129,.07);
+  border:1px solid rgba(16,185,129,.2);
+  font-size:14px;
+  font-weight:500;
+  color:#065F46;
+  margin-bottom:20px;
+}
+.glory-banner .ms{font-size:18px;color:#059669;}
+
+/* Column sizing for main content row */
+.col-left{flex:1.5;min-width:0}
+.col-right{flex:1;min-width:0}
+</style>
+<style>
+.ha-img-placeholder{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:#f4f4f5;border:1px dashed #d4d4d8;border-radius:8px;color:#71717a;font-size:12px;font-family:system-ui,sans-serif;min-height:80px;padding:16px;box-sizing:border-box;animation:ha-img-pulse 1.5s ease-in-out infinite}
+.ha-img-placeholder.ha-failed{animation:none;opacity:.7}
+@keyframes ha-img-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@media(prefers-color-scheme:dark){.ha-img-placeholder{background:#27272a;border-color:#3f3f46;color:#a1a1aa}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">UIU Aid<small>Mutual Aid Network</small></div>
+    <nav class="nav">
+      <a class="nav-item"><span class="ms">space_dashboard</span>Dashboard</a>
+      <a class="nav-item"><span class="ms">handshake</span>Loans</a>
+      <a class="nav-item"><span class="ms">volunteer_activism</span>Crowdfunding</a>
+      <a class="nav-item"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item"><span class="ms">restaurant</span>Meal Drops</a>
+      <a class="nav-item active"><span class="ms">verified_user</span>Trust Profile</a>
+    </nav>
+    <div class="side-user">
+      <span class="av av-1">NJ</span>
+      <div><b>Nusrat Jahan</b><span class="vrf"><span class="ms">verified</span>Verified</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Page header -->
+    <div class="page-head">
+      <div>
+        <h1>Campus Trust Profile</h1>
+        <div class="sub">What lenders and guarantors see</div>
+      </div>
+      <div class="head-actions">
+        <div class="bell"><span class="ms">notifications</span><span class="cnt">2</span></div>
+      </div>
+    </div>
+
+    <!-- Glory banner -->
+    <div class="glory-banner">
+      <span class="ms">workspace_premium</span>
+      <span>All 14 loans repaid on time &mdash; your record is spotless. Keep it up.</span>
+    </div>
+
+    <!-- HEADER IDENTITY CARD -->
+    <div class="hdr-card">
+      <!-- Left: avatar + identity -->
+      <div class="hdr-identity">
+        <span class="av av-xl av-1">NJ</span>
+        <div class="hdr-identity-text">
+          <div class="hdr-name">Nusrat Jahan</div>
+          <div class="hdr-meta">BBA &nbsp;&middot;&nbsp; 9th trimester &nbsp;&middot;&nbsp; Member since 2024</div>
+          <span class="vbadge">
+            <span class="ms">verified</span>
+            Verified Student
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: gauge + tier ladder -->
+      <div class="hdr-right">
+
+        <!-- Circular gauge -->
+        <div class="gauge-wrap">
+          <svg width="130" height="130" viewBox="0 0 120 120" role="img" aria-label="Trust score 82 out of 100">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#10B981" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="58.8"
+              transform="rotate(-90 60 60)"/>
+            <text x="60" y="57" text-anchor="middle" font-size="30" font-weight="800" fill="#0F172A" font-family="Inter">82</text>
+            <text x="60" y="74" text-anchor="middle" font-size="11" fill="#64748B" font-family="Inter">/100</text>
+          </svg>
+          <span class="pill pill-emerald" style="font-size:13px;padding:5px 14px;">
+            <span class="ms ms-fill" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">workspace_premium</span>
+            Gold Tier
+          </span>
+        </div>
+
+        <!-- Tier ladder -->
+        <div class="tier-ladder">
+          <div class="tier-ladder-label">Your Journey</div>
+          <div class="tier-pips">
+            <div class="tier-row">
+              <span class="tier-pip done"></span>
+              <span class="tier-pip-label">New</span>
+            </div>
+            <div class="tier-row">
+              <span class="tier-pip done"></span>
+              <span class="tier-pip-label">Bronze</span>
+            </div>
+            <div class="tier-row">
+              <span class="tier-pip done"></span>
+              <span class="tier-pip-label">Silver</span>
+            </div>
+            <div class="tier-row">
+              <span class="tier-pip current"></span>
+              <span class="tier-pip-label" style="font-weight:700;color:#059669;">Gold</span>
+            </div>
+            <div class="tier-row">
+              <span class="tier-pip"></span>
+              <span class="tier-pip-label muted-tier">Platinum</span>
+            </div>
+          </div>
+          <div class="tier-caption">Borrows up to 4,000 Tk &nbsp;&middot;&nbsp; 8 pts to Platinum (10,000 Tk limit)</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BADGE ROW -->
+    <div class="badge-row">
+      <span class="badge-chip emerald">
+        <span class="ms">workspace_premium</span>
+        Reliable Repayer
+      </span>
+      <span class="badge-chip navy">
+        <span class="ms">how_to_reg</span>
+        Guarantor &times;3
+      </span>
+      <span class="badge-chip slate">
+        <span class="ms">favorite</span>
+        Quiet Hero &mdash; 12 meals
+      </span>
+      <span class="badge-chip emerald">
+        <span class="ms">volunteer_activism</span>
+        0% Charity Lender
+      </span>
+      <span class="badge-chip slate locked">
+        <span class="ms">lock</span>
+        Campus Pillar &mdash; locked
+      </span>
+    </div>
+
+    <!-- MAIN CONTENT ROW -->
+    <div class="row">
+
+      <!-- LEFT: Repayment History -->
+      <div class="col col-left">
+        <div class="card">
+          <div class="card-title">
+            <span class="ms">history</span>
+            Repayment History
+          </div>
+
+          <!-- Headline stat -->
+          <div class="repay-headline">
+            <span class="repay-count money">14/14</span>
+            <span class="repay-label">loans repaid<br>on time</span>
+            <span class="ms repay-check">check_circle</span>
+          </div>
+
+          <!-- Timeline -->
+          <div class="tl">
+
+            <div class="tl-item">
+              <span class="tl-dot emerald"></span>
+              <div>
+                <div style="font-size:14.5px;"><b>Repaid 1,500 Tk to Karim H. &mdash; 2 days early</b></div>
+                <div class="footnote" style="margin-top:2px;">Jul 2026 &nbsp;&middot;&nbsp; <span style="color:#059669;font-weight:600;">+2 pts</span></div>
+              </div>
+            </div>
+
+            <div class="tl-item">
+              <span class="tl-dot navy"></span>
+              <div>
+                <div style="font-size:14.5px;"><b>Lent 2,000 Tk to Tanvir H.</b></div>
+                <div class="footnote" style="margin-top:2px;">Jun 2026 &nbsp;&middot;&nbsp; repaid in full</div>
+              </div>
+            </div>
+
+            <div class="tl-item">
+              <span class="tl-dot amber"></span>
+              <div>
+                <div style="font-size:14.5px;"><b>Extension requested and honored &mdash; 500 Tk loan</b></div>
+                <div class="footnote" style="margin-top:2px;">Mar 2026 &nbsp;&middot;&nbsp; <span style="color:#B45309;font-weight:600;">&minus;3 pts</span> &nbsp;&middot;&nbsp; no permanent mark</div>
+              </div>
+            </div>
+
+            <div class="tl-item">
+              <span class="tl-dot emerald"></span>
+              <div>
+                <div style="font-size:14.5px;"><b>Guaranteed Mim A.'s loan &mdash; fully repaid</b></div>
+                <div class="footnote" style="margin-top:2px;">Feb 2026 &nbsp;&middot;&nbsp; stake returned</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="footnote" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+            Trust events are permanent and visible across campus.
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Score Breakdown + Vouched By -->
+      <div class="col col-right">
+        <div class="stack">
+
+          <!-- Score Breakdown -->
+          <div class="card">
+            <div class="card-title">
+              <span class="ms">analytics</span>
+              Score Breakdown
+            </div>
+
+            <!-- On-time repayment: 40/40 = 100% -->
+            <div class="score-row">
+              <div class="score-row-top">
+                <span class="score-label">On-time repayment</span>
+                <span class="score-val">40<span style="font-weight:500;color:var(--text2);">/40</span></span>
+              </div>
+              <div class="bar"><i style="width:100%"></i></div>
+            </div>
+
+            <!-- Guarantor reliability: 18/20 = 90% -->
+            <div class="score-row">
+              <div class="score-row-top">
+                <span class="score-label">Guarantor reliability</span>
+                <span class="score-val">18<span style="font-weight:500;color:var(--text2);">/20</span></span>
+              </div>
+              <div class="bar"><i style="width:90%"></i></div>
+            </div>
+
+            <!-- Community giving: 12/20 = 60% -->
+            <div class="score-row">
+              <div class="score-row-top">
+                <span class="score-label">Community giving</span>
+                <span class="score-val">12<span style="font-weight:500;color:var(--text2);">/20</span></span>
+              </div>
+              <div class="bar"><i style="width:60%"></i></div>
+            </div>
+
+            <!-- Longevity & activity: 12/20 = 60% -->
+            <div class="score-row">
+              <div class="score-row-top">
+                <span class="score-label">Longevity &amp; activity</span>
+                <span class="score-val">12<span style="font-weight:500;color:var(--text2);">/20</span></span>
+              </div>
+              <div class="bar"><i style="width:60%"></i></div>
+            </div>
+
+            <div class="footnote" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+              <span>Total score</span>
+              <span style="font-weight:800;font-size:16px;color:var(--text);font-variant-numeric:tabular-nums;">82 / 100</span>
+            </div>
+          </div>
+
+          <!-- Vouched By -->
+          <div class="card">
+            <div class="card-title">
+              <span class="ms">how_to_reg</span>
+              Vouched By
+            </div>
+
+            <!-- Rahim Khan -->
+            <div class="frow">
+              <span class="av av-4">RK</span>
+              <div style="min-width:0;flex:1;">
+                <div class="voucher-name">Rahim Khan</div>
+                <div class="voucher-sub">staked 15 pts &nbsp;&middot;&nbsp; Gold</div>
+              </div>
+              <div class="tier-badge">
+                <span class="vbadge">
+                  <span class="ms">verified</span>
+                  Gold
+                </span>
+              </div>
+            </div>
+
+            <!-- Mim Akter -->
+            <div class="frow">
+              <span class="av av-6">MA</span>
+              <div style="min-width:0;flex:1;">
+                <div class="voucher-name">Mim Akter</div>
+                <div class="voucher-sub">staked 10 pts &nbsp;&middot;&nbsp; Platinum</div>
+              </div>
+              <div class="tier-badge">
+                <span class="vbadge">
+                  <span class="ms">verified</span>
+                  Platinum
+                </span>
+              </div>
+            </div>
+
+            <!-- Sadia Rahman -->
+            <div class="frow">
+              <span class="av av-3">SR</span>
+              <div style="min-width:0;flex:1;">
+                <div class="voucher-name">Sadia Rahman</div>
+                <div class="voucher-sub">staked 12 pts &nbsp;&middot;&nbsp; Platinum</div>
+              </div>
+              <div class="tier-badge">
+                <span class="vbadge">
+                  <span class="ms">verified</span>
+                  Platinum
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    <!-- end .row -->
+
+  </main>
+</div>
+<script>
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && window.parent !== window) {
+    window.parent.postMessage({ type: 'close-fullscreen' }, '*');
+  }
+});
+</script>
+<!-- broken-img-handler -->
+<script>
+(function(){
+  if(window.__brokenImgHandler)return;
+  window.__brokenImgHandler=true;
+  var MAX=5,DELAYS=[2000,4000,8000,16000,32000];
+  document.addEventListener('error',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    var liveSrc=img.getAttribute('src');
+    var src=img.dataset.haOriginalSrc||liveSrc;
+    if(!src)return;
+    if(img.dataset.haOriginalSrc&&liveSrc&&liveSrc!==img.dataset.haOriginalSrc&&liveSrc.indexOf('_r=')<0){src=liveSrc;img.dataset.haOriginalSrc=src;img.dataset.haRetryCount='0'}
+    else if(!img.dataset.haOriginalSrc){img.dataset.haOriginalSrc=src}
+    var attempt=parseInt(img.dataset.haRetryCount||'0',10);
+    if(img.dataset.haPhId){var old=document.getElementById(img.dataset.haPhId);if(old)old.remove()}
+    var ph=document.createElement('div');
+    ph.className='ha-img-placeholder'+(attempt>=MAX?' ha-failed':'');
+    ph.id='ha-ph-'+Math.random().toString(36).slice(2,9);
+    var w=img.getAttribute('width');var h=img.getAttribute('height');
+    if(w)ph.style.width=w+(isNaN(Number(w))?'':'px');
+    else if(img.style.width)ph.style.width=img.style.width;
+    else if(img.width>1)ph.style.width=img.width+'px';
+    if(h)ph.style.height=h+(isNaN(Number(h))?'':'px');
+    else if(img.style.height)ph.style.height=img.style.height;
+    else if(img.height>1)ph.style.height=img.height+'px';
+    ph.textContent=attempt>=MAX?'Image unavailable':'Loading image\u2026';
+    img.dataset.haPhId=ph.id;
+    if(img.dataset.haOrigDisplay==null)img.dataset.haOrigDisplay=img.style.display||'';
+    img.style.display='none';
+    img.insertAdjacentElement('afterend',ph);
+    if(attempt<MAX){
+      img.dataset.haRetryCount=String(attempt+1);
+      setTimeout(function(){
+        if(!img.isConnected)return;
+        if(img.dataset.haOriginalSrc!==src)return;
+        if(img.complete&&img.naturalWidth>0)return;
+        var curSrc=img.getAttribute('src');
+        if(curSrc&&curSrc.indexOf(src)!==0)return;
+        var fresh=src+(src.indexOf('?')>=0?'&':'?')+'_r='+(attempt+1)+'_'+Date.now();
+        img.src=fresh;
+      },DELAYS[attempt]);
+    }
+  },true);
+  document.addEventListener('load',function(e){
+    var img=e.target;
+    if(!img||img.tagName!=='IMG')return;
+    if(img.dataset.haPhId){
+      var ph=document.getElementById(img.dataset.haPhId);
+      if(ph)ph.remove();
+      delete img.dataset.haPhId;
+      img.style.display=img.dataset.haOrigDisplay||'';
+      delete img.dataset.haOrigDisplay;
+      delete img.dataset.haOriginalSrc;
+      delete img.dataset.haRetryCount;
+    }
+  },true);
+})();
+</script>
+</body>
+</html>
