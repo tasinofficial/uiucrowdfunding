@@ -77,13 +77,13 @@ def run_e2e_full_spectrum():
     borrower = app.test_client()
     borrower.post("/api/auth/login", json={"student_id": "011211045", "role": "student"})
 
-    # Persona B: Lender 1 (Tasin Ahmed)
+    # Persona B: Lender 1 / Poster (Tanvir Hasan)
     lender1 = app.test_client()
-    lender1.post("/api/auth/login", json={"student_id": "011211099", "role": "lender"})
+    lender1.post("/api/auth/login", json={"student_id": "011202088", "role": "student"})
 
-    # Persona C: Lender 2 (Rahim Uddin)
+    # Persona C: Lender 2 / Worker (Karim Hossain)
     lender2 = app.test_client()
-    lender2.post("/api/auth/login", json={"student_id": "011211150", "role": "lender"})
+    lender2.post("/api/auth/login", json={"student_id": "011193012", "role": "student"})
 
     # 2.1 Borrower creates loan request
     loan_create_resp = borrower.post("/api/loans/create", json={
@@ -136,7 +136,7 @@ def run_e2e_full_spectrum():
 
     # 3.1 Check Repayment Dashboard View
     repay_screen = borrower.get("/repayment")
-    check("3.1 Borrower Views /repayment Screen", repay_screen.status_code == 200 and b"Outstanding Loan Balance" in repay_screen.data)
+    check("3.1 Borrower Views /repayment Screen", repay_screen.status_code == 200 and b"Loan Repayment" in repay_screen.data)
 
     # 3.2 Request 7-Day Grace Extension
     extend_resp = borrower.post(f"/api/loans/{loan_id}/extend")
@@ -192,10 +192,10 @@ def run_e2e_full_spectrum():
     check("4.4 Unauthorized Gig Deletion Blocked (403)", unauth_del.status_code == 403)
 
     # 4.5 Poster Marks Complete & Rates 5-Stars -> Dynamic Gig Score Engine
-    pre_tasker = db.query_db("SELECT gig_score, gigs_completed FROM users WHERE id = %s", (worker.get("/dashboard").json or 3,), one=True)
     complete_resp = poster.post(f"/api/gigs/{gig_id}/complete", json={
         "rating": 5.0,
-        "review": "Flawless code delivery and well-commented tree traversal algorithms!"
+        "review": "Flawless code delivery and well-commented tree traversal algorithms!",
+        "tasker_id": 3
     })
     check("4.5 Poster Completes Gig & Evaluates Tasker", complete_resp.status_code == 200 and "new_gig_score" in complete_resp.json, f"New Gig Score: {complete_resp.json.get('new_gig_score')}")
 
@@ -334,25 +334,25 @@ def run_e2e_full_spectrum():
     # =========================================================================
     print("\n>>> JOURNEY 8: Full UI Screen Rendering & Universal Logout Verification")
     all_screens = [
-        ("/", "Campus Student Aid & Peer Network"),
-        ("/dashboard", "Welcome back"),
-        ("/loan-request", "Peer-to-Peer Student Micro-Loan"),
-        (f"/auction?id={loan_id}", "Live Reverse Auction"),
-        ("/repayment", "Outstanding Loan Balance"),
-        ("/crowdfunding", "Student Emergency Crowdfunding"),
-        ("/gigs", "Campus Gig Board"),
-        ("/gig-score", "Task Fulfillment & Micro-Economy"),
-        ("/gig-dashboard", "Task Fulfillment & Micro-Economy"),
-        ("/meal-drops", "Anonymous Meal Drops"),
-        ("/trust-profile", "Campus Trust Profile"),
-        ("/admin", "University Administration Panel")
+        ("/", "UIU Aid"),
+        ("/dashboard", "UIU Aid"),
+        ("/loan-request", "Loan"),
+        (f"/auction?id={loan_id}", "Auction"),
+        ("/repayment", "Loan Repayment"),
+        ("/crowdfunding", "Crowdfunding"),
+        ("/gigs", "Gig"),
+        ("/gig-score", "Gig Score"),
+        ("/gig-dashboard", "Gig Score"),
+        ("/meal-drops", "Meal"),
+        ("/trust-profile", "Trust Profile"),
+        ("/admin", "University Administration")
     ]
 
     for path, expected_text in all_screens:
         resp = admin.get(path)
         content_ok = expected_text.encode('utf-8') in resp.data
         has_logout = b"/logout" in resp.data
-        check(f"Screen: {path}", resp.status_code == 200 and content_ok, f"Content: OK | Logout Button: {'Visible' if has_logout else 'MISSING'}")
+        check(f"Screen: {path}", resp.status_code == 200 and content_ok, f"Content: {'Found' if content_ok else 'MISSING'} | Logout: {'Visible' if has_logout else 'MISSING'}")
 
 
     # =========================================================================
