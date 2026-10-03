@@ -365,10 +365,17 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
           <span>Verified Disbursement</span>
           <span class="ms ms-18" style="color:var(--navy);">security</span>
         </div>
+        {% if stats.has_receipts %}
         <div class="stat-kpi-val">{{ stats.verified_disbursement_rate }}% Direct</div>
-        <div class="stat-kpi-sub">
-          0% cash leakage to third parties
+        <div class="stat-kpi-sub green">
+          <span class="ms ms-16">verified</span> 0% cash leakage to third parties
         </div>
+        {% else %}
+        <div class="stat-kpi-val">0 Tk Disbursed</div>
+        <div class="stat-kpi-sub">
+          Audit release pending milestones
+        </div>
+        {% endif %}
       </div>
 
       <div class="stat-kpi">
@@ -414,7 +421,13 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
           <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
               <span style="font-size:13px;font-weight:700;color:var(--text);">Campaign Expenditure Allocation &amp; Invoices</span>
-              <span style="font-size:12px;color:var(--text2);">{{ stats.total_expenditure }} Tk accounted</span>
+              <span style="font-size:12px;color:var(--text2);">
+                {% if stats.has_receipts %}
+                  {{ stats.total_expenditure }} Tk accounted
+                {% else %}
+                  Projected target allocation (0 Tk disbursed)
+                {% endif %}
+              </span>
             </div>
             {% set seg_colors = ['#2563EB', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899', '#06B6D4'] %}
             <div class="seg-bar">
@@ -458,13 +471,23 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
 
           <!-- TAB 1: ITEMIZED RECEIPTS (ACTIVE) -->
           <div id="tab-receipts">
+            {% if expenditures and expenditures|length > 0 %}
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:#F0FDF4;border:1px solid #BBF7D0;padding:10px 14px;border-radius:var(--r);">
               <div style="font-size:12.5px;color:#166534;font-weight:600;display:flex;align-items:center;gap:6px;">
                 <span class="ms ms-18 ms-fill" style="color:var(--emerald);">verified</span>
-                All {{ expenditures|length }} hospital &amp; pharmacy invoices audited by UIU Medical Centre
+                All {{ expenditures|length }} hospital &amp; pharmacy invoice(s) audited by UIU Medical Centre
               </div>
               <span class="pill pill-emerald">100% Verified</span>
             </div>
+            {% else %}
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:#FFFBEB;border:1px solid #FDE68A;padding:12px 16px;border-radius:var(--r);">
+              <div style="font-size:12.5px;color:#92400E;font-weight:600;display:flex;align-items:center;gap:6px;">
+                <span class="ms ms-18" style="color:#D97706;">pending_actions</span>
+                Hospital &amp; vendor invoices will be audited and logged here as milestone funds are released.
+              </div>
+              <span class="pill pill-amber" style="background:#FEF3C7;color:#B45309;border:1px solid #FCD34D;">Audit Pending</span>
+            </div>
+            {% endif %}
 
             {% for exp in expenditures %}
             <div class="receipt-tile">
@@ -498,7 +521,11 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
             </div>
             {% endfor %}
             {% if not expenditures %}
-            <div style="text-align:center;padding:32px;color:var(--text2);">No receipts uploaded yet.</div>
+            <div style="text-align:center;padding:36px 20px;background:#FAFBFD;border:1px dashed var(--border);border-radius:var(--r);color:var(--text2);margin-bottom:12px;">
+              <span class="ms ms-32" style="color:#94A3B8;display:block;margin-bottom:8px;">receipt_long</span>
+              <strong style="color:var(--text);font-size:14px;display:block;margin-bottom:4px;">No Hospital Receipts Uploaded Yet</strong>
+              <span style="font-size:12.5px;">Itemized invoices and hospital pharmacy receipts from <strong>{{ campaign.hospital_name or 'the hospital' }}</strong> will be verified and uploaded here by the UIU administration committee as funds are disbursed.</span>
+            </div>
             {% endif %}
           </div>
 

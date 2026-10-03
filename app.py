@@ -286,7 +286,8 @@ def crowdfunding():
     avg_donation = round(raised / donor_count) if donor_count > 0 else 0
     
     # Expenditures breakdown by category
-    total_expenditure = sum(e["amount"] for e in expenditures) if expenditures else 38400
+    total_expenditure = sum(e["amount"] for e in expenditures) if expenditures else 0
+    has_receipts = bool(expenditures and total_expenditure > 0)
     categories_map = {}
     if expenditures:
         for e in expenditures:
@@ -294,15 +295,15 @@ def crowdfunding():
             categories_map[cat] = categories_map.get(cat, 0) + e["amount"]
     
     cat_breakdown = []
-    if categories_map:
+    if categories_map and total_expenditure > 0:
         for cat, amt in categories_map.items():
-            pct = round((amt / total_expenditure) * 100, 1) if total_expenditure > 0 else 0
+            pct = round((amt / total_expenditure) * 100, 1)
             cat_breakdown.append({"category": cat, "amount": amt, "percent": pct})
     else:
         cat_breakdown = [
-            {"category": "Hospital & Room Charges", "amount": 15000, "percent": 39.1},
-            {"category": "Surgery & Operating Theater", "amount": 20000, "percent": 52.1},
-            {"category": "Post-Op Pharmacy", "amount": 3400, "percent": 8.8}
+            {"category": "Hospital & Room Charges", "amount": int(goal * 0.40), "percent": 40.0},
+            {"category": "Surgery & Operating Theater", "amount": int(goal * 0.50), "percent": 50.0},
+            {"category": "Post-Op Pharmacy", "amount": int(goal * 0.10), "percent": 10.0}
         ]
 
     days_left = campaign.get("days_left", 6) if campaign else 6
@@ -327,7 +328,8 @@ def crowdfunding():
         "pct_funded": pct_funded,
         "donor_count": donor_count,
         "avg_donation": avg_donation,
-        "verified_disbursement_rate": 100,
+        "verified_disbursement_rate": 100 if has_receipts else 0,
+        "has_receipts": has_receipts,
         "daily_velocity_needed": round(deficit / max(1, days_left)),
         "days_left": days_left,
         "total_expenditure": total_expenditure,
