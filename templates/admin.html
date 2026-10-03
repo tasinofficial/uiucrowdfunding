@@ -142,12 +142,17 @@ tr:hover td{background:#FDFDFE}
       <a class="nav-item" href="/logout"><span class="ms">logout</span>Sign Out</a>
     </nav>
 
-    <div class="side-user">
-      <div class="av">AD</div>
-      <div>
-        <b>Admin Division</b>
-        <small>Provost & Financial Aid</small>
+    <div class="side-user" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="av">AD</div>
+        <div>
+          <b>Admin Division</b>
+          <small>Provost &amp; Financial Aid</small>
+        </div>
       </div>
+      <a href="/logout" title="Sign Out / Logout" style="color:#94A3B8;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:6px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='#EF4444';this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.color='#94A3B8';this.style.background='transparent'">
+        <span class="ms ms-18">logout</span>
+      </a>
     </div>
   </aside>
 
@@ -190,16 +195,18 @@ tr:hover td{background:#FDFDFE}
 
     <!-- TAB NAVIGATION -->
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('loans-tab', this)"><span class="ms ms-18">handshake</span> Peer Loans & Requests ({{ loans|length }})</div>
-      <div class="tab" onclick="switchTab('milestones-tab', this)"><span class="ms ms-18">receipt_long</span> Campaign Milestones ({{ milestones|length }})</div>
-      <div class="tab" onclick="switchTab('users-tab', this)"><span class="ms ms-18">group</span> Students & Trust Ratings ({{ users|length }})</div>
+      <div class="tab active" onclick="switchTab('loans-tab', this)"><span class="ms ms-18">handshake</span> Peer Loans &amp; Requests ({{ loans|length }})</div>
+      <div class="tab" onclick="switchTab('campaigns-tab', this)"><span class="ms ms-18">volunteer_activism</span> Crowdfunding Campaigns ({{ campaigns|length }})</div>
+      <div class="tab" onclick="switchTab('expenditures-tab', this)"><span class="ms ms-18">receipt_long</span> Itemized Receipts &amp; Audits ({{ expenditures|length }})</div>
+      <div class="tab" onclick="switchTab('milestones-tab', this)"><span class="ms ms-18">fact_check</span> Milestones ({{ milestones|length }})</div>
+      <div class="tab" onclick="switchTab('users-tab', this)"><span class="ms ms-18">group</span> Students &amp; Trust Ratings ({{ users|length }})</div>
     </div>
 
     <!-- SECTION 1: LOANS TABLE -->
     <div id="loans-tab" class="admin-section">
       <div class="card">
         <div class="card-header">
-          <h2>Loan Applications & Risk Review</h2>
+          <h2>Loan Applications &amp; Risk Review</h2>
           <span style="font-size:12.5px;color:var(--text2);">Click to approve or close auction</span>
         </div>
         <table>
@@ -252,11 +259,118 @@ tr:hover td{background:#FDFDFE}
       </div>
     </div>
 
+    <!-- SECTION: CAMPAIGNS TABLE & APPROVALS -->
+    <div id="campaigns-tab" class="admin-section" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <h2>Crowdfunding Campaigns &amp; Medical Approvals</h2>
+          <span style="font-size:12.5px;color:var(--text2);">Audit submitted student campaigns before public listing</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title &amp; Cause</th>
+              <th>Student Initiator</th>
+              <th>Category</th>
+              <th>Goal</th>
+              <th>Raised</th>
+              <th>Status</th>
+              <th>Admin Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in campaigns %}
+            <tr>
+              <td>#{{ c.id }}</td>
+              <td><strong>{{ c.title }}</strong></td>
+              <td>
+                <div>{{ c.student_name }}</div>
+                <small style="color:var(--text2)">{{ c.student_dept }}</small>
+              </td>
+              <td><span class="pill pill-navy">{{ c.category }}</span></td>
+              <td><strong>{{ c.goal_amount }} Tk</strong></td>
+              <td>{{ c.raised_amount }} Tk</td>
+              <td>
+                {% if c.status == 'active' %}
+                <span class="pill pill-emerald"><span class="ms ms-16">check</span> Live Active</span>
+                {% else %}
+                <span class="pill pill-amber"><span class="ms ms-16">hourglass_empty</span> Pending Approval</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if c.status != 'active' %}
+                <button class="btn btn-sm btn-emerald" onclick="adminAction('/api/admin/campaign/approve', {campaign_id: {{ c.id }}}, 'Campaign approved & live on UIU Aid!')">Approve Campaign</button>
+                {% else %}
+                <span style="color:var(--emerald);font-weight:600;font-size:12px;">Approved ✓</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION: ITEMIZED EXPENDITURES & RECEIPTS -->
+    <div id="expenditures-tab" class="admin-section" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Itemized Vendor Invoices &amp; Hospital Receipts</h2>
+            <span style="font-size:12.5px;color:var(--text2);">Direct vendor-verified disbursement entries tied to crowdfunding</span>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openExpenditureModal()">
+            <span class="ms ms-16">add_circle</span> Add Verified Receipt
+          </button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice / Date</th>
+              <th>Campaign</th>
+              <th>Category</th>
+              <th>Vendor</th>
+              <th>Item &amp; Quantity</th>
+              <th>Amount</th>
+              <th>Audit Authority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in expenditures %}
+            <tr>
+              <td>
+                <code>{{ e.invoice_no }}</code>
+                <div><small style="color:var(--text2)">{{ e.receipt_date or 'Recent' }}</small></div>
+              </td>
+              <td><strong>{{ e.campaign_title[:28] }}...</strong></td>
+              <td><span class="pill pill-purple">{{ e.category }}</span></td>
+              <td><strong>{{ e.vendor }}</strong></td>
+              <td>
+                <div>{{ e.item_name }}</div>
+                <small style="color:var(--text2)">Qty: {{ e.quantity or '1' }}</small>
+              </td>
+              <td><strong style="color:var(--emerald);">{{ e.amount }} Tk</strong></td>
+              <td>
+                <span class="pill pill-emerald"><span class="ms ms-16">verified</span> {{ e.verified_by }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+            {% if not expenditures %}
+            <tr>
+              <td colspan="7" style="text-align:center;color:var(--text2);padding:24px;">No expenditures recorded yet. Click "Add Verified Receipt" to log one.</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- SECTION 2: MILESTONES TABLE -->
     <div id="milestones-tab" class="admin-section" style="display:none;">
       <div class="card">
         <div class="card-header">
-          <h2>Crowdfunding Expense Receipts & Invoices</h2>
+          <h2>Crowdfunding Expense Receipts &amp; Invoices</h2>
           <span style="font-size:12.5px;color:var(--text2);">Audit and verify withdrawal milestones</span>
         </div>
         <table>
@@ -392,6 +506,99 @@ tr:hover td{background:#FDFDFE}
       alert('Error executing administrative command');
     }
   }
+
+  function openExpenditureModal() {
+    document.getElementById('expenditure-modal').style.display = 'flex';
+  }
+  function closeExpenditureModal() {
+    document.getElementById('expenditure-modal').style.display = 'none';
+  }
+  async function submitExpenditure() {
+    const campaign_id = document.getElementById('exp-campaign').value;
+    const category = document.getElementById('exp-category').value;
+    const vendor = document.getElementById('exp-vendor').value.trim();
+    const invoice_no = document.getElementById('exp-invoice').value.trim();
+    const item_name = document.getElementById('exp-item').value.trim();
+    const quantity = document.getElementById('exp-qty').value.trim() || '1 Unit';
+    const amount = parseInt(document.getElementById('exp-amount').value);
+    const verified_by = document.getElementById('exp-verifier').value.trim() || 'UIU Medical Centre Audit Committee';
+
+    if(!vendor || !item_name || !amount) {
+      alert('Please fill out vendor name, item description, and amount.');
+      return;
+    }
+
+    await adminAction('/api/admin/expenditure/add', {
+      campaign_id, category, vendor, invoice_no, item_name, quantity, amount, verified_by
+    }, 'Itemized invoice receipt verified and logged!');
+    closeExpenditureModal();
+  }
 </script>
+
+<!-- Add Expenditure Modal -->
+<div id="expenditure-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:var(--r);width:100%;max-width:520px;box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#F8FAFC;">
+      <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;">
+        <span class="ms ms-20" style="color:var(--emerald);">receipt_long</span> Add Verified Expenditure Receipt
+      </h3>
+      <button onclick="closeExpenditureModal()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text2);">&times;</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Target Campaign</label>
+        <select id="exp-campaign" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+          {% for c in campaigns %}
+          <option value="{{ c.id }}">{{ c.title }} (#{{ c.id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Category</label>
+          <select id="exp-category" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+            <option value="Hospital & Room Charges">Hospital & Room Charges</option>
+            <option value="Surgery & Operating Theater">Surgery & Operating Theater</option>
+            <option value="Post-Op Pharmacy">Post-Op Pharmacy</option>
+            <option value="Diagnostics & Lab Tests">Diagnostics & Lab Tests</option>
+            <option value="Tuition Fee Clearance">Tuition Fee Clearance</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Invoice / Bill Number</label>
+          <input type="text" id="exp-invoice" placeholder="e.g. INV-98421" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Vendor / Hospital Entity</label>
+          <input type="text" id="exp-vendor" placeholder="e.g. Evercare Hospital Dhaka" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Disbursed Amount (Tk)</label>
+          <input type="number" id="exp-amount" placeholder="e.g. 15000" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.4fr 0.6fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Item / Procedure Description</label>
+          <input type="text" id="exp-item" placeholder="e.g. Emergency Surgical OT Kit & Surgeon Fee" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Quantity</label>
+          <input type="text" id="exp-qty" placeholder="1 Unit" value="1 Unit" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;">Audit &amp; Verifying Body</label>
+        <input type="text" id="exp-verifier" value="UIU Medical Centre Audit Committee" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px;">
+        <button class="btn btn-secondary" onclick="closeExpenditureModal()">Cancel</button>
+        <button class="btn btn-primary" style="background:var(--emerald);border-color:var(--emerald);" onclick="submitExpenditure()">Verify &amp; Commit Receipt</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

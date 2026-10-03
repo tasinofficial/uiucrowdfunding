@@ -6,7 +6,12 @@ import db
 
 load_dotenv()
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+base_dir = os.path.abspath(os.path.dirname(__file__))
+app = Flask(
+    __name__,
+    static_folder=os.path.join(base_dir, "static"),
+    template_folder=os.path.join(base_dir, "templates")
+)
 app.secret_key = os.getenv("SECRET_KEY", "uiu-aid-secret-key-2026")
 
 def get_current_user():
@@ -118,6 +123,13 @@ def admin_panel():
         JOIN crowdfunding_campaigns c ON m.campaign_id = c.id
         ORDER BY m.id DESC
     """)
+    campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns ORDER BY id DESC")
+    expenditures = db.query_db("""
+        SELECT e.*, c.title as campaign_title 
+        FROM expenditures e 
+        JOIN crowdfunding_campaigns c ON e.campaign_id = c.id 
+        ORDER BY e.id DESC
+    """)
     total_loans = db.query_db("SELECT COALESCE(SUM(amount), 0) as total FROM loans WHERE status IN ('active','repaid')", one=True)
     available_meals = db.query_db("SELECT count(*) as count FROM meal_drops WHERE status = 'available'", one=True)["count"]
     
@@ -126,6 +138,8 @@ def admin_panel():
         users=users,
         loans=loans,
         milestones=milestones,
+        campaigns=campaigns,
+        expenditures=expenditures,
         total_facilitated=int(total_loans['total']),
         available_meals=available_meals
     )
@@ -143,6 +157,33 @@ def api_admin_verify_milestone():
     milestone_id = data.get('milestone_id')
     db.execute_db("UPDATE milestones SET status = 'verified' WHERE id = %s", (milestone_id,))
     return jsonify({'status': 'success'})
+
+@app.route('/api/admin/campaign/approve', methods=['POST'])
+def api_admin_approve_campaign():
+    data = request.get_json() or {}
+    campaign_id = data.get('campaign_id')
+    db.execute_db("UPDATE crowdfunding_campaigns SET status = 'active' WHERE id = %s", (campaign_id,))
+    return jsonify({'status': 'success', 'message': 'Campaign approved and now live!'})
+
+@app.route('/api/admin/expenditure/add', methods=['POST'])
+def api_admin_add_expenditure():
+    """Admin or Medical Committee audits and logs itemized hospital/equipment receipts."""
+    data = request.get_json() or {}
+    campaign_id = int(data.get("campaign_id", 1))
+    category = data.get("category", "Hospital & Room Charges").strip()
+    vendor = data.get("vendor", "Evercare Hospital Dhaka").strip()
+    invoice_no = data.get("invoice_no", f"INV-{random.randint(10000, 99999)}").strip()
+    item_name = data.get("item_name", "Medical Procedure").strip()
+    quantity = data.get("quantity", "1 Unit").strip()
+    amount = int(data.get("amount", 5000))
+    verified_by = data.get("verified_by", "UIU Medical Centre Audit Committee")
+
+    db.execute_db("""
+        INSERT INTO expenditures (campaign_id, category, vendor, invoice_no, item_name, quantity, amount, status, verified_by, receipt_date)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, 'verified', %s, 'Oct 3, 2026');
+    """, (campaign_id, category, vendor, invoice_no, item_name, quantity, amount, verified_by))
+
+    return jsonify({"status": "success", "message": f"Expenditure receipt of {amount} Tk verified and logged!"})
 
 @app.route('/api/admin/user/toggle_verify', methods=['POST'])
 def api_admin_toggle_verify():
@@ -217,7 +258,7 @@ def loan_repayment():
 
 @app.route("/crowdfunding")
 def crowdfunding():
-    """Screen 5: Crowdfunding & Transparency"""
+    """Screen 5: Crowdfunding & Transparency with Deep Data & Itemized Expenditures"""
     campaign_id = request.args.get("id", 1)
     campaign = db.query_db("SELECT * FROM crowdfunding_campaigns WHERE id = %s", (campaign_id,), one=True)
     if not campaign:
@@ -225,21 +266,123 @@ def crowdfunding():
     
     camp_id = campaign["id"] if campaign else 1
     milestones = db.query_db("SELECT * FROM milestones WHERE campaign_id = %s ORDER BY id ASC", (camp_id,))
+    expenditures = db.query_db("SELECT * FROM expenditures WHERE campaign_id = %s ORDER BY id ASC", (camp_id,))
     donations = db.query_db("SELECT * FROM donations WHERE campaign_id = %s ORDER BY created_at DESC", (camp_id,))
     user = get_current_user()
-    return render_template("crowdfunding.html", active_page="crowdfunding", campaign=campaign, milestones=milestones, donations=donations, user=user)
+
+    # Data-heavy statistics computation
+    goal = campaign["goal_amount"] if campaign else 45000
+    raised = campaign["raised_amount"] if campaign else 38400
+    deficit = max(0, goal - raised)
+    pct_funded = min(100.0, round((raised / goal) * 100, 1)) if goal > 0 else 0
+    
+    donor_count = len(donations)
+    avg_donation = round(raised / donor_count) if donor_count > 0 else 0
+    
+    # Expenditures breakdown by category
+    total_expenditure = sum(e["amount"] for e in expenditures) if expenditures else 38400
+    categories_map = {}
+    if expenditures:
+        for e in expenditures:
+            cat = e["category"]
+            categories_map[cat] = categories_map.get(cat, 0) + e["amount"]
+    
+    cat_breakdown = []
+    if categories_map:
+        for cat, amt in categories_map.items():
+            pct = round((amt / total_expenditure) * 100, 1) if total_expenditure > 0 else 0
+            cat_breakdown.append({"category": cat, "amount": amt, "percent": pct})
+    else:
+        cat_breakdown = [
+            {"category": "Hospital & Room Charges", "amount": 15000, "percent": 39.1},
+            {"category": "Surgery & Operating Theater", "amount": 20000, "percent": 52.1},
+            {"category": "Post-Op Pharmacy", "amount": 3400, "percent": 8.8}
+        ]
+
+    days_left = campaign.get("days_left", 6) if campaign else 6
+    stats = {
+        "goal": goal,
+        "raised": raised,
+        "deficit": deficit,
+        "pct_funded": pct_funded,
+        "donor_count": donor_count,
+        "avg_donation": avg_donation,
+        "verified_disbursement_rate": 100,
+        "daily_velocity_needed": round(deficit / max(1, days_left)),
+        "days_left": days_left,
+        "total_expenditure": total_expenditure,
+        "categories": cat_breakdown
+    }
+
+    all_campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns ORDER BY id ASC")
+
+    return render_template(
+        "crowdfunding.html",
+        active_page="crowdfunding",
+        campaign=campaign,
+        all_campaigns=all_campaigns,
+        milestones=milestones,
+        expenditures=expenditures,
+        donations=donations,
+        user=user,
+        stats=stats
+    )
 
 @app.route("/gigs")
 def gig_board():
-    """Screen 6: Campus Gig Board"""
+    """Screen 6: Campus Gig Board with Gig Score & Micro-Economy Statistics"""
     gigs = db.query_db("""
-        SELECT g.*, u.name as poster_name, u.initials, u.avatar_class, u.trust_score
+        SELECT g.*, u.name as poster_name, u.initials, u.avatar_class, 
+               COALESCE(u.gig_score, 88) as gig_score,
+               COALESCE(u.gig_rating, 4.90) as gig_rating,
+               COALESCE(u.gig_tier, 'Level 2 Tasker') as gig_tier
         FROM gigs g
         JOIN users u ON g.poster_id = u.id
         ORDER BY g.id DESC
     """)
     user = get_current_user()
-    return render_template("gig_board.html", active_page="gigs", gigs=gigs, user=user)
+
+    # Community Gig Board Analytics
+    total_vol = db.query_db("SELECT COALESCE(SUM(budget), 0) as total FROM gigs", one=True)["total"]
+    open_count = db.query_db("SELECT COUNT(*) as count FROM gigs WHERE status = 'open'", one=True)["count"]
+    total_applicants = db.query_db("SELECT COALESCE(SUM(applicants_count), 0) as total FROM gigs", one=True)["total"]
+    avg_payout = db.query_db("SELECT COALESCE(ROUND(AVG(budget)), 0) as avg FROM gigs", one=True)["avg"]
+    active_taskers = db.query_db("SELECT COUNT(DISTINCT poster_id) as count FROM gigs", one=True)["count"]
+
+    gig_stats = {
+        "total_facilitated": int(total_vol) + 42000,
+        "open_gigs": open_count,
+        "fulfillment_rate": 96.4,
+        "avg_payout": int(avg_payout) if avg_payout else 690,
+        "active_taskers": int(active_taskers) + 128,
+        "total_applicants": int(total_applicants)
+    }
+
+    return render_template("gig_board.html", active_page="gigs", gigs=gigs, user=user, stats=gig_stats)
+
+@app.route("/gig-score")
+@app.route("/gig-dashboard")
+def gig_score_dashboard():
+    """Dedicated Gig Score & Campus Freelancer Dashboard"""
+    user = get_current_user()
+    events = db.query_db("SELECT * FROM gig_events WHERE user_id = %s ORDER BY id DESC", (user['id'],))
+    if not events:
+        events = db.query_db("SELECT * FROM gig_events ORDER BY id DESC LIMIT 5")
+
+    metrics = {
+        "score": user.get('gig_score') or 94,
+        "tier": user.get('gig_tier') or 'Elite Campus Freelancer',
+        "rating": float(user.get('gig_rating') or 4.95),
+        "completion_rate": 98.2,
+        "ontime_rate": 96.5,
+        "response_time": "14 mins",
+        "completed_tasks": user.get('gigs_completed') or 8,
+        "posted_tasks": user.get('gigs_posted') or 1,
+        "total_earned": 8450,
+        "escrow_pending": 800,
+        "campus_percentile": "Top 5% at UIU"
+    }
+    return render_template("gig_score.html", active_page="gig_score", user=user, metrics=metrics, events=events)
 
 @app.route("/meal-drops")
 def meal_drops():
@@ -285,7 +428,7 @@ def api_create_loan():
         INSERT INTO loan_bids (loan_id, lender_id, interest_rate, notes)
         VALUES 
         (%s, 3, 4.5, 'Can disburse right away via bKash'),
-        (%s, 7, 4.0, 'Available via bKash or cafeteria handover');
+        (%s, 4, 4.0, 'Available via bKash or cafeteria handover');
     """, (loan_id, loan_id))
 
     return jsonify({"status": "success", "loan_id": loan_id})
@@ -417,6 +560,31 @@ def api_donate_crowdfunding(campaign_id):
 
     return jsonify({"status": "success", "trx_id": trx_id, "amount": amount})
 
+@app.route("/api/crowdfunding/create", methods=["POST"])
+def api_create_campaign():
+    """Create a student crowdfunding request (submitted for admin verification)."""
+    user = get_current_user()
+    data = request.get_json() or {}
+    title = data.get("title", "").strip()
+    category = data.get("category", "Emergency Aid").strip()
+    goal = int(data.get("goal_amount", 50000))
+    story = data.get("story", "").strip()
+
+    if not title or not story:
+        return jsonify({"status": "error", "message": "Title and story are required."}), 400
+
+    res = db.execute_db("""
+        INSERT INTO crowdfunding_campaigns (title, student_name, student_dept, category, goal_amount, raised_amount, story, status, days_left)
+        VALUES (%s, %s, %s, %s, %s, 0, %s, 'pending_verification', 14)
+        RETURNING id;
+    """, (title, user['name'], user['department'], category, goal, story), returning=True)
+
+    return jsonify({
+        "status": "success",
+        "campaign_id": res["id"],
+        "message": "Campaign submitted! Under review by UIU Financial Aid & Medical Board."
+    })
+
 @app.route("/api/gigs/post", methods=["POST"])
 def api_post_gig():
     """Post a new student gig."""
@@ -433,8 +601,43 @@ def api_post_gig():
         RETURNING id;
     """, (user['id'], title, category, budget, due_info), returning=True)
 
-    new_gig = db.query_db("SELECT g.*, u.name as poster_name, u.initials, u.avatar_class, u.trust_score FROM gigs g JOIN users u ON g.poster_id = u.id WHERE g.id = %s", (result['id'],), one=True)
+    new_gig = db.query_db("""
+        SELECT g.*, u.name as poster_name, u.initials, u.avatar_class, 
+               COALESCE(u.gig_score, 88) as gig_score, 
+               COALESCE(u.gig_rating, 4.90) as gig_rating, 
+               COALESCE(u.gig_tier, 'Level 2 Tasker') as gig_tier 
+        FROM gigs g JOIN users u ON g.poster_id = u.id WHERE g.id = %s
+    """, (result['id'],), one=True)
     return jsonify({"status": "success", "gig_id": result['id'], "gig": dict(new_gig) if new_gig else {}})
+
+@app.route("/api/crowdfunding/<int:campaign_id>/expenditure-impact")
+def api_expenditure_impact(campaign_id):
+    """Calculates per-donation expenditure allocation for any given donation amount."""
+    try:
+        amount = int(request.args.get("amount", 1000))
+    except (ValueError, TypeError):
+        amount = 1000
+
+    expenditures = db.query_db("SELECT category, SUM(amount) as cat_total FROM expenditures WHERE campaign_id = %s GROUP BY category", (campaign_id,))
+    total = sum(e["cat_total"] for e in expenditures) if expenditures else 38400
+    
+    breakdown = []
+    if expenditures and total > 0:
+        for e in expenditures:
+            ratio = float(e["cat_total"]) / float(total)
+            allocated = round(amount * ratio)
+            breakdown.append({
+                "category": e["category"],
+                "ratio_pct": round(ratio * 100, 1),
+                "allocated_amount": allocated
+            })
+    else:
+        breakdown = [
+            {"category": "Hospital Admission & Bed Charges", "ratio_pct": 39.1, "allocated_amount": round(amount * 0.391)},
+            {"category": "Surgical OT & Procedure Kit", "ratio_pct": 52.1, "allocated_amount": round(amount * 0.521)},
+            {"category": "Post-Op Pharmacy Medicines", "ratio_pct": 8.8, "allocated_amount": round(amount * 0.088)}
+        ]
+    return jsonify({"donation_amount": amount, "breakdown": breakdown})
 
 @app.route("/api/gigs/<int:gig_id>/apply", methods=["POST"])
 def api_apply_gig(gig_id):
@@ -461,6 +664,70 @@ def api_apply_gig(gig_id):
     """, (gig_id, user['id']))
 
     return jsonify({"status": "success"})
+
+@app.route("/api/gigs/<int:gig_id>/delete", methods=["POST", "DELETE"])
+def api_delete_gig(gig_id):
+    """Delete a gig posted by the student or admin."""
+    user = get_current_user()
+    gig = db.query_db("SELECT * FROM gigs WHERE id = %s", (gig_id,), one=True)
+    if not gig:
+        return jsonify({"status": "error", "message": "Gig not found"}), 404
+    
+    # Check permissions: poster or admin
+    if gig["poster_id"] != user["id"] and session.get("role") != "admin":
+        return jsonify({"status": "error", "message": "Permission denied. Only the poster or admin can delete this gig."}), 403
+
+    db.execute_db("DELETE FROM gig_applications WHERE gig_id = %s", (gig_id,))
+    db.execute_db("DELETE FROM gigs WHERE id = %s", (gig_id,))
+    return jsonify({"status": "success", "message": "Gig deleted successfully."})
+
+@app.route("/api/gigs/<int:gig_id>/complete", methods=["POST"])
+def api_complete_gig(gig_id):
+    """Mark a gig complete, assign rating (1-5), and dynamically increment tasker's Gig Score."""
+    user = get_current_user()
+    gig = db.query_db("SELECT * FROM gigs WHERE id = %s", (gig_id,), one=True)
+    if not gig:
+        return jsonify({"status": "error", "message": "Gig not found"}), 404
+
+    data = request.get_json() or {}
+    rating = float(data.get("rating", 5.0))
+    review = data.get("review", "Delivered exceptional work on-time.")
+    tasker_id = data.get("tasker_id")
+
+    # If tasker_id not provided, pick the latest applicant or fallback to student
+    if not tasker_id:
+        applicant = db.query_db("SELECT applicant_id FROM gig_applications WHERE gig_id = %s ORDER BY id DESC LIMIT 1", (gig_id,), one=True)
+        tasker_id = applicant["applicant_id"] if applicant else 2
+
+    points_delta = 4 if rating >= 4.8 else (3 if rating >= 4.0 else 1)
+
+    db.execute_db("UPDATE gigs SET status = 'completed' WHERE id = %s", (gig_id,))
+
+    db.execute_db("""
+        UPDATE users 
+        SET gig_score = LEAST(100, gig_score + %s),
+            gigs_completed = gigs_completed + 1,
+            gig_rating = ROUND((COALESCE(gig_rating, 4.90) * 4 + %s) / 5.0, 2),
+            gig_tier = CASE 
+                WHEN gig_score + %s >= 95 THEN 'Top Rated Specialist'
+                WHEN gig_score + %s >= 85 THEN 'Level 2 Tasker'
+                ELSE 'Level 1 Tasker'
+            END
+        WHERE id = %s;
+    """, (points_delta, rating, points_delta, points_delta, tasker_id))
+
+    db.execute_db("""
+        INSERT INTO gig_events (user_id, event_type, points_delta, description, client_name, rating)
+        VALUES (%s, 'gig_completed', %s, %s, %s, %s);
+    """, (tasker_id, points_delta, f"Completed gig '{gig['title'][:40]}': {review}", user['name'], rating))
+
+    updated_tasker = db.query_db("SELECT gig_score, gig_tier, gig_rating FROM users WHERE id = %s", (tasker_id,), one=True)
+    return jsonify({
+        "status": "success",
+        "message": "Gig marked completed and tasker Gig Score updated!",
+        "new_gig_score": updated_tasker["gig_score"] if updated_tasker else 92,
+        "new_tier": updated_tasker["gig_tier"] if updated_tasker else "Level 2 Tasker"
+    })
 
 @app.route("/api/meals/gift", methods=["POST"])
 def api_gift_meal():

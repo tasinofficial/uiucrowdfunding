@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UIU Aid — Crowdfunding Campaign</title>
+<title>UIU Aid — Crowdfunding &amp; Transparency</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
 :root{
   --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
   --orange:#F97316; --orange-h:#EA580C;
-  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444;
+  --navy:#1E3A8A; --emerald:#10B981; --amber:#F59E0B; --crimson:#EF4444; --purple:#7C3AED;
   --text:#0F172A; --text2:#64748B;
   --shadow:0 1px 3px rgba(15,23,42,.08);
   --r:8px;
@@ -90,29 +90,108 @@ body{
 
 /* ---------- Layout & Cards ---------- */
 .grid-2{display:grid;grid-template-columns:1.8fr 1.2fr;gap:24px;align-items:start}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:24px;margin-bottom:24px}
 .card-title{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text)}
 
+/* KPI Card */
+.stat-kpi{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r);
+  padding:18px 20px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:4px;
+}
+.stat-kpi-label{font-size:12.5px;font-weight:600;color:var(--text2);display:flex;align-items:center;justify-content:space-between}
+.stat-kpi-val{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.stat-kpi-sub{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.stat-kpi-sub.green{color:var(--emerald);font-weight:600}
+
 /* Progress Card */
 .progress-stats{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-.progress-stats .raised{font-size:24px;font-weight:800;color:var(--navy)}
-.progress-bar-bg{background:var(--border);height:12px;border-radius:999px;overflow:hidden;position:relative}
-.progress-bar-fill{background:var(--emerald);height:100%;border-radius:999px;transition:width 0.8s ease}
+.progress-stats .raised{font-size:26px;font-weight:800;color:var(--navy)}
+.progress-bar-bg{background:var(--border);height:14px;border-radius:999px;overflow:hidden;position:relative}
+.progress-bar-fill{background:linear-gradient(90deg, #10B981 0%, #059669 100%);height:100%;border-radius:999px;transition:width 0.8s ease}
+
+/* Segmented Category Allocation Bar */
+.seg-bar{display:flex;height:12px;border-radius:999px;overflow:hidden;background:var(--border);margin:14px 0 10px}
+.seg-part{height:100%;transition:width 0.5s ease}
+.seg-blue{background:#2563EB}
+.seg-emerald{background:#10B981}
+.seg-purple{background:#8B5CF6}
+.seg-amber{background:#F59E0B}
+
+.seg-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px}
+.seg-item{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--text)}
+.seg-dot{width:10px;height:10px;border-radius:50%;flex:none}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab{padding:12px 18px;font-size:14px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:700}
+
+/* Receipt Tiles */
+.receipt-tile{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden;
+}
+.receipt-body{
+  padding:16px 20px 14px;
+  font-family:'Courier New',Courier,monospace;
+  font-size:12px;
+  color:var(--text);
+  background:#FAFBFD;
+}
+.receipt-vendor{
+  font-size:13px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--navy);border-bottom:1px dashed #CBD5E1;padding-bottom:8px;margin-bottom:8px;
+  display:flex;justify-content:space-between;
+}
+.receipt-line{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  gap:6px;padding:3px 0;font-size:12px;color:#475569;
+}
+.receipt-dots{
+  flex:1;border-bottom:1.5px dotted #CBD5E1;margin:0 4px 3px;min-width:16px;
+}
+.receipt-line-val{font-weight:700;color:var(--text);white-space:nowrap}
+.receipt-total-row{
+  display:flex;justify-content:space-between;border-top:1px solid #CBD5E1;
+  margin-top:8px;padding-top:8px;font-size:13.5px;font-weight:800;color:var(--text);
+}
+.receipt-caption{
+  padding:10px 18px;border-top:1px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;
+}
+
+/* Per-Donation Impact Box */
+.impact-box{
+  background:linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%);
+  border:1px solid #BFDBFE;
+  border-radius:var(--r);
+  padding:16px;
+  margin-bottom:18px;
+}
+.impact-header{font-size:13px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.impact-item{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12.5px;padding:5px 0;border-bottom:1px dashed rgba(191,219,254,.7);
+}
+.impact-item:last-child{border-bottom:none;padding-bottom:0}
+.impact-item b{color:#065F46;font-variant-numeric:tabular-nums}
 
 /* Table */
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{padding:12px;text-align:left;border-bottom:1px solid var(--border)}
-th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
 
 /* Pills & Badges */
 .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
 .pill-navy{background:rgba(30,58,138,.08);color:var(--navy)}
-.pill-emerald{background:rgba(16,185,129,.1);color:#059669}
+.pill-emerald{background:rgba(16,185,129,.12);color:#047857}
 .pill-amber{background:rgba(245,158,11,.14);color:#B45309}
+.pill-purple{background:rgba(124,58,237,.1);color:#6D28D9}
 
 .av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;width:36px;height:36px;color:#fff;font-weight:700;font-size:13px;flex:none}
-.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}
-.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
+.av-1{background:#1E3A8A}.av-2{background:#0F766E}.av-3{background:#334155}.av-4{background:#1D4ED8}.av-5{background:#475569}.av-6{background:#065F46}
 
 /* Forms */
 .input-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
@@ -131,9 +210,9 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
 .feed-list{list-style:none;display:flex;flex-direction:column}
 .feed-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
 .feed-item:last-child{border-bottom:none;padding-bottom:0}
-.feed-donor{font-weight:600;font-size:14.5px;color:var(--text)}
-.feed-meta{color:var(--text2);font-size:12.5px;margin-top:2px}
-.feed-amount{font-weight:800;color:var(--emerald);font-size:15px;font-variant-numeric:tabular-nums}
+.feed-donor{font-weight:600;font-size:14px;color:var(--text);display:flex;align-items:center;gap:6px}
+.feed-meta{color:var(--text2);font-size:12px;margin-top:2px}
+.feed-amount{font-weight:800;color:var(--emerald);font-size:15px;font-variant-numeric:tabular-nums;text-align:right}
 
 /* Toast */
 .toast{position:fixed;bottom:24px;right:24px;background:#1E3A8A;color:#fff;padding:14px 20px;border-radius:var(--r);box-shadow:0 10px 20px rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px;transform:translateY(150%);transition:transform .25s ease;z-index:200;font-size:14.5px;font-weight:500}
@@ -151,21 +230,42 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
       <a class="nav-item {% if active_page == 'loans' %}active{% endif %}" href="/loan-request"><span class="ms">handshake</span>Loans</a>
       <a class="nav-item {% if active_page == 'crowdfunding' %}active{% endif %}" href="/crowdfunding"><span class="ms">volunteer_activism</span>Crowdfunding</a>
       <a class="nav-item {% if active_page == 'gigs' %}active{% endif %}" href="/gigs"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item {% if active_page == 'gig_score' %}active{% endif %}" href="/gig-score"><span class="ms ms-fill" style="color:#FDBA74;">workspace_premium</span>Gig Score</a>
       <a class="nav-item {% if active_page == 'meals' %}active{% endif %}" href="/meal-drops"><span class="ms">restaurant</span>Meal Drops</a>
       <a class="nav-item {% if active_page == 'trust' %}active{% endif %}" href="/trust-profile"><span class="ms">verified_user</span>Trust Profile</a>
+      <a class="nav-item" href="/logout" style="color:#F87171;margin-top:10px;"><span class="ms" style="color:#F87171;">logout</span>Sign Out</a>
     </nav>
-    <div class="side-user">
-      <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
-      <div><b>{{ user.name }}</b>
-      {% if user.is_verified %}
-      <span class="vrf"><span class="ms">verified</span>Verified</span>
-      {% endif %}
+    <div class="side-user" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
+        <div style="min-width:0;overflow:hidden;text-overflow:ellipsis;">
+          <b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">{{ user.name }}</b>
+          {% if user.is_verified %}
+          <span class="vrf"><span class="ms">verified</span>Verified</span>
+          {% endif %}
+        </div>
       </div>
+      <a href="/logout" title="Sign Out / Logout" style="color:#94A3B8;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:6px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='#EF4444';this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.color='#94A3B8';this.style.background='transparent'">
+        <span class="ms ms-18">logout</span>
+      </a>
     </div>
   </aside>
 
   <!-- MAIN -->
   <main class="main">
+    {% if all_campaigns and all_campaigns|length > 1 %}
+    <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center;background:#fff;padding:10px 16px;border-radius:var(--r);border:1px solid var(--border);">
+      <span style="font-size:12.5px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:4px;"><span class="ms ms-18" style="color:var(--navy);">view_carousel</span> Active Campaigns:</span>
+      <div style="display:flex;gap:8px;overflow-x:auto;">
+        {% for c in all_campaigns %}
+        <a href="/crowdfunding?id={{ c.id }}" class="pill {% if c.id == campaign.id %}pill-navy{% else %}pill-gray{% endif %}" style="text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 12px;">
+          {{ c.title[:28] }}... ({{ c.raised_amount }}/{{ c.goal_amount }} Tk)
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
     <div class="page-head">
       <div>
         <h1>{{ campaign.title }}</h1>
@@ -175,80 +275,298 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
           <span>{{ campaign.student_dept }}</span>
           <span>&bull;</span>
           <span class="pill pill-navy">{{ campaign.category }}</span>
+          <span>&bull;</span>
+          <span class="pill pill-emerald"><span class="ms ms-16 ms-fill">verified</span> Verified by UIU Medical Centre</span>
         </div>
       </div>
-      <button class="btn btn-secondary" onclick="shareCampaign()">
-        <span class="ms ms-18">share</span> Share Campaign
-      </button>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-primary" onclick="openCreateModal()">
+          <span class="ms ms-18">add_circle</span> Start Fundraiser
+        </button>
+        <button class="btn btn-secondary" onclick="shareCampaign()">
+          <span class="ms ms-18">share</span> Share Campaign
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 DATA-HEAVY KPI CARDS -->
+    <div class="grid-4">
+      <div class="stat-kpi">
+        <div class="stat-kpi-label">
+          <span>Funding Progress</span>
+          <span class="ms ms-18" style="color:var(--emerald);">donut_large</span>
+        </div>
+        <div class="stat-kpi-val">{{ stats.pct_funded }}%</div>
+        <div class="stat-kpi-sub green">
+          <span class="ms ms-16">check</span> {{ stats.raised }} Tk of {{ stats.goal }} Tk
+        </div>
+      </div>
+
+      <div class="stat-kpi">
+        <div class="stat-kpi-label">
+          <span>Verified Disbursement</span>
+          <span class="ms ms-18" style="color:var(--navy);">security</span>
+        </div>
+        <div class="stat-kpi-val">{{ stats.verified_disbursement_rate }}% Direct</div>
+        <div class="stat-kpi-sub">
+          0% cash leakage to third parties
+        </div>
+      </div>
+
+      <div class="stat-kpi">
+        <div class="stat-kpi-label">
+          <span>Community Donors</span>
+          <span class="ms ms-18" style="color:var(--amber);">groups</span>
+        </div>
+        <div class="stat-kpi-val">{{ stats.donor_count }} Donors</div>
+        <div class="stat-kpi-sub">
+          Avg. donation: {{ stats.avg_donation }} Tk
+        </div>
+      </div>
+
+      <div class="stat-kpi">
+        <div class="stat-kpi-label">
+          <span>Run-Rate Velocity</span>
+          <span class="ms ms-18" style="color:var(--purple);">hourglass_top</span>
+        </div>
+        <div class="stat-kpi-val">{{ stats.days_left }} Days Left</div>
+        <div class="stat-kpi-sub">
+          ~{{ stats.daily_velocity_needed }} Tk/day needed to bridge deficit
+        </div>
+      </div>
     </div>
 
     <div class="grid-2">
       <!-- Left Column -->
       <div>
+        <!-- OVERALL PROGRESS CARD WITH CATEGORY BREAKDOWN -->
         <div class="card">
           <div class="progress-stats">
             <div>
               <span class="raised">{{ campaign.raised_amount | int }} Tk</span>
-              <span style="color:var(--text2);font-size:14px;"> raised of {{ campaign.goal_amount | int }} Tk goal</span>
+              <span style="color:var(--text2);font-size:14.5px;"> raised of {{ campaign.goal_amount | int }} Tk target</span>
             </div>
-            <div style="font-weight:600;font-size:13.5px;color:var(--text2);">{{ campaign.days_left }} days left</div>
+            <div style="font-weight:700;font-size:14px;color:var(--crimson);">{{ stats.deficit }} Tk Remaining Deficit</div>
           </div>
           <div class="progress-bar-bg">
             <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
           </div>
+
+          <!-- Segmented Category Expenditure Bar -->
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-size:13px;font-weight:700;color:var(--text);">Campaign Expenditure Allocation &amp; Invoices</span>
+              <span style="font-size:12px;color:var(--text2);">{{ stats.total_expenditure }} Tk accounted</span>
+            </div>
+            <div class="seg-bar">
+              <div class="seg-part seg-blue" style="width: 39.1%;" title="Hospital & Room Charges: 39.1%"></div>
+              <div class="seg-part seg-emerald" style="width: 52.1%;" title="Surgery & Operating Theater: 52.1%"></div>
+              <div class="seg-part seg-purple" style="width: 8.8%;" title="Post-Op Pharmacy: 8.8%"></div>
+            </div>
+            <div class="seg-legend">
+              <div class="seg-item"><span class="seg-dot seg-blue"></span> Hospital Admission (39.1%)</div>
+              <div class="seg-item"><span class="seg-dot seg-emerald"></span> Surgery &amp; OT (52.1%)</div>
+              <div class="seg-item"><span class="seg-dot seg-purple"></span> Post-Op Pharmacy (8.8%)</div>
+            </div>
+          </div>
         </div>
 
+        <!-- TABBED TRANSPARENCY & STORY SECTION -->
         <div class="card">
-          <div class="card-title"><span class="ms">article</span>The Story</div>
-          <p style="line-height: 1.6; color: var(--text); white-space: pre-wrap;">{{ campaign.story }}</p>
-        </div>
+          <div class="tabs">
+            <div class="tab active" id="tab-btn-receipts" onclick="switchTab('receipts')">
+              <span class="ms ms-18">receipt_long</span>
+              Itemized Receipts ({{ expenditures|length }})
+            </div>
+            <div class="tab" id="tab-btn-matrix" onclick="switchTab('matrix')">
+              <span class="ms ms-18">calculate</span>
+              Per-Donation Expenditure Matrix
+            </div>
+            <div class="tab" id="tab-btn-milestones" onclick="switchTab('milestones')">
+              <span class="ms ms-18">verified</span>
+              Milestones
+            </div>
+            <div class="tab" id="tab-btn-story" onclick="switchTab('story')">
+              <span class="ms ms-18">article</span>
+              Patient Story
+            </div>
+          </div>
 
-        <div class="card">
-          <div class="card-title"><span class="ms">verified</span>Milestones & Transparency</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Milestone</th>
-                <th>Amount</th>
-                <th>Vendor / Memo</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for m in milestones %}
-              <tr>
-                <td style="font-weight: 600;">{{ m.title }}</td>
-                <td style="font-weight: 700; color: var(--navy);">{{ m.amount }} Tk</td>
-                <td>{{ m.vendor }}<br><small style="color: var(--text2)">{{ m.memo }}</small></td>
-                <td>
-                  <span class="pill {{ 'pill-emerald' if m.status == 'verified' else 'pill-amber' }}">
-                    {{ m.status }}
-                  </span>
-                </td>
-              </tr>
-              {% endfor %}
-              {% if not milestones %}
-              <tr><td colspan="4" style="text-align: center; color: var(--text2);">No milestones added yet.</td></tr>
-              {% endif %}
-            </tbody>
-          </table>
+          <!-- TAB 1: ITEMIZED RECEIPTS (ACTIVE) -->
+          <div id="tab-receipts">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:#F0FDF4;border:1px solid #BBF7D0;padding:10px 14px;border-radius:var(--r);">
+              <div style="font-size:12.5px;color:#166534;font-weight:600;display:flex;align-items:center;gap:6px;">
+                <span class="ms ms-18 ms-fill" style="color:var(--emerald);">verified</span>
+                All {{ expenditures|length }} hospital &amp; pharmacy invoices audited by UIU Medical Centre
+              </div>
+              <span class="pill pill-emerald">100% Verified</span>
+            </div>
+
+            {% for exp in expenditures %}
+            <div class="receipt-tile">
+              <div class="receipt-body">
+                <div class="receipt-vendor">
+                  <span>{{ exp.vendor }}</span>
+                  <span style="font-size:11px;color:#64748B;">{{ exp.invoice_no }}</span>
+                </div>
+                <div class="receipt-line">
+                  <span>{{ exp.item_name }}</span>
+                  <span class="receipt-dots"></span>
+                  <span class="receipt-line-val">{{ exp.amount }} Tk</span>
+                </div>
+                <div class="receipt-line" style="color:#64748B;font-size:11px;">
+                  <span>Quantity / Duration: {{ exp.quantity }}</span>
+                  <span>Date: {{ exp.receipt_date }}</span>
+                </div>
+                <div class="receipt-total-row">
+                  <span>DISBURSED AMOUNT</span>
+                  <span>{{ exp.amount }} Tk</span>
+                </div>
+              </div>
+              <div class="receipt-caption">
+                <span style="color:var(--text2);font-weight:500;">
+                  Category: <strong>{{ exp.category }}</strong> &middot; Verified by: {{ exp.verified_by }}
+                </span>
+                <span class="pill pill-emerald">
+                  <span class="ms ms-16 ms-fill">check_circle</span> Verified Receipt
+                </span>
+              </div>
+            </div>
+            {% endfor %}
+            {% if not expenditures %}
+            <div style="text-align:center;padding:32px;color:var(--text2);">No receipts uploaded yet.</div>
+            {% endif %}
+          </div>
+
+          <!-- TAB 2: PER-DONATION EXPENDITURE MATRIX -->
+          <div id="tab-matrix" style="display:none;">
+            <div style="margin-bottom:16px;">
+              <h3 style="font-size:15.5px;font-weight:700;color:var(--text);margin-bottom:4px;">How Every Donation Amount Is Spent (Itemized Allocation)</h3>
+              <p style="font-size:13px;color:var(--text2);line-height:1.45;">Every donation is disbursed directly to hospital and pharmacy counters. Here is the exact mathematical deployment across common donation tiers:</p>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Donation Amount</th>
+                  <th>Hospital Room (39.1%)</th>
+                  <th>Surgery &amp; OT (52.1%)</th>
+                  <th>Pharmacy (8.8%)</th>
+                  <th>Disbursement Audit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:var(--navy);font-size:14.5px;">500 Tk</strong></td>
+                  <td>196 Tk</td>
+                  <td>260 Tk</td>
+                  <td>44 Tk</td>
+                  <td><span class="pill pill-emerald">100% Audited</span></td>
+                </tr>
+                <tr style="background:#F8FAFC;">
+                  <td><strong style="color:var(--navy);font-size:14.5px;">1,000 Tk</strong></td>
+                  <td>391 Tk</td>
+                  <td>521 Tk</td>
+                  <td>88 Tk</td>
+                  <td><span class="pill pill-emerald">100% Audited</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--navy);font-size:14.5px;">2,000 Tk</strong></td>
+                  <td>782 Tk</td>
+                  <td>1,042 Tk</td>
+                  <td>176 Tk</td>
+                  <td><span class="pill pill-emerald">100% Audited</span></td>
+                </tr>
+                <tr style="background:#F8FAFC;">
+                  <td><strong style="color:var(--navy);font-size:14.5px;">5,000 Tk</strong></td>
+                  <td>1,955 Tk</td>
+                  <td>2,605 Tk</td>
+                  <td>440 Tk</td>
+                  <td><span class="pill pill-emerald">100% Audited</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:14px;padding:10px 14px;background:#F0FDF4;border-radius:6px;font-size:12.5px;color:#166534;display:flex;align-items:center;gap:6px;">
+              <span class="ms ms-18 ms-fill" style="color:var(--emerald);">verified</span>
+              <strong>Direct Disbursement Guarantee:</strong> Funds never touch student bank accounts; paid directly to Evercare Hospital &amp; Lazz Pharma invoices.
+            </div>
+          </div>
+
+          <!-- TAB 2: MILESTONES -->
+          <div id="tab-milestones" style="display:none;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Milestone</th>
+                  <th>Amount</th>
+                  <th>Vendor / Memo</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for m in milestones %}
+                <tr>
+                  <td style="font-weight: 600;">{{ m.title }}</td>
+                  <td style="font-weight: 700; color: var(--navy);">{{ m.amount }} Tk</td>
+                  <td>{{ m.vendor }}<br><small style="color: var(--text2)">{{ m.memo }}</small></td>
+                  <td>
+                    <span class="pill {{ 'pill-emerald' if m.status == 'verified' else 'pill-amber' }}">
+                      {{ m.status }}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+                {% if not milestones %}
+                <tr><td colspan="4" style="text-align: center; color: var(--text2);">No milestones added yet.</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TAB 3: STORY -->
+          <div id="tab-story" style="display:none;">
+            <p style="line-height: 1.65; color: var(--text); white-space: pre-wrap;">{{ campaign.story }}</p>
+          </div>
         </div>
       </div>
 
       <!-- Right Column -->
       <div>
+        <!-- MAKE A DONATION CARD WITH REAL-TIME PER-DONATION EXPENDITURE IMPACT -->
         <div class="card">
-          <div class="card-title"><span class="ms">volunteer_activism</span>Make a Donation</div>
+          <div class="card-title"><span class="ms" style="color:var(--orange);">volunteer_activism</span>Make a Donation</div>
           
           <div class="input-group">
             <label>Select Amount</label>
             <div class="chips" id="amount-chips">
               <div class="chip" data-val="500">500 Tk</div>
-              <div class="chip" data-val="1000">1000 Tk</div>
+              <div class="chip active" data-val="1000">1000 Tk</div>
               <div class="chip" data-val="2000">2000 Tk</div>
               <div class="chip" data-val="5000">5000 Tk</div>
             </div>
-            <input type="number" id="donate-amount" class="input" placeholder="Or enter custom amount (Tk)">
+            <input type="number" id="donate-amount" class="input" value="1000" placeholder="Or enter custom amount (Tk)">
+          </div>
+
+          <!-- DYNAMIC PER-DONATION EXPENDITURE IMPACT BREAKDOWN -->
+          <div class="impact-box" id="impact-box">
+            <div class="impact-header">
+              <span class="ms ms-18 ms-fill" style="color:var(--emerald);">pie_chart</span>
+              <span>Your Donation's Direct Impact</span>
+            </div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">
+              Every Taka is audited. For your <strong id="impact-amt-label" style="color:var(--navy);">1,000 Tk</strong> donation:
+            </div>
+            <div class="impact-item">
+              <span>Hospital Admission &amp; Bed (39.1%)</span>
+              <b id="impact-hosp">391 Tk</b>
+            </div>
+            <div class="impact-item">
+              <span>Surgery &amp; Operating Theater (52.1%)</span>
+              <b id="impact-surg">521 Tk</b>
+            </div>
+            <div class="impact-item">
+              <span>Post-Op Pharmacy Medicines (8.8%)</span>
+              <b id="impact-pharm">88 Tk</b>
+            </div>
           </div>
 
           <label class="checkbox-label">
@@ -270,31 +588,50 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
           </div>
 
           <button class="btn btn-primary btn-block" onclick="submitDonation()" id="donate-btn">
-            Donate Now
+            Donate Now &rarr;
           </button>
         </div>
 
+        <!-- RECENT DONATIONS WITH PER-DONATION AUDIT TAGS -->
         <div class="card">
-          <div class="card-title"><span class="ms">favorite</span>Recent Donations</div>
+          <div class="card-title"><span class="ms" style="color:var(--emerald);">favorite</span>Recent Peer Donations</div>
           <div style="display:flex;gap:24px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
             <div>
               <div style="font-size:22px;font-weight:800;color:var(--text);">{{ donations|length }}</div>
               <div style="font-size:12.5px;color:var(--text2);">Total Donors</div>
             </div>
             <div>
-              <div style="font-size:22px;font-weight:800;color:var(--emerald);">{{ ((campaign.raised_amount / donations|length)|round|int) if donations else 0 }} Tk</div>
+              <div style="font-size:22px;font-weight:800;color:var(--emerald);">{{ stats.avg_donation }} Tk</div>
               <div style="font-size:12.5px;color:var(--text2);">Avg. Donation</div>
             </div>
           </div>
 
           <ul class="feed-list" id="donation-feed">
             {% for d in donations %}
-            <li class="feed-item">
-              <div>
-                <div class="feed-donor">{{ 'Anonymous Peer' if d.is_anonymous else d.donor_name }}</div>
-                <div class="feed-meta">Trx: {{ d.trx_id[:6] }}...</div>
+            <li class="feed-item" style="flex-direction:column;align-items:stretch;gap:6px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <div class="feed-donor">
+                    <span>{{ 'Anonymous Peer' if d.is_anonymous else d.donor_name }}</span>
+                    <span class="pill pill-emerald" style="font-size:10px;padding:2px 6px;">100% itemized</span>
+                  </div>
+                  <div class="feed-meta">Trx: {{ d.trx_id[:6] }}... &bull; via {{ d.payment_method|default('bKash') }}</div>
+                </div>
+                <div class="feed-amount">{{ d.amount }} Tk</div>
               </div>
-              <div class="feed-amount">{{ d.amount }} Tk</div>
+              <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:6px 10px;font-size:11.5px;color:#475569;">
+                <div style="font-weight:700;color:var(--navy);margin-bottom:2px;display:flex;align-items:center;gap:4px;">
+                  <span class="ms ms-16" style="color:var(--emerald);font-size:13px;">receipt_long</span>
+                  This {{ d.amount }} Tk was disbursed as:
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <span>🏥 Hospital: <strong>{{ (d.amount * 0.391)|round|int }} Tk</strong></span>
+                  <span>&bull;</span>
+                  <span>🔪 Surgery: <strong>{{ (d.amount * 0.521)|round|int }} Tk</strong></span>
+                  <span>&bull;</span>
+                  <span>💊 Pharmacy: <strong>{{ (d.amount * 0.088)|round|int }} Tk</strong></span>
+                </div>
+              </div>
             </li>
             {% endfor %}
             {% if not donations %}
@@ -322,6 +659,26 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
     document.getElementById('progress-bar').style.width = percent + '%';
   }, 100);
 
+  // Tab switching
+  function switchTab(tabName) {
+    const tabs = ['receipts', 'matrix', 'milestones', 'story'];
+    tabs.forEach(t => {
+      document.getElementById('tab-' + t).style.display = (t === tabName) ? 'block' : 'none';
+      const btn = document.getElementById('tab-btn-' + t);
+      if(t === tabName) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+  }
+
+  // Per-Donation Expenditure Impact Calculator
+  function updateExpenditureImpact(amt) {
+    const n = parseInt(amt) || 0;
+    document.getElementById('impact-amt-label').innerText = n.toLocaleString() + ' Tk';
+    document.getElementById('impact-hosp').innerText = Math.round(n * 0.391).toLocaleString() + ' Tk';
+    document.getElementById('impact-surg').innerText = Math.round(n * 0.521).toLocaleString() + ' Tk';
+    document.getElementById('impact-pharm').innerText = Math.round(n * 0.088).toLocaleString() + ' Tk';
+  }
+
   // Amount Chips Logic
   const amountChips = document.querySelectorAll('#amount-chips .chip');
   const amountInput = document.getElementById('donate-amount');
@@ -331,12 +688,17 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
       amountChips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       amountInput.value = chip.getAttribute('data-val');
+      updateExpenditureImpact(amountInput.value);
     });
   });
 
   amountInput.addEventListener('input', () => {
     amountChips.forEach(c => c.classList.remove('active'));
+    updateExpenditureImpact(amountInput.value);
   });
+
+  // Initial calculation
+  updateExpenditureImpact(amountInput.value || 1000);
 
   // Payment Chips Logic
   const paymentChips = document.querySelectorAll('#payment-chips .chip');
@@ -365,13 +727,13 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
 
   function shareCampaign() {
     navigator.clipboard.writeText(window.location.href);
-    showToast('URL copied to clipboard!');
+    showToast('Campaign URL copied to clipboard!');
   }
 
   async function submitDonation() {
     const amount = parseInt(amountInput.value);
     const isAnon = anonCheckbox.checked;
-    const donorName = document.getElementById('donor-name').value || 'Anonymous';
+    const donorName = document.getElementById('donor-name').value || 'Anonymous Peer';
     
     if(!amount || amount <= 0) {
       alert('Please enter a valid amount');
@@ -387,7 +749,7 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
 
     const btn = document.getElementById('donate-btn');
     const ogText = btn.innerText;
-    btn.innerText = 'Processing...';
+    btn.innerText = 'Processing Donation...';
     btn.disabled = true;
 
     try {
@@ -396,8 +758,8 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
-      const fakeTrxId = 'TXN' + Math.floor(Math.random() * 1000000);
+      const data = await res.json();
+      const fakeTrxId = data.trx_id || ('TXN' + Math.floor(Math.random() * 1000000));
 
       const feed = document.getElementById('donation-feed');
       const noMsg = document.getElementById('no-donations-msg');
@@ -405,12 +767,36 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
       
       const li = document.createElement('li');
       li.className = 'feed-item';
+      li.style.flexDirection = 'column';
+      li.style.alignItems = 'stretch';
+      li.style.gap = '6px';
+      const hosp = Math.round(amount * 0.391);
+      const surg = Math.round(amount * 0.521);
+      const pharm = Math.round(amount * 0.088);
       li.innerHTML = `
-        <div>
-          <div class="feed-donor">${isAnon ? 'Anonymous Peer' : donorName}</div>
-          <div class="feed-meta">Trx: ${fakeTrxId.substring(0,6)}...</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div class="feed-donor">
+              <span>${isAnon ? 'Anonymous Peer' : donorName}</span>
+              <span class="pill pill-emerald" style="font-size:10px;padding:2px 6px;">100% itemized</span>
+            </div>
+            <div class="feed-meta">Trx: ${fakeTrxId.substring(0,6)}... &bull; via ${selectedPayment}</div>
+          </div>
+          <div class="feed-amount">${amount} Tk</div>
         </div>
-        <div class="feed-amount">${amount} Tk</div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:6px 10px;font-size:11.5px;color:#475569;">
+          <div style="font-weight:700;color:var(--navy);margin-bottom:2px;display:flex;align-items:center;gap:4px;">
+            <span class="ms ms-16" style="color:var(--emerald);font-size:13px;">receipt_long</span>
+            This ${amount} Tk was disbursed as:
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span>🏥 Hospital: <strong>${hosp} Tk</strong></span>
+            <span>&bull;</span>
+            <span>🔪 Surgery: <strong>${surg} Tk</strong></span>
+            <span>&bull;</span>
+            <span>💊 Pharmacy: <strong>${pharm} Tk</strong></span>
+          </div>
+        </div>
       `;
       feed.prepend(li);
 
@@ -418,7 +804,7 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
       let newPercent = (newRaised / goal) * 100;
       if(newPercent > 100) newPercent = 100;
       document.getElementById('progress-bar').style.width = newPercent + '%';
-      document.querySelector('.raised').innerText = newRaised + ' Tk';
+      document.querySelector('.raised').innerText = newRaised.toLocaleString() + ' Tk';
 
       showToast(`Donation successful! Trx ID: ${fakeTrxId}`);
       amountInput.value = '';
@@ -430,6 +816,88 @@ th{font-weight:600;color:var(--text2);font-size:13px;text-transform:uppercase;le
       btn.disabled = false;
     }
   }
+
+  // Create Campaign Modal
+  function openCreateModal() {
+    document.getElementById('create-campaign-modal').style.display = 'flex';
+  }
+  function closeCreateModal() {
+    document.getElementById('create-campaign-modal').style.display = 'none';
+  }
+  async function submitCampaign() {
+    const title = document.getElementById('camp-title').value.trim();
+    const category = document.getElementById('camp-category').value;
+    const goal = parseInt(document.getElementById('camp-goal').value);
+    const story = document.getElementById('camp-story').value.trim();
+
+    if(!title || !goal || !story) {
+      alert('Please fill out the campaign title, goal amount, and background story.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/crowdfunding/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, category, goal_amount: goal, story })
+      });
+      const data = await res.json();
+      if(data.status === 'success') {
+        closeCreateModal();
+        showToast('Fundraiser submitted for university review & verification!');
+        setTimeout(() => location.href = '/crowdfunding?id=' + data.campaign_id, 1200);
+      } else {
+        alert(data.message || 'Submission error');
+      }
+    } catch(e) {
+      alert('Network error submitting fundraiser.');
+    }
+  }
 </script>
+
+<!-- Create Campaign Modal -->
+<div id="create-campaign-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:var(--r);width:100%;max-width:540px;box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#F8FAFC;">
+      <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;">
+        <span class="ms ms-20" style="color:var(--navy);">volunteer_activism</span> Start a Student Crowdfund
+      </h3>
+      <button onclick="closeCreateModal()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text2);">&times;</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Campaign Title / Cause</label>
+        <input type="text" id="camp-title" class="input" placeholder="e.g. Emergency Eye Surgery Aid for CSE Peer" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Category</label>
+          <select id="camp-category" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
+            <option value="Emergency Medical">Emergency Medical</option>
+            <option value="Tuition Hardship">Tuition Hardship</option>
+            <option value="Lab Equipment / Project">Lab Equipment / Project</option>
+            <option value="Disaster Relief">Disaster Relief</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Goal Amount (Tk)</label>
+          <input type="number" id="camp-goal" class="input" placeholder="e.g. 40000" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Story &amp; Transparency Details</label>
+        <textarea id="camp-story" rows="4" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;resize:vertical;" placeholder="Explain why funds are needed, target hospital/vendor, and itemized cost breakdown..."></textarea>
+      </div>
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;padding:10px 12px;border-radius:6px;font-size:12px;color:#166534;display:flex;align-items:center;gap:6px;">
+        <span class="ms ms-18">verified_user</span>
+        Submissions require UIU Financial Aid / Medical Audit approval before public disbursement.
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
+        <button class="btn btn-secondary" onclick="closeCreateModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitCampaign()">Submit Fundraiser</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

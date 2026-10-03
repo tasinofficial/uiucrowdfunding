@@ -466,17 +466,24 @@ input[type=range]::-webkit-slider-runnable-track {
       <a class="nav-item {% if active_page == 'loans' %}active{% endif %}" href="/loan-request"><span class="ms">handshake</span>Loans</a>
       <a class="nav-item {% if active_page == 'crowdfunding' %}active{% endif %}" href="/crowdfunding"><span class="ms">volunteer_activism</span>Crowdfunding</a>
       <a class="nav-item {% if active_page == 'gigs' %}active{% endif %}" href="/gigs"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item {% if active_page == 'gig_score' %}active{% endif %}" href="/gig-score"><span class="ms ms-fill" style="color:#FDBA74;">workspace_premium</span>Gig Score</a>
       <a class="nav-item {% if active_page == 'meals' %}active{% endif %}" href="/meal-drops"><span class="ms">restaurant</span>Meal Drops</a>
       <a class="nav-item {% if active_page == 'trust' %}active{% endif %}" href="/trust-profile"><span class="ms">verified_user</span>Trust Profile</a>
+      <a class="nav-item" href="/logout" style="color:#F87171;margin-top:10px;"><span class="ms" style="color:#F87171;">logout</span>Sign Out</a>
     </nav>
-    <div class="side-user">
-      <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
-      <div>
-        <b>{{ user.name }}</b>
-        {% if user.is_verified %}
-        <span class="vrf"><span class="ms">verified</span>Verified</span>
-        {% endif %}
+    <div class="side-user" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
+        <div style="min-width:0;overflow:hidden;text-overflow:ellipsis;">
+          <b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">{{ user.name }}</b>
+          {% if user.is_verified %}
+          <span class="vrf"><span class="ms">verified</span>Verified</span>
+          {% endif %}
+        </div>
       </div>
+      <a href="/logout" title="Sign Out / Logout" style="color:#94A3B8;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:6px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='#EF4444';this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.color='#94A3B8';this.style.background='transparent'">
+        <span class="ms ms-18">logout</span>
+      </a>
     </div>
   </aside>
 

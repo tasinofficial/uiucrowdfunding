@@ -158,16 +158,24 @@ body{
       <a class="nav-item {% if active_page == 'loans' %}active{% endif %}" href="/loan-request"><span class="ms">handshake</span>Loans</a>
       <a class="nav-item {% if active_page == 'crowdfunding' %}active{% endif %}" href="/crowdfunding"><span class="ms">volunteer_activism</span>Crowdfunding</a>
       <a class="nav-item {% if active_page == 'gigs' %}active{% endif %}" href="/gigs"><span class="ms">work</span>Gig Board</a>
+      <a class="nav-item {% if active_page == 'gig_score' %}active{% endif %}" href="/gig-score"><span class="ms ms-fill" style="color:#FDBA74;">workspace_premium</span>Gig Score</a>
       <a class="nav-item {% if active_page == 'meals' %}active{% endif %}" href="/meal-drops"><span class="ms">restaurant</span>Meal Drops</a>
       <a class="nav-item {% if active_page == 'trust' %}active{% endif %}" href="/trust-profile"><span class="ms">verified_user</span>Trust Profile</a>
+      <a class="nav-item" href="/logout" style="color:#F87171;margin-top:10px;"><span class="ms" style="color:#F87171;">logout</span>Sign Out</a>
     </nav>
-    <div class="side-user">
-      <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
-      <div><b>{{ user.name }}</b>
-      {% if user.is_verified %}
-      <span class="vrf"><span class="ms">verified</span>Verified</span>
-      {% endif %}
+    <div class="side-user" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <span class="av {{ user.avatar_class }}">{{ user.initials }}</span>
+        <div style="min-width:0;overflow:hidden;text-overflow:ellipsis;">
+          <b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">{{ user.name }}</b>
+          {% if user.is_verified %}
+          <span class="vrf"><span class="ms">verified</span>Verified</span>
+          {% endif %}
+        </div>
       </div>
+      <a href="/logout" title="Sign Out / Logout" style="color:#94A3B8;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:6px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='#EF4444';this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.color='#94A3B8';this.style.background='transparent'">
+        <span class="ms ms-18">logout</span>
+      </a>
     </div>
   </aside>
 
@@ -176,14 +184,69 @@ body{
     <div class="page-head">
       <div>
         <h1>Campus Gig Board</h1>
-        <div class="sub">{{ gigs|length }} open campus micro-tasks & gigs available</div>
+        <div class="sub">{{ gigs|length }} open campus micro-tasks &middot; earn directly to offset loans and expenses</div>
       </div>
-      <button class="btn btn-primary" onclick="openModal()"><span class="ms ms-18">add</span> Post a Gig</button>
+      <div style="display:flex;gap:10px;">
+        <a href="/gig-score" class="btn btn-secondary"><span class="ms ms-18">military_tech</span> My Gig Score</a>
+        <button class="btn btn-primary" onclick="openModal()"><span class="ms ms-18">add</span> Post a Gig</button>
+      </div>
+    </div>
+
+    <!-- GIG BOARD STATISTICS STRIP -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);">
+        <div style="font-size:12.5px;font-weight:600;color:var(--text2);display:flex;justify-content:space-between;align-items:center;">
+          <span>Micro-Economy Volume</span>
+          <span class="ms ms-18" style="color:var(--emerald);">payments</span>
+        </div>
+        <div style="font-size:24px;font-weight:800;color:var(--text);margin-top:4px;">{{ stats.total_facilitated }} Tk</div>
+        <div style="font-size:12px;color:var(--emerald);font-weight:600;margin-top:2px;display:flex;align-items:center;gap:4px;">
+          <span class="ms ms-16">trending_up</span> Student peer earnings
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);">
+        <div style="font-size:12.5px;font-weight:600;color:var(--text2);display:flex;justify-content:space-between;align-items:center;">
+          <span>Active Tasks &amp; Demand</span>
+          <span class="ms ms-18" style="color:var(--navy);">work_outline</span>
+        </div>
+        <div style="font-size:24px;font-weight:800;color:var(--text);margin-top:4px;">{{ stats.open_gigs }} Open Tasks</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;">
+          {{ stats.total_applicants }} student applicants active
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);">
+        <div style="font-size:12.5px;font-weight:600;color:var(--text2);display:flex;justify-content:space-between;align-items:center;">
+          <span>Task Fulfillment Rate</span>
+          <span class="ms ms-18" style="color:var(--emerald);">verified</span>
+        </div>
+        <div style="font-size:24px;font-weight:800;color:var(--emerald);margin-top:4px;">{{ stats.fulfillment_rate }}%</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;">
+          Zero academic dispute flags
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);">
+        <div style="font-size:12.5px;font-weight:600;color:var(--text2);display:flex;justify-content:space-between;align-items:center;">
+          <span>Average Task Payout</span>
+          <span class="ms ms-18" style="color:var(--amber);">price_check</span>
+        </div>
+        <div style="font-size:24px;font-weight:800;color:var(--text);margin-top:4px;">{{ stats.avg_payout }} Tk</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;">
+          {{ stats.active_taskers }} active campus freelancers
+        </div>
+      </div>
     </div>
 
     <div class="controls-card">
       <div class="controls-top">
-        <input type="text" id="search-input" class="search-input" placeholder="Search gigs by keyword or title...">
+        <input type="text" id="search-input" class="search-input" placeholder="Search gigs by keyword, title, or skill...">
+        <select id="score-filter" class="sort-select">
+          <option value="all">Gig Score: Any</option>
+          <option value="90">Gig Score: 90+ (Top Rated)</option>
+          <option value="80">Gig Score: 80+</option>
+        </select>
         <select id="sort-select" class="sort-select">
           <option value="newest">Sort: Newest</option>
           <option value="budget-high">Budget: High to Low</option>
@@ -201,7 +264,7 @@ body{
 
     <div class="gig-grid" id="gig-grid">
       {% for gig in gigs %}
-      <div class="gig-card" data-category="{{ gig.category }}" data-budget="{{ gig.budget }}" data-title="{{ gig.title|lower }}" data-id="{{ gig.id }}">
+      <div class="gig-card" data-category="{{ gig.category }}" data-budget="{{ gig.budget }}" data-title="{{ gig.title|lower }}" data-score="{{ gig.gig_score }}" data-id="{{ gig.id }}">
         <div class="gig-header">
           {% set cat_class = 'pill-navy' %}
           {% if gig.category == 'Design' %}{% set cat_class = 'pill-purple' %}{% endif %}
@@ -224,10 +287,27 @@ body{
             <span class="av av-1">{{ gig.initials }}</span>
             <div class="poster-details">
               <span class="poster-name">{{ gig.poster_name }}</span>
-              <span class="poster-trust">Trust: {{ gig.trust_score }}/100</span>
+              <a href="/gig-score" style="text-decoration:none;" title="View Gig Score Profile">
+                <span class="poster-gig" style="font-size:12px;color:#047857;font-weight:700;display:inline-flex;align-items:center;gap:3px;">
+                  <span class="ms ms-16 ms-fill" style="color:var(--amber);font-size:14px;">star</span>
+                  {{ gig.gig_score }} Gig Score &middot; {{ gig.gig_rating|default('4.9') }}★
+                </span>
+              </a>
+              <span style="font-size:11px;color:var(--text2);font-weight:500;">{{ gig.gig_tier|default('Level 2 Tasker') }}</span>
             </div>
           </div>
+          {% if gig.poster_id == user.id %}
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button class="btn btn-sm btn-outline" style="color:var(--emerald);border-color:var(--emerald);font-size:12px;padding:4px 8px;font-weight:600;" onclick="openCompleteModal({{ gig.id }}, '{{ gig.title|replace('\'', '\\\'') }}')">
+              <span class="ms ms-16">check_circle</span> Complete
+            </button>
+            <button class="btn btn-sm btn-outline" style="color:#EF4444;border-color:#FCA5A5;font-size:12px;padding:4px 8px;" title="Delete Gig" onclick="deleteGig({{ gig.id }})">
+              <span class="ms ms-16">delete</span>
+            </button>
+          </div>
+          {% else %}
           <button class="btn btn-primary btn-sm apply-btn" data-gig-id="{{ gig.id }}" onclick="applyForGig(this, {{ gig.id }})">Apply</button>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
@@ -297,22 +377,26 @@ body{
   const filterChips = document.querySelectorAll('#filter-chips .chip');
   const searchInput = document.getElementById('search-input');
   const sortSelect = document.getElementById('sort-select');
+  const scoreFilter = document.getElementById('score-filter');
   
   function applyFilters() {
     const activeChip = document.querySelector('#filter-chips .chip.active');
     const categoryFilter = activeChip ? activeChip.getAttribute('data-filter') : 'All';
     const searchQuery = searchInput.value.toLowerCase();
+    const minScore = (scoreFilter && scoreFilter.value !== 'all') ? parseInt(scoreFilter.value) : 0;
     
     const cards = Array.from(document.querySelectorAll('.gig-card'));
     
     cards.forEach(card => {
       const cat = card.getAttribute('data-category');
       const title = card.getAttribute('data-title');
+      const score = parseInt(card.getAttribute('data-score')) || 0;
       
       const matchCat = (categoryFilter === 'All' || cat === categoryFilter);
       const matchSearch = title.includes(searchQuery);
+      const matchScore = score >= minScore;
       
-      if(matchCat && matchSearch) {
+      if(matchCat && matchSearch && matchScore) {
         card.style.display = 'flex';
       } else {
         card.style.display = 'none';
@@ -351,6 +435,7 @@ body{
 
   searchInput.addEventListener('input', applyFilters);
   sortSelect.addEventListener('change', applyFilters);
+  if (scoreFilter) scoreFilter.addEventListener('change', applyFilters);
 
   // Apply for Gig
   async function applyForGig(btn, gigId) {
@@ -430,6 +515,96 @@ body{
       btn.disabled = false;
     }
   }
+
+  // Delete Gig
+  async function deleteGig(gigId) {
+    if(!confirm('Are you sure you want to delete this gig posting? This action cannot be undone.')) return;
+    try {
+      const res = await fetch(`/api/gigs/${gigId}/delete`, { method: 'POST' });
+      const data = await res.json();
+      if(data.status === 'success') {
+        showToast('Gig posting deleted successfully.');
+        setTimeout(() => location.reload(), 600);
+      } else {
+        alert(data.message || 'Error deleting gig');
+      }
+    } catch(e) {
+      alert('Network error while deleting gig');
+    }
+  }
+
+  // Complete Gig & Rate Tasker Modal
+  let activeCompleteGigId = null;
+  function openCompleteModal(gigId, gigTitle) {
+    activeCompleteGigId = gigId;
+    document.getElementById('complete-gig-title').innerText = gigTitle;
+    document.getElementById('complete-modal').style.display = 'flex';
+  }
+  function closeCompleteModal() {
+    document.getElementById('complete-modal').style.display = 'none';
+  }
+  async function submitCompleteGig() {
+    if(!activeCompleteGigId) return;
+    const rating = parseFloat(document.getElementById('rating-select').value);
+    const review = document.getElementById('review-input').value.trim() || 'Work delivered promptly and verified.';
+
+    try {
+      const res = await fetch(`/api/gigs/${activeCompleteGigId}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rating, review })
+      });
+      const data = await res.json();
+      if(data.status === 'success') {
+        closeCompleteModal();
+        showToast(`Gig marked complete! Tasker Gig Score updated to ${data.new_gig_score} (${data.new_tier})`);
+        setTimeout(() => location.reload(), 1200);
+      } else {
+        alert(data.message || 'Error completing gig');
+      }
+    } catch(e) {
+      alert('Network error completing gig');
+    }
+  }
 </script>
+
+<!-- Complete Gig Modal -->
+<div id="complete-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:var(--r);width:100%;max-width:480px;box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#F8FAFC;">
+      <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;">
+        <span class="ms ms-20" style="color:var(--emerald);">workspace_premium</span> Mark Gig Complete &amp; Award Score
+      </h3>
+      <button onclick="closeCompleteModal()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text2);">&times;</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <div style="font-size:12px;color:var(--text2);font-weight:600;">TASK BEING COMPLETED</div>
+        <div id="complete-gig-title" style="font-size:14px;font-weight:700;color:var(--navy);margin-top:2px;"></div>
+      </div>
+      <div>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Tasker Rating (Impacts Gig Score)</label>
+        <select id="rating-select" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;font-weight:600;">
+          <option value="5.0">⭐⭐⭐⭐⭐ 5.0 - Flawless Delivery (+4 Gig Score)</option>
+          <option value="4.5">⭐⭐⭐⭐ 4.5 - High Quality Work (+3 Gig Score)</option>
+          <option value="4.0">⭐⭐⭐⭐ 4.0 - Good Job (+2 Gig Score)</option>
+          <option value="3.0">⭐⭐⭐ 3.0 - Met Minimum Criteria (+1 Gig Score)</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Feedback / Review Note</label>
+        <input type="text" id="review-input" placeholder="e.g. Delivered clean code and explained logic thoroughly" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
+      </div>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;padding:10px 12px;border-radius:6px;font-size:12px;color:#92400E;display:flex;align-items:center;gap:6px;">
+        <span class="ms ms-18">verified</span>
+        Completing this task disburses funds to the student and writes to the immutable Gig Reputation ledger.
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
+        <button class="btn btn-secondary" onclick="closeCompleteModal()">Cancel</button>
+        <button class="btn btn-primary" style="background:var(--emerald);border-color:var(--emerald);" onclick="submitCompleteGig()">Complete &amp; Submit Rating</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

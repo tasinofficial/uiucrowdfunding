@@ -1,5 +1,5 @@
 import re, os
-templates = ['dashboard', 'loan_request', 'reverse_auction', 'loan_repayment', 'crowdfunding', 'gig_board', 'meal_drops', 'trust_profile']
+templates = ['dashboard', 'loan_request', 'reverse_auction', 'loan_repayment', 'crowdfunding', 'gig_board', 'gig_score', 'meal_drops', 'trust_profile']
 for t in templates:
     path = os.path.join('templates', t + '.html')
     with open(path, encoding='utf-8', errors='ignore') as f:

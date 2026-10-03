@@ -1,0 +1,10 @@
+.git
+.github
+__pycache__
+*.pyc
+*.log
+audit_*.py
+test_*.py
+e2e_*.py
+.env
+.venv

@@ -1,5 +1,7 @@
 import os
+import threading
 import psycopg2
+from psycopg2.pool import ThreadedConnectionPool
 from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 
@@ -11,27 +13,100 @@ DATABASE_URL = os.getenv(
     "postgresql://neondb_owner:npg_8oZcQdE2zyrH@ep-steep-bonus-aydbaplr-pooler.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require"
 )
 
+_pool = None
+_pool_lock = threading.Lock()
+
+def get_pool():
+    """Returns a singleton ThreadedConnectionPool to reuse warm TLS sockets."""
+    global _pool
+    if _pool is None or _pool.closed:
+        with _pool_lock:
+            if _pool is None or _pool.closed:
+                _pool = ThreadedConnectionPool(
+                    minconn=1,
+                    maxconn=10,
+                    dsn=DATABASE_URL,
+                    cursor_factory=RealDictCursor
+                )
+    return _pool
+
 def get_db_connection():
-    """Returns a new psycopg2 connection with RealDictCursor."""
-    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    """Fetches a warm connection from the pool and verifies liveness."""
+    pool = get_pool()
+    conn = pool.getconn()
+    try:
+        # Check if socket is still alive (reconnect if Neon dropped idle socket)
+        if conn.closed != 0:
+            pool.putconn(conn, close=True)
+            conn = pool.getconn()
+    except Exception:
+        pass
     conn.autocommit = False
     return conn
 
-def query_db(query, args=(), one=False):
-    """Simple query helper returning dicts."""
-    conn = get_db_connection()
+def release_db_connection(conn, is_bad=False):
+    """Returns connection to pool with rollback so next query gets a clean transaction."""
+    if not conn:
+        return
     try:
+        pool = get_pool()
+        if is_bad or conn.closed != 0:
+            pool.putconn(conn, close=True)
+        else:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+            pool.putconn(conn)
+    except Exception:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+def query_db(query, args=(), one=False):
+    """Fast query helper reusing warm pooled connection."""
+    conn = None
+    is_bad = False
+    try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             cur.execute(query, args)
             rv = cur.fetchall()
             return (rv[0] if rv else None) if one else rv
+    except psycopg2.OperationalError:
+        # Auto-recover on dropped connection: close bad conn, grab fresh one, retry once
+        is_bad = True
+        release_db_connection(conn, is_bad=True)
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute(query, args)
+            rv = cur.fetchall()
+            return (rv[0] if rv else None) if one else rv
+    except Exception as e:
+        is_bad = True
+        raise e
     finally:
-        conn.close()
+        release_db_connection(conn, is_bad=is_bad)
 
 def execute_db(query, args=(), returning=False):
-    """Simple execute helper for INSERT/UPDATE/DELETE."""
-    conn = get_db_connection()
+    """Fast execute helper for INSERT/UPDATE/DELETE reusing warm pooled connection."""
+    conn = None
+    is_bad = False
     try:
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute(query, args)
+            res = None
+            if returning:
+                res = cur.fetchone()
+            conn.commit()
+            return res
+    except psycopg2.OperationalError:
+        # Auto-recover on dropped connection: close bad conn, grab fresh one, retry once
+        is_bad = True
+        release_db_connection(conn, is_bad=True)
+        conn = get_db_connection()
         with conn.cursor() as cur:
             cur.execute(query, args)
             res = None
@@ -40,10 +115,15 @@ def execute_db(query, args=(), returning=False):
             conn.commit()
             return res
     except Exception as e:
-        conn.rollback()
+        is_bad = True
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
         raise e
     finally:
-        conn.close()
+        release_db_connection(conn, is_bad=is_bad)
 
 def init_db():
     """Creates tables in Neon PostgreSQL and seeds initial realistic demo data."""
@@ -66,6 +146,53 @@ def init_db():
                 lent_amount INT DEFAULT 2400,
                 is_verified BOOLEAN DEFAULT TRUE,
                 avatar_class VARCHAR(10) DEFAULT 'av-1',
+                gig_score INT DEFAULT 88,
+                gig_rating NUMERIC(3,2) DEFAULT 4.90,
+                gigs_completed INT DEFAULT 6,
+                gigs_posted INT DEFAULT 2,
+                gig_tier VARCHAR(50) DEFAULT 'Level 2 Tasker',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """)
+
+            # Ensure columns exist on already created tables
+            cur.execute("""
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS gig_score INT DEFAULT 88;
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS gig_rating NUMERIC(3,2) DEFAULT 4.90;
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS gigs_completed INT DEFAULT 6;
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS gigs_posted INT DEFAULT 2;
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS gig_tier VARCHAR(50) DEFAULT 'Level 2 Tasker';
+            """)
+
+            # Gig Reputation Events
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS gig_events (
+                id SERIAL PRIMARY KEY,
+                user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                event_type VARCHAR(50),
+                points_delta INT,
+                description VARCHAR(255),
+                client_name VARCHAR(100),
+                rating NUMERIC(3,2),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """)
+
+            # Crowdfunding Itemized Expenditures (Per-Donation Breakdown & Receipts)
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS expenditures (
+                id SERIAL PRIMARY KEY,
+                campaign_id INT REFERENCES crowdfunding_campaigns(id) ON DELETE CASCADE,
+                milestone_id INT,
+                category VARCHAR(50) NOT NULL,
+                vendor VARCHAR(100) NOT NULL,
+                invoice_no VARCHAR(50),
+                item_name VARCHAR(150) NOT NULL,
+                quantity VARCHAR(30),
+                amount INT NOT NULL,
+                status VARCHAR(30) DEFAULT 'verified',
+                verified_by VARCHAR(100) DEFAULT 'UIU Medical Centre Audit Committee',
+                receipt_date VARCHAR(50),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """)
@@ -310,6 +437,45 @@ def init_db():
 
                 print("Demo data seeded successfully!")
 
+            # Ensure users have rich, diverse gig stats
+            cur.execute("""
+                UPDATE users SET gig_score = 94, gig_rating = 4.95, gigs_completed = 8, gigs_posted = 1, gig_tier = 'Elite Campus Freelancer' WHERE id = 1 AND (gig_score IS NULL OR gig_score = 88);
+                UPDATE users SET gig_score = 78, gig_rating = 4.60, gigs_completed = 3, gigs_posted = 2, gig_tier = 'Rising Tasker' WHERE id = 2 AND (gig_score IS NULL OR gig_score = 88);
+                UPDATE users SET gig_score = 96, gig_rating = 5.00, gigs_completed = 14, gigs_posted = 1, gig_tier = 'Master Tasker' WHERE id = 3 AND (gig_score IS NULL OR gig_score = 88);
+                UPDATE users SET gig_score = 85, gig_rating = 4.80, gigs_completed = 5, gigs_posted = 3, gig_tier = 'Level 2 Tasker' WHERE id = 4 AND (gig_score IS NULL OR gig_score = 88);
+                UPDATE users SET gig_score = 91, gig_rating = 4.90, gigs_completed = 7, gigs_posted = 1, gig_tier = 'Level 2 Tasker' WHERE id = 5 AND (gig_score IS NULL OR gig_score = 88);
+            """)
+
+            # Seed gig events if empty
+            cur.execute("SELECT COUNT(*) AS count FROM gig_events;")
+            gig_events_count = cur.fetchone()["count"]
+            if gig_events_count == 0:
+                print("Seeding initial gig score events...")
+                cur.execute("""
+                INSERT INTO gig_events (user_id, event_type, points_delta, description, client_name, rating)
+                VALUES
+                (1, 'task_completed', 4, 'Completed Python data-structures debugging ahead of deadline', 'Adnan Chowdhury', 5.00),
+                (1, 'task_completed', 3, 'Delivered Calculus tutoring crash review', 'Karim Hossain', 4.90),
+                (1, 'task_completed', 4, 'Designed UI wireframe for CSE project showcase', 'Tanvir Hasan', 5.00),
+                (1, 'ontime_streak', 2, 'Maintained 5-task consecutive on-time delivery streak', 'System Automated', NULL),
+                (1, 'review_received', 3, 'Received 5.0 rating: "Super clear explanation, saved my midterms!"', 'Priya Das', 5.00);
+                """)
+
+            # Seed expenditures if empty
+            cur.execute("SELECT COUNT(*) AS count FROM expenditures;")
+            exp_count = cur.fetchone()["count"]
+            if exp_count == 0:
+                print("Seeding initial crowdfunding itemized expenditures...")
+                cur.execute("""
+                INSERT INTO expenditures (campaign_id, milestone_id, category, vendor, invoice_no, item_name, quantity, amount, status, verified_by, receipt_date)
+                VALUES
+                (1, 1, 'Hospital & Room Charges', 'Evercare Hospital Dhaka', 'INV-EC-99412', 'Emergency Room admission & bed charges (3 nights)', '3 days', 8500, 'verified', 'UIU Medical Centre (Dr. Shamsul Alam)', 'Jul 18, 2026'),
+                (1, 1, 'Diagnostics & Imaging', 'Evercare Hospital Dhaka', 'INV-EC-99413', 'Ultrasonography & Whole Abdomen CT Scan', '2 scans', 6500, 'verified', 'UIU Medical Centre (Dr. Shamsul Alam)', 'Jul 18, 2026'),
+                (1, 2, 'Surgery & Operating Theater', 'Evercare Hospital Dhaka', 'INV-EC-99450', 'Laparoscopic Appendectomy OT Charges & Surgical Kit', '1 procedure', 14500, 'verified', 'UIU Medical Centre (Dr. Shamsul Alam)', 'Jul 19, 2026'),
+                (1, 2, 'Anesthesia & Surgeon Team', 'Evercare Hospital Dhaka', 'INV-EC-99451', 'Senior Surgeon & Chief Anesthesiologist fee', '1 procedure', 5500, 'verified', 'UIU Medical Centre (Dr. Shamsul Alam)', 'Jul 19, 2026'),
+                (1, 3, 'Post-Op Pharmacy', 'Lazz Pharma (UIU Campus Gate)', 'LZ-UIU-4019', 'IV Antibiotics (Meropenem), Analgesics, Infusions', 'Batch of 12', 3400, 'verified', 'UIU Medical Centre (Dr. Shamsul Alam)', 'Jul 20, 2026');
+                """)
+
             conn.commit()
             print("Database initialized successfully in Neon PostgreSQL.")
     except Exception as e:
@@ -317,7 +483,7 @@ def init_db():
         print(f"Error initializing database: {e}")
         raise e
     finally:
-        conn.close()
+        release_db_connection(conn)
 
 if __name__ == "__main__":
     init_db()
