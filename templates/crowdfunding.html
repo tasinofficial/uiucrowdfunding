@@ -276,7 +276,13 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
           <span>&bull;</span>
           <span class="pill pill-navy">{{ campaign.category }}</span>
           <span>&bull;</span>
+          {% if campaign.status == 'active' %}
           <span class="pill pill-emerald"><span class="ms ms-16 ms-fill">verified</span> Verified by UIU Medical Centre</span>
+          {% elif campaign.status == 'pending_verification' %}
+          <span class="pill pill-amber" style="background:#FEF3C7;color:#D97706;border:1px solid #FCD34D;"><span class="ms ms-16">hourglass_top</span> Verification Pending</span>
+          {% else %}
+          <span class="pill pill-gray">{{ campaign.status|title }}</span>
+          {% endif %}
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;">
@@ -288,6 +294,29 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
         </button>
       </div>
     </div>
+
+    {% if campaign.status == 'pending_verification' %}
+    <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:16px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow);">
+      <span class="ms ms-28" style="color:#D97706;margin-top:2px;">pending_actions</span>
+      <div style="flex:1;">
+        <div style="font-weight:700;color:#92400E;font-size:15px;display:flex;justify-content:space-between;align-items:center;">
+          <span>Fundraiser Awaiting Administrative Verification</span>
+          <span style="font-size:11.5px;background:#FEF3C7;color:#B45309;padding:2px 8px;border-radius:4px;font-weight:600;">Status: Pending Audit</span>
+        </div>
+        <p style="font-size:13.5px;color:#B45309;margin-top:4px;line-height:1.4;">
+          This fundraiser was initiated by <strong>{{ campaign.student_name }}</strong> and is currently being audited by the UIU Financial Aid & Medical Board.
+          Public donations and disbursement are locked until hospital admission proofs and invoices are approved by an administrator.
+        </p>
+        {% if session.get('role') == 'admin' %}
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <a href="/admin" class="btn btn-sm btn-primary" style="background:var(--navy);font-size:12.5px;padding:6px 14px;text-decoration:none;">
+            <span class="ms ms-16">admin_panel_settings</span> Open Admin Portal to Approve
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
 
     <!-- 4 DATA-HEAVY KPI CARDS -->
     <div class="grid-4">
@@ -587,9 +616,19 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
             </div>
           </div>
 
+          {% if campaign.status == 'pending_verification' %}
+          <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:6px;padding:12px;margin-top:14px;font-size:12.5px;color:#991B1B;display:flex;align-items:center;gap:8px;">
+            <span class="ms ms-18">lock</span>
+            Donations are locked until university administrators audit and approve this fundraiser.
+          </div>
+          <button class="btn btn-secondary btn-block" disabled style="opacity:0.6;cursor:not-allowed;background:#E2E8F0;color:#64748B;margin-top:10px;">
+            🔒 Donations Locked (Pending Audit)
+          </button>
+          {% else %}
           <button class="btn btn-primary btn-block" onclick="submitDonation()" id="donate-btn">
             Donate Now &rarr;
           </button>
+          {% endif %}
         </div>
 
         <!-- RECENT DONATIONS WITH PER-DONATION AUDIT TAGS -->

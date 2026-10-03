@@ -259,10 +259,16 @@ def loan_repayment():
 @app.route("/crowdfunding")
 def crowdfunding():
     """Screen 5: Crowdfunding & Transparency with Deep Data & Itemized Expenditures"""
-    campaign_id = request.args.get("id", 1)
-    campaign = db.query_db("SELECT * FROM crowdfunding_campaigns WHERE id = %s", (campaign_id,), one=True)
-    if not campaign:
-        campaign = db.query_db("SELECT * FROM crowdfunding_campaigns ORDER BY id ASC", one=True)
+    campaign_id = request.args.get("id")
+    is_admin = session.get("role") == "admin"
+
+    if campaign_id:
+        campaign = db.query_db("SELECT * FROM crowdfunding_campaigns WHERE id = %s", (campaign_id,), one=True)
+    else:
+        # Default to the first active, verified campaign
+        campaign = db.query_db("SELECT * FROM crowdfunding_campaigns WHERE status = 'active' ORDER BY id ASC", one=True)
+        if not campaign:
+            campaign = db.query_db("SELECT * FROM crowdfunding_campaigns ORDER BY id ASC", one=True)
     
     camp_id = campaign["id"] if campaign else 1
     milestones = db.query_db("SELECT * FROM milestones WHERE campaign_id = %s ORDER BY id ASC", (camp_id,))
@@ -314,7 +320,11 @@ def crowdfunding():
         "categories": cat_breakdown
     }
 
-    all_campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns ORDER BY id ASC")
+    # Only show active verified campaigns in public carousel (admins see all)
+    if is_admin:
+        all_campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns ORDER BY id ASC")
+    else:
+        all_campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns WHERE status = 'active' ORDER BY id ASC")
 
     return render_template(
         "crowdfunding.html",
@@ -540,6 +550,13 @@ def api_extend_loan(loan_id):
 @app.route("/api/crowdfunding/<int:campaign_id>/donate", methods=["POST"])
 def api_donate_crowdfunding(campaign_id):
     """Submit a real crowdfunding donation."""
+    camp = db.query_db("SELECT status FROM crowdfunding_campaigns WHERE id = %s", (campaign_id,), one=True)
+    if not camp or camp.get("status") != "active":
+        return jsonify({
+            "status": "error",
+            "message": "This campaign is pending verification by the UIU Financial Aid & Medical Board. Public donations will unlock once approved."
+        }), 400
+
     data = request.get_json() or {}
     amount = int(data.get("amount", 500))
     donor_name = data.get("donor_name", "Anonymous Peer")
