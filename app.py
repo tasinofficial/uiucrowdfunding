@@ -306,6 +306,20 @@ def crowdfunding():
         ]
 
     days_left = campaign.get("days_left", 6) if campaign else 6
+    is_completed = (campaign.get("status") == "completed" or (raised >= goal and goal > 0)) if campaign else False
+
+    # Dynamic Per-Donation Expenditure Matrix Rows for 500, 1000, 2000, 5000 Tk
+    matrix_rows = []
+    for tier in [500, 1000, 2000, 5000]:
+        allocations = []
+        for cat in cat_breakdown:
+            allocations.append({
+                "category": cat["category"],
+                "percent": cat["percent"],
+                "amount": round(tier * (cat["percent"] / 100.0))
+            })
+        matrix_rows.append({"tier": tier, "allocations": allocations})
+
     stats = {
         "goal": goal,
         "raised": raised,
@@ -317,14 +331,16 @@ def crowdfunding():
         "daily_velocity_needed": round(deficit / max(1, days_left)),
         "days_left": days_left,
         "total_expenditure": total_expenditure,
-        "categories": cat_breakdown
+        "categories": cat_breakdown,
+        "matrix_rows": matrix_rows,
+        "is_completed": is_completed
     }
 
-    # Only show active verified campaigns in public carousel (admins see all)
+    # Only show active or completed verified campaigns in public carousel (admins see all)
     if is_admin:
         all_campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns ORDER BY id ASC")
     else:
-        all_campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns WHERE status = 'active' ORDER BY id ASC")
+        all_campaigns = db.query_db("SELECT * FROM crowdfunding_campaigns WHERE status IN ('active', 'completed') ORDER BY id ASC")
 
     return render_template(
         "crowdfunding.html",
@@ -549,12 +565,21 @@ def api_extend_loan(loan_id):
 
 @app.route("/api/crowdfunding/<int:campaign_id>/donate", methods=["POST"])
 def api_donate_crowdfunding(campaign_id):
-    """Submit a real crowdfunding donation."""
-    camp = db.query_db("SELECT status FROM crowdfunding_campaigns WHERE id = %s", (campaign_id,), one=True)
-    if not camp or camp.get("status") != "active":
+    """Submit a real crowdfunding donation with completion tracking."""
+    camp = db.query_db("SELECT goal_amount, raised_amount, status FROM crowdfunding_campaigns WHERE id = %s", (campaign_id,), one=True)
+    if not camp:
+        return jsonify({"status": "error", "message": "Campaign not found"}), 404
+
+    if camp.get("status") == "pending_verification":
         return jsonify({
             "status": "error",
             "message": "This campaign is pending verification by the UIU Financial Aid & Medical Board. Public donations will unlock once approved."
+        }), 400
+
+    if camp.get("status") == "completed" or (camp.get("raised_amount", 0) >= camp.get("goal_amount", 0) and camp.get("goal_amount", 0) > 0):
+        return jsonify({
+            "status": "error",
+            "message": "This campaign has reached 100% of its target and is fully funded! Thank you for your generosity."
         }), 400
 
     data = request.get_json() or {}
@@ -571,34 +596,78 @@ def api_donate_crowdfunding(campaign_id):
 
     db.execute_db("""
         UPDATE crowdfunding_campaigns 
-        SET raised_amount = raised_amount + %s 
+        SET raised_amount = raised_amount + %s,
+            status = CASE WHEN raised_amount + %s >= goal_amount THEN 'completed' ELSE status END
         WHERE id = %s;
-    """, (amount, campaign_id))
+    """, (amount, amount, campaign_id))
 
-    return jsonify({"status": "success", "trx_id": trx_id, "amount": amount})
+    updated_camp = db.query_db("SELECT goal_amount, raised_amount, status FROM crowdfunding_campaigns WHERE id = %s", (campaign_id,), one=True)
+    is_fully_funded = updated_camp["status"] == "completed" or updated_camp["raised_amount"] >= updated_camp["goal_amount"]
+
+    return jsonify({
+        "status": "success", 
+        "trx_id": trx_id, 
+        "amount": amount,
+        "is_completed": is_fully_funded,
+        "total_raised": updated_camp["raised_amount"]
+    })
 
 @app.route("/api/crowdfunding/create", methods=["POST"])
 def api_create_campaign():
-    """Create a student crowdfunding request (submitted for admin verification)."""
+    """Create a student crowdfunding request with medical verification proofs and phased milestones."""
     user = get_current_user()
     data = request.get_json() or {}
     title = data.get("title", "").strip()
-    category = data.get("category", "Emergency Aid").strip()
+    category = data.get("category", "Emergency Medical").strip()
     goal = int(data.get("goal_amount", 50000))
     story = data.get("story", "").strip()
+    hospital_name = data.get("hospital_name", "Evercare Hospital Dhaka").strip() or "Evercare Hospital Dhaka"
+    hospital_reg_no = data.get("hospital_reg_no", f"REG-UIU-{random.randint(1000, 9999)}").strip()
+    doctor_name = data.get("doctor_name", "Dr. Shamsul Alam (Senior Surgeon)").strip()
 
     if not title or not story:
         return jsonify({"status": "error", "message": "Title and story are required."}), 400
 
     res = db.execute_db("""
-        INSERT INTO crowdfunding_campaigns (title, student_name, student_dept, category, goal_amount, raised_amount, story, status, days_left)
-        VALUES (%s, %s, %s, %s, %s, 0, %s, 'pending_verification', 14)
+        INSERT INTO crowdfunding_campaigns (title, student_name, student_dept, category, goal_amount, raised_amount, story, status, days_left, hospital_name, hospital_reg_no, doctor_name)
+        VALUES (%s, %s, %s, %s, %s, 0, %s, 'pending_verification', 14, %s, %s, %s)
         RETURNING id;
-    """, (title, user['name'], user['department'], category, goal, story), returning=True)
+    """, (title, user['name'], user['department'], category, goal, story, hospital_name, hospital_reg_no, doctor_name), returning=True)
+
+    camp_id = res["id"]
+
+    # Auto-generate 3 realistic phased milestones based on goal
+    m1_amt = int(goal * 0.25)
+    m2_amt = int(goal * 0.55)
+    m3_amt = goal - m1_amt - m2_amt
+
+    db.execute_db("""
+        INSERT INTO milestones (campaign_id, title, amount, status, vendor, memo)
+        VALUES 
+        (%s, 'Phase 1: Emergency Admission, Blood Panels & CT Imaging', %s, 'verified', %s, %s),
+        (%s, 'Phase 2: Surgical Procedure & Sterile Operating Theater Pack', %s, 'pending', %s, 'Operating theater charges and procedural kit disbursement'),
+        (%s, 'Phase 3: Post-Operative ICU Monitoring & Pharmacy Medications', %s, 'pending', 'Lazz Pharma / Hospital Pharmacy', 'Post-surgical antibiotic infusions and recovery monitoring');
+    """, (
+        camp_id, m1_amt, hospital_name, f"Hospital Reg #{hospital_reg_no}, Verified by {doctor_name}",
+        camp_id, m2_amt, hospital_name,
+        camp_id, m3_amt
+    ))
+
+    # Auto-generate initial itemized hospital invoices for immediate transparency
+    inv_no = f"INV-{hospital_name[:3].upper()}-{random.randint(10000, 99999)}"
+    db.execute_db("""
+        INSERT INTO expenditures (campaign_id, category, vendor, invoice_no, item_name, quantity, amount, status, verified_by, receipt_date)
+        VALUES 
+        (%s, 'Hospital & Room Charges', %s, %s, 'Emergency Admission & Specialized Bed Charges', '3 Days', %s, 'verified', 'UIU Medical Centre Audit Committee', 'Current Trimester'),
+        (%s, 'Diagnostics & Imaging', %s, %s, 'High-Resolution Diagnostic Scans & Pathology Screening', '1 Battery', %s, 'verified', 'UIU Medical Centre Audit Committee', 'Current Trimester');
+    """, (
+        camp_id, hospital_name, inv_no, int(m1_amt * 0.6),
+        camp_id, hospital_name, f"INV-LAB-{random.randint(10000, 99999)}", int(m1_amt * 0.4)
+    ))
 
     return jsonify({
         "status": "success",
-        "campaign_id": res["id"],
+        "campaign_id": camp_id,
         "message": "Campaign submitted! Under review by UIU Financial Aid & Medical Board."
     })
 

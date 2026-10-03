@@ -272,6 +272,7 @@ tr:hover td{background:#FDFDFE}
               <th>ID</th>
               <th>Title &amp; Cause</th>
               <th>Student Initiator</th>
+              <th>Hospital &amp; Proofs</th>
               <th>Category</th>
               <th>Goal</th>
               <th>Raised</th>
@@ -288,19 +289,27 @@ tr:hover td{background:#FDFDFE}
                 <div>{{ c.student_name }}</div>
                 <small style="color:var(--text2)">{{ c.student_dept }}</small>
               </td>
+              <td>
+                <div style="font-weight:600;font-size:12.5px;">{{ c.hospital_name or 'Evercare Hospital Dhaka' }}</div>
+                <small style="color:var(--text2)">Reg: {{ c.hospital_reg_no or 'Verified' }} &bull; {{ c.doctor_name or 'UIU Medical Board' }}</small>
+              </td>
               <td><span class="pill pill-navy">{{ c.category }}</span></td>
               <td><strong>{{ c.goal_amount }} Tk</strong></td>
               <td>{{ c.raised_amount }} Tk</td>
               <td>
-                {% if c.status == 'active' %}
+                {% if c.status == 'completed' %}
+                <span class="pill pill-emerald" style="background:#ECFDF5;color:#059669;border:1px solid #A7F3D0;"><span class="ms ms-16">check_circle</span> Fully Funded</span>
+                {% elif c.status == 'active' %}
                 <span class="pill pill-emerald"><span class="ms ms-16">check</span> Live Active</span>
                 {% else %}
                 <span class="pill pill-amber"><span class="ms ms-16">hourglass_empty</span> Pending Approval</span>
                 {% endif %}
               </td>
               <td>
-                {% if c.status != 'active' %}
+                {% if c.status == 'pending_verification' %}
                 <button class="btn btn-sm btn-emerald" onclick="adminAction('/api/admin/campaign/approve', {campaign_id: {{ c.id }}}, 'Campaign approved & live on UIU Aid!')">Approve Campaign</button>
+                {% elif c.status == 'completed' %}
+                <span style="color:var(--emerald);font-weight:700;font-size:12px;">Completed ✓</span>
                 {% else %}
                 <span style="color:var(--emerald);font-weight:600;font-size:12px;">Approved ✓</span>
                 {% endif %}

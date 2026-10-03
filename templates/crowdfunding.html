@@ -269,14 +269,29 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
     <div class="page-head">
       <div>
         <h1>{{ campaign.title }}</h1>
-        <div class="sub">
+        <div class="sub" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           <span>By <strong>{{ campaign.student_name }}</strong></span>
           <span>&bull;</span>
           <span>{{ campaign.student_dept }}</span>
           <span>&bull;</span>
           <span class="pill pill-navy">{{ campaign.category }}</span>
+          {% if campaign.hospital_name %}
           <span>&bull;</span>
-          {% if campaign.status == 'active' %}
+          <span style="display:inline-flex;align-items:center;gap:4px;color:var(--text);font-weight:600;">
+            <span class="ms ms-16" style="color:var(--navy);">local_hospital</span> {{ campaign.hospital_name }} 
+            {% if campaign.hospital_reg_no %}<small style="color:var(--text2);font-weight:500;">(Reg #{{ campaign.hospital_reg_no }})</small>{% endif %}
+          </span>
+          {% endif %}
+          {% if campaign.doctor_name %}
+          <span>&bull;</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;color:var(--text2);">
+            <span class="ms ms-16" style="color:var(--emerald);">medical_services</span> {{ campaign.doctor_name }}
+          </span>
+          {% endif %}
+          <span>&bull;</span>
+          {% if stats.is_completed %}
+          <span class="pill pill-emerald" style="background:#ECFDF5;color:#059669;border:1px solid #A7F3D0;"><span class="ms ms-16 ms-fill">check_circle</span> Goal Reached &bull; Fully Funded</span>
+          {% elif campaign.status == 'active' %}
           <span class="pill pill-emerald"><span class="ms ms-16 ms-fill">verified</span> Verified by UIU Medical Centre</span>
           {% elif campaign.status == 'pending_verification' %}
           <span class="pill pill-amber" style="background:#FEF3C7;color:#D97706;border:1px solid #FCD34D;"><span class="ms ms-16">hourglass_top</span> Verification Pending</span>
@@ -295,7 +310,21 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
       </div>
     </div>
 
-    {% if campaign.status == 'pending_verification' %}
+    {% if stats.is_completed %}
+    <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:var(--r);padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);">
+      <span class="ms ms-28 ms-fill" style="color:#059669;">check_circle</span>
+      <div style="flex:1;">
+        <div style="font-weight:700;color:#065F46;font-size:15px;display:flex;justify-content:space-between;align-items:center;">
+          <span>🎉 Goal Fully Funded! Target Reached</span>
+          <span style="font-size:11.5px;background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:4px;font-weight:600;">100% Complete</span>
+        </div>
+        <p style="font-size:13.5px;color:#047857;margin-top:4px;line-height:1.4;">
+          This student fundraiser has successfully reached its target of <strong>{{ stats.goal }} Tk</strong> with <strong>{{ stats.raised }} Tk</strong> raised by {{ stats.donor_count }} campus peers.
+          Direct disbursements to <strong>{{ campaign.hospital_name or 'the hospital' }}</strong> are active. Further donations are safely locked.
+        </p>
+      </div>
+    </div>
+    {% elif campaign.status == 'pending_verification' %}
     <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:16px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow);">
       <span class="ms ms-28" style="color:#D97706;margin-top:2px;">pending_actions</span>
       <div style="flex:1;">
@@ -387,15 +416,21 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
               <span style="font-size:13px;font-weight:700;color:var(--text);">Campaign Expenditure Allocation &amp; Invoices</span>
               <span style="font-size:12px;color:var(--text2);">{{ stats.total_expenditure }} Tk accounted</span>
             </div>
+            {% set seg_colors = ['#2563EB', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899', '#06B6D4'] %}
             <div class="seg-bar">
-              <div class="seg-part seg-blue" style="width: 39.1%;" title="Hospital & Room Charges: 39.1%"></div>
-              <div class="seg-part seg-emerald" style="width: 52.1%;" title="Surgery & Operating Theater: 52.1%"></div>
-              <div class="seg-part seg-purple" style="width: 8.8%;" title="Post-Op Pharmacy: 8.8%"></div>
+              {% for cat in stats.categories %}
+              {% set c_idx = loop.index0 % 6 %}
+              <div class="seg-part" style="width: {{ cat.percent }}%; background: {{ seg_colors[c_idx] }};" title="{{ cat.category }}: {{ cat.percent }}% ({{ cat.amount }} Tk)"></div>
+              {% endfor %}
             </div>
             <div class="seg-legend">
-              <div class="seg-item"><span class="seg-dot seg-blue"></span> Hospital Admission (39.1%)</div>
-              <div class="seg-item"><span class="seg-dot seg-emerald"></span> Surgery &amp; OT (52.1%)</div>
-              <div class="seg-item"><span class="seg-dot seg-purple"></span> Post-Op Pharmacy (8.8%)</div>
+              {% for cat in stats.categories %}
+              {% set c_idx = loop.index0 % 6 %}
+              <div class="seg-item">
+                <span class="seg-dot" style="background: {{ seg_colors[c_idx] }};"></span>
+                {{ cat.category }} ({{ cat.percent }}%)
+              </div>
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -477,46 +512,27 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
               <thead>
                 <tr>
                   <th>Donation Amount</th>
-                  <th>Hospital Room (39.1%)</th>
-                  <th>Surgery &amp; OT (52.1%)</th>
-                  <th>Pharmacy (8.8%)</th>
+                  {% for cat in stats.categories %}
+                  <th>{{ cat.category }} ({{ cat.percent }}%)</th>
+                  {% endfor %}
                   <th>Disbursement Audit</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><strong style="color:var(--navy);font-size:14.5px;">500 Tk</strong></td>
-                  <td>196 Tk</td>
-                  <td>260 Tk</td>
-                  <td>44 Tk</td>
+                {% for row in stats.matrix_rows %}
+                <tr {% if loop.index % 2 == 0 %}style="background:#F8FAFC;"{% endif %}>
+                  <td><strong style="color:var(--navy);font-size:14.5px;">{{ row.tier }} Tk</strong></td>
+                  {% for alloc in row.allocations %}
+                  <td>{{ alloc.amount }} Tk</td>
+                  {% endfor %}
                   <td><span class="pill pill-emerald">100% Audited</span></td>
                 </tr>
-                <tr style="background:#F8FAFC;">
-                  <td><strong style="color:var(--navy);font-size:14.5px;">1,000 Tk</strong></td>
-                  <td>391 Tk</td>
-                  <td>521 Tk</td>
-                  <td>88 Tk</td>
-                  <td><span class="pill pill-emerald">100% Audited</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:var(--navy);font-size:14.5px;">2,000 Tk</strong></td>
-                  <td>782 Tk</td>
-                  <td>1,042 Tk</td>
-                  <td>176 Tk</td>
-                  <td><span class="pill pill-emerald">100% Audited</span></td>
-                </tr>
-                <tr style="background:#F8FAFC;">
-                  <td><strong style="color:var(--navy);font-size:14.5px;">5,000 Tk</strong></td>
-                  <td>1,955 Tk</td>
-                  <td>2,605 Tk</td>
-                  <td>440 Tk</td>
-                  <td><span class="pill pill-emerald">100% Audited</span></td>
-                </tr>
+                {% endfor %}
               </tbody>
             </table>
             <div style="margin-top:14px;padding:10px 14px;background:#F0FDF4;border-radius:6px;font-size:12.5px;color:#166534;display:flex;align-items:center;gap:6px;">
               <span class="ms ms-18 ms-fill" style="color:var(--emerald);">verified</span>
-              <strong>Direct Disbursement Guarantee:</strong> Funds never touch student bank accounts; paid directly to Evercare Hospital &amp; Lazz Pharma invoices.
+              <strong>Direct Disbursement Guarantee:</strong> Funds never touch student bank accounts; paid directly to {{ campaign.hospital_name or 'verified healthcare/vendor' }} &amp; pharmacy invoices.
             </div>
           </div>
 
@@ -584,18 +600,12 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
             <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">
               Every Taka is audited. For your <strong id="impact-amt-label" style="color:var(--navy);">1,000 Tk</strong> donation:
             </div>
+            {% for cat in stats.categories %}
             <div class="impact-item">
-              <span>Hospital Admission &amp; Bed (39.1%)</span>
-              <b id="impact-hosp">391 Tk</b>
+              <span>{{ cat.category }} ({{ cat.percent }}%)</span>
+              <b id="impact-cat-{{ loop.index0 }}">{{ (1000 * cat.percent / 100)|round|int }} Tk</b>
             </div>
-            <div class="impact-item">
-              <span>Surgery &amp; Operating Theater (52.1%)</span>
-              <b id="impact-surg">521 Tk</b>
-            </div>
-            <div class="impact-item">
-              <span>Post-Op Pharmacy Medicines (8.8%)</span>
-              <b id="impact-pharm">88 Tk</b>
-            </div>
+            {% endfor %}
           </div>
 
           <label class="checkbox-label">
@@ -616,7 +626,15 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
             </div>
           </div>
 
-          {% if campaign.status == 'pending_verification' %}
+          {% if stats.is_completed %}
+          <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:6px;padding:12px;margin-top:14px;font-size:12.5px;color:#065F46;display:flex;align-items:center;gap:8px;">
+            <span class="ms ms-18 ms-fill" style="color:var(--emerald);">check_circle</span>
+            Goal fully funded! Target reached with 100% transparent disbursements.
+          </div>
+          <button class="btn btn-secondary btn-block" disabled style="opacity:0.6;cursor:not-allowed;background:#E2E8F0;color:#64748B;margin-top:10px;">
+            ✅ Target Reached (Completed)
+          </button>
+          {% elif campaign.status == 'pending_verification' %}
           <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:6px;padding:12px;margin-top:14px;font-size:12.5px;color:#991B1B;display:flex;align-items:center;gap:8px;">
             <span class="ms ms-18">lock</span>
             Donations are locked until university administrators audit and approve this fundraiser.
@@ -709,13 +727,22 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
     });
   }
 
+  const campaignCategories = {{ stats.categories | tojson }};
+
   // Per-Donation Expenditure Impact Calculator
   function updateExpenditureImpact(amt) {
     const n = parseInt(amt) || 0;
-    document.getElementById('impact-amt-label').innerText = n.toLocaleString() + ' Tk';
-    document.getElementById('impact-hosp').innerText = Math.round(n * 0.391).toLocaleString() + ' Tk';
-    document.getElementById('impact-surg').innerText = Math.round(n * 0.521).toLocaleString() + ' Tk';
-    document.getElementById('impact-pharm').innerText = Math.round(n * 0.088).toLocaleString() + ' Tk';
+    const lbl = document.getElementById('impact-amt-label');
+    if(lbl) lbl.innerText = n.toLocaleString() + ' Tk';
+    if(campaignCategories && campaignCategories.length > 0) {
+      campaignCategories.forEach((cat, idx) => {
+        const el = document.getElementById('impact-cat-' + idx);
+        if(el) {
+          const catAmt = Math.round(n * (cat.percent / 100));
+          el.innerText = catAmt.toLocaleString() + ' Tk';
+        }
+      });
+    }
   }
 
   // Amount Chips Logic
@@ -798,6 +825,11 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
         body: JSON.stringify(payload)
       });
       const data = await res.json();
+      if(data.status === 'error') {
+        alert(data.message || 'Donation could not be processed');
+        return;
+      }
+
       const fakeTrxId = data.trx_id || ('TXN' + Math.floor(Math.random() * 1000000));
 
       const feed = document.getElementById('donation-feed');
@@ -809,9 +841,16 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
       li.style.flexDirection = 'column';
       li.style.alignItems = 'stretch';
       li.style.gap = '6px';
-      const hosp = Math.round(amount * 0.391);
-      const surg = Math.round(amount * 0.521);
-      const pharm = Math.round(amount * 0.088);
+      
+      let breakdownBadges = '';
+      if(campaignCategories && campaignCategories.length > 0) {
+        campaignCategories.forEach((cat, idx) => {
+          const catAmt = Math.round(amount * (cat.percent / 100));
+          breakdownBadges += `<span>${cat.category}: <strong>${catAmt.toLocaleString()} Tk</strong></span>`;
+          if(idx < campaignCategories.length - 1) breakdownBadges += '<span>&bull;</span>';
+        });
+      }
+
       li.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
@@ -829,11 +868,7 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
             This ${amount} Tk was disbursed as:
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <span>🏥 Hospital: <strong>${hosp} Tk</strong></span>
-            <span>&bull;</span>
-            <span>🔪 Surgery: <strong>${surg} Tk</strong></span>
-            <span>&bull;</span>
-            <span>💊 Pharmacy: <strong>${pharm} Tk</strong></span>
+            ${breakdownBadges}
           </div>
         </div>
       `;
@@ -847,9 +882,16 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
 
       showToast(`Donation successful! Trx ID: ${fakeTrxId}`);
       amountInput.value = '';
+
+      if(data.is_completed) {
+        setTimeout(() => {
+          alert('🎉 Target reached! This student campaign is now 100% fully funded. Thank you for your support!');
+          location.reload();
+        }, 800);
+      }
       
     } catch(err) {
-      alert('Error making donation');
+      alert('Error making donation: ' + err.message);
     } finally {
       btn.innerText = ogText;
       btn.disabled = false;
@@ -868,6 +910,9 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
     const category = document.getElementById('camp-category').value;
     const goal = parseInt(document.getElementById('camp-goal').value);
     const story = document.getElementById('camp-story').value.trim();
+    const hospital_name = document.getElementById('camp-hospital').value.trim();
+    const hospital_reg_no = document.getElementById('camp-reg-no').value.trim();
+    const doctor_name = document.getElementById('camp-doctor').value.trim();
 
     if(!title || !goal || !story) {
       alert('Please fill out the campaign title, goal amount, and background story.');
@@ -878,7 +923,15 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
       const res = await fetch('/api/crowdfunding/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, category, goal_amount: goal, story })
+        body: JSON.stringify({ 
+          title, 
+          category, 
+          goal_amount: goal, 
+          story,
+          hospital_name,
+          hospital_reg_no,
+          doctor_name
+        })
       });
       const data = await res.json();
       if(data.status === 'success') {
@@ -922,6 +975,20 @@ th{font-weight:600;color:var(--text2);font-size:12.5px;text-transform:uppercase;
           <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Goal Amount (Tk)</label>
           <input type="number" id="camp-goal" class="input" placeholder="e.g. 40000" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
         </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Hospital / Clinic / Vendor</label>
+          <input type="text" id="camp-hospital" class="input" placeholder="e.g. Evercare Hospital Dhaka" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Hospital Reg / Admission #</label>
+          <input type="text" id="camp-reg-no" class="input" placeholder="e.g. REG-UIU-2026" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Attending Doctor / Specialist</label>
+        <input type="text" id="camp-doctor" class="input" placeholder="e.g. Prof. Dr. Shamsul Alam (Senior Surgeon)" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;">
       </div>
       <div>
         <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:4px;">Story &amp; Transparency Details</label>

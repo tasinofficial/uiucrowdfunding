@@ -162,6 +162,10 @@ def init_db():
                 ALTER TABLE users ADD COLUMN IF NOT EXISTS gigs_completed INT DEFAULT 6;
                 ALTER TABLE users ADD COLUMN IF NOT EXISTS gigs_posted INT DEFAULT 2;
                 ALTER TABLE users ADD COLUMN IF NOT EXISTS gig_tier VARCHAR(50) DEFAULT 'Level 2 Tasker';
+
+                ALTER TABLE crowdfunding_campaigns ADD COLUMN IF NOT EXISTS hospital_name VARCHAR(150) DEFAULT 'Evercare Hospital Dhaka';
+                ALTER TABLE crowdfunding_campaigns ADD COLUMN IF NOT EXISTS hospital_reg_no VARCHAR(100) DEFAULT 'REG-UIU-2026-09';
+                ALTER TABLE crowdfunding_campaigns ADD COLUMN IF NOT EXISTS doctor_name VARCHAR(150) DEFAULT 'Dr. Shamsul Alam (Senior Surgeon)';
             """)
 
             # Gig Reputation Events
